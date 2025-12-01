@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floyd-Warshall Algorithm Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .controls { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn { background: linear-gradient(45deg, #fd7e14, #e83e8c); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(253,126,20,0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .visualization { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .graph-panel, .matrix-panel { background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        #canvas { border: 2px solid #e9ecef; border-radius: 10px; background: white; }
+        .matrix-container { max-height: 400px; overflow: auto; }
+        .distance-matrix { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+        .distance-matrix th, .distance-matrix td { padding: 8px; text-align: center; border: 1px solid #dee2e6; min-width: 40px; }
+        .distance-matrix th { background: #f8f9fa; font-weight: 600; }
+        .intermediate { background: #007bff !important; color: white; }
+        .updated { background: #28a745 !important; color: white; animation: highlight 0.5s; }
+        .current-pair { background: #ffc107 !important; }
+        .iteration-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #fd7e14; }
+        @keyframes highlight { 0% { background: #fff3cd; } 100% { background: #28a745; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧭 Floyd-Warshall Algorithm</h1>
+            <p>Find shortest paths between all pairs of vertices</p>
+        </div>
+        
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn" onclick="generateGraph()">🔄 Generate Graph</button>
+                <button class="btn" onclick="startAlgorithm()" id="startBtn">▶️ Start</button>
+                <button class="btn" onclick="stepForward()" id="stepBtn" disabled>⏭️ Step</button>
+                <button class="btn" onclick="autoRun()" id="autoBtn" disabled>🚀 Auto</button>
+                <button class="btn" onclick="reset()">🔄 Reset</button>
+                <button class="btn" onclick="addNegativeCycle()">➕ Add Negative Cycle</button>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <div class="graph-panel">
+                <h3>📊 Graph Visualization</h3>
+                <canvas id="canvas" width="600" height="400"></canvas>
+                
+                <div class="iteration-info" id="status">Ready to start</div>
+            </div>
+            
+            <div class="matrix-panel">
+                <h3>📋 Distance Matrix</h3>
+                <div class="iteration-info">
+                    <strong>Progress:</strong><br>
+                    Intermediate Vertex: <span id="currentK">-</span><br>
+                    Checking Pair: <span id="currentPair">-</span><br>
+                    Updates: <span id="updateCount">0</span>
+                </div>
+                
+                <div class="matrix-container">
+                    <table class="distance-matrix" id="distanceMatrix">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let graph = { vertices: [], edges: [] };
+        let distMatrix = [];
+        let currentK = 0, currentI = 0, currentJ = 0;
+        let step = 0, isRunning = false, updateCount = 0;
+        let hasNegativeCycle = false;
+
+        function generateGraph() {
+            const numVertices = 4;
+            graph.vertices = [];
+            graph.edges = [];
+            
+            for (let i = 0; i < numVertices; i++) {
+                graph.vertices.push({
+                    id: i,
+                    x: 150 + (i % 2) * 300,
+                    y: 100 + Math.floor(i / 2) * 200,
+                    label: String.fromCharCode(65 + i)
+                });
+            }
+            
+            // Generate directed edges
+            for (let i = 0; i < numVertices; i++) {
+                for (let j = 0; j < numVertices; j++) {
+                    if (i !== j && Math.random() < 0.6) {
+                        graph.edges.push({
+                            from: i, to: j,
+                            weight: Math.floor(Math.random() * 15) + 1
+                        });
+                    }
+                }
+            }
+            
+            initializeMatrix();
+            drawGraph();
+            reset();
+        }
+
+        function addNegativeCycle() {
+            // Clear existing edges and add a negative cycle
+            graph.edges = [];
+            
+            // Add cycle: A -> B -> C -> A with negative total weight
+            graph.edges.push(
+                { from: 0, to: 1, weight: 1 },
+                { from: 1, to: 2, weight: -1 },
+                { from: 2, to: 0, weight: -1 }
+            );
+            
+            initializeMatrix();
+            drawGraph();
+            reset();
+        }
+
+        function initializeMatrix() {
+            const n = graph.vertices.length;
+            distMatrix = Array(n).fill().map(() => Array(n).fill(Infinity));
+            
+            // Initialize diagonal to 0
+            for (let i = 0; i < n; i++) {
+                distMatrix[i][i] = 0;
+            }
+            
+            // Set edge weights
+            graph.edges.forEach(edge => {
+                distMatrix[edge.from][edge.to] = edge.weight;
+            });
+            
+            updateMatrixDisplay();
+        }
+
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            graph.edges.forEach(edge => {
+                const from = graph.vertices[edge.from];
+                const to = graph.vertices[edge.to];
+                
+                // Draw arrow
+                const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                const arrowLength = 15;
+                const arrowAngle = Math.PI / 6;
+                
+                ctx.strokeStyle = '#dee2e6';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x - 30 * Math.cos(angle), to.y - 30 * Math.sin(angle));
+                ctx.stroke();
+                
+                // Arrow head
+                const endX = to.x - 30 * Math.cos(angle);
+                const endY = to.y - 30 * Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle - arrowAngle), endY - arrowLength * Math.sin(angle - arrowAngle));
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle + arrowAngle), endY - arrowLength * Math.sin(angle + arrowAngle));
+                ctx.stroke();
+                
+                // Weight
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                ctx.fillStyle = '#495057';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(edge.weight, midX, midY - 10);
+            });
+            
+            // Draw vertices
+            graph.vertices.forEach((vertex, index) => {
+                let color = '#6c757d';
+                if (index === currentK && isRunning) color = '#007bff';
+                if (hasNegativeCycle) color = '#dc3545';
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 30, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(vertex.label, vertex.x, vertex.y + 7);
+            });
+        }
+
+        function startAlgorithm() {
+            reset();
+            currentK = 0;
+            currentI = 0;
+            currentJ = 0;
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('autoBtn').disabled = false;
+            
+            updateStatus('Algorithm started. Using dynamic programming approach...');
+            updateProgress();
+        }
+
+        function stepForward() {
+            const n = graph.vertices.length;
+            
+            if (currentK >= n) {
+                checkNegativeCycle();
+                return;
+            }
+            
+            if (currentI >= n) {
+                // Move to next k
+                currentK++;
+                currentI = 0;
+                currentJ = 0;
+                
+                if (currentK < n) {
+                    updateStatus(`Starting iteration with intermediate vertex ${graph.vertices[currentK].label}`);
+                    updateProgress();
+                    drawGraph();
+                    return;
+                } else {
+                    checkNegativeCycle();
+                    return;
+                }
+            }
+            
+            if (currentJ >= n) {
+                // Move to next i
+                currentI++;
+                currentJ = 0;
+                return stepForward();
+            }
+            
+            // Floyd-Warshall relaxation
+            if (distMatrix[currentI][currentK] !== Infinity && 
+                distMatrix[currentK][currentJ] !== Infinity) {
+                
+                const newDist = distMatrix[currentI][currentK] + distMatrix[currentK][currentJ];
+                
+                if (newDist < distMatrix[currentI][currentJ]) {
+                    distMatrix[currentI][currentJ] = newDist;
+                    updateCount++;
+                    updateStatus(`Updated dist[${graph.vertices[currentI].label}][${graph.vertices[currentJ].label}] = ${newDist} via ${graph.vertices[currentK].label}`);
+                } else {
+                    updateStatus(`No update for pair (${graph.vertices[currentI].label}, ${graph.vertices[currentJ].label})`);
+                }
+            } else {
+                updateStatus(`Skipped pair (${graph.vertices[currentI].label}, ${graph.vertices[currentJ].label}) - unreachable via ${graph.vertices[currentK].label}`);
+            }
+            
+            currentJ++;
+            step++;
+            
+            updateProgress();
+            updateMatrixDisplay();
+            drawGraph();
+        }
+
+        function checkNegativeCycle() {
+            const n = graph.vertices.length;
+            let cycleDetected = false;
+            
+            for (let i = 0; i < n; i++) {
+                if (distMatrix[i][i] < 0) {
+                    cycleDetected = true;
+                    break;
+                }
+            }
+            
+            if (cycleDetected) {
+                hasNegativeCycle = true;
+                updateStatus('🔴 NEGATIVE CYCLE DETECTED! All-pairs shortest paths are undefined.');
+            } else {
+                updateStatus('✅ Algorithm completed! All-pairs shortest paths computed.');
+            }
+            
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('autoBtn').disabled = true;
+            updateMatrixDisplay();
+            drawGraph();
+        }
+
+        function updateMatrixDisplay() {
+            const table = document.getElementById('distanceMatrix');
+            const n = graph.vertices.length;
+            
+            // Create header
+            const thead = table.querySelector('thead');
+            thead.innerHTML = '';
+            const headerRow = thead.insertRow();
+            headerRow.insertCell().textContent = '';
+            graph.vertices.forEach(v => {
+                const th = document.createElement('th');
+                th.textContent = v.label;
+                headerRow.appendChild(th);
+            });
+            
+            // Create body
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            for (let i = 0; i < n; i++) {
+                const row = tbody.insertRow();
+                const th = document.createElement('th');
+                th.textContent = graph.vertices[i].label;
+                row.appendChild(th);
+                
+                for (let j = 0; j < n; j++) {
+                    const cell = row.insertCell();
+                    const value = distMatrix[i][j] === Infinity ? '∞' : distMatrix[i][j];
+                    cell.textContent = value;
+                    
+                    // Highlight current elements
+                    if (isRunning) {
+                        if (i === currentK || j === currentK) {
+                            cell.className = 'intermediate';
+                        }
+                        if (i === currentI && j === currentJ) {
+                            cell.className = 'current-pair';
+                        }
+                    }
+                    
+                    // Highlight negative diagonal (negative cycle)
+                    if (i === j && distMatrix[i][j] < 0) {
+                        cell.style.background = '#dc3545';
+                        cell.style.color = 'white';
+                    }
+                }
+            }
+        }
+
+        function updateProgress() {
+            document.getElementById('currentK').textContent = 
+                currentK < graph.vertices.length ? graph.vertices[currentK].label : 'Complete';
+            document.getElementById('currentPair').textContent = 
+                currentI < graph.vertices.length && currentJ < graph.vertices.length ? 
+                `(${graph.vertices[currentI].label}, ${graph.vertices[currentJ].label})` : '-';
+            document.getElementById('updateCount').textContent = updateCount;
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `<strong>Step ${step}:</strong> ${message}`;
+        }
+
+        function autoRun() {
+            if (currentK >= graph.vertices.length) return;
+            stepForward();
+            setTimeout(autoRun, 600);
+        }
+
+        function reset() {
+            currentK = 0; currentI = 0; currentJ = 0;
+            step = 0; isRunning = false; updateCount = 0;
+            hasNegativeCycle = false;
+            
+            initializeMatrix();
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('autoBtn').disabled = true;
+            
+            updateStatus('Ready to start');
+            updateProgress();
+            drawGraph();
+        }
+
+        generateGraph();
+    </script>
+</body>
+</html>

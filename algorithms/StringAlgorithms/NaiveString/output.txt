@@ -1,0 +1,188 @@
+{
+  "text": "ABABABAC",
+  "pattern": "ABA",
+  "steps": [
+    {
+      "alignment": 0,
+      "compareIndex": 0,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 0,
+      "compareIndex": 1,
+      "textChar": "B",
+      "patternChar": "B",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 0,
+      "compareIndex": 2,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 0,
+      "compareIndex": 3,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": true,
+      "isComplete": true,
+      "foundMatch": true,
+      "status": "Pattern found at position 0"
+    },
+    {
+      "alignment": 1,
+      "compareIndex": 0,
+      "textChar": "B",
+      "patternChar": "A",
+      "isMatch": false,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Mismatch"
+    },
+    {
+      "alignment": 1,
+      "compareIndex": 0,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": false,
+      "isComplete": true,
+      "foundMatch": false,
+      "status": "Pattern not found at position 1"
+    },
+    {
+      "alignment": 2,
+      "compareIndex": 0,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 2,
+      "compareIndex": 1,
+      "textChar": "B",
+      "patternChar": "B",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 2,
+      "compareIndex": 2,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 2,
+      "compareIndex": 3,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": true,
+      "isComplete": true,
+      "foundMatch": true,
+      "status": "Pattern found at position 2"
+    },
+    {
+      "alignment": 3,
+      "compareIndex": 0,
+      "textChar": "B",
+      "patternChar": "A",
+      "isMatch": false,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Mismatch"
+    },
+    {
+      "alignment": 3,
+      "compareIndex": 0,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": false,
+      "isComplete": true,
+      "foundMatch": false,
+      "status": "Pattern not found at position 3"
+    },
+    {
+      "alignment": 4,
+      "compareIndex": 0,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 4,
+      "compareIndex": 1,
+      "textChar": "B",
+      "patternChar": "B",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 4,
+      "compareIndex": 2,
+      "textChar": "A",
+      "patternChar": "A",
+      "isMatch": true,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Match"
+    },
+    {
+      "alignment": 4,
+      "compareIndex": 3,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": true,
+      "isComplete": true,
+      "foundMatch": true,
+      "status": "Pattern found at position 4"
+    },
+    {
+      "alignment": 5,
+      "compareIndex": 0,
+      "textChar": "B",
+      "patternChar": "A",
+      "isMatch": false,
+      "isComplete": false,
+      "foundMatch": false,
+      "status": "Mismatch"
+    },
+    {
+      "alignment": 5,
+      "compareIndex": 0,
+      "textChar": "",
+      "patternChar": "",
+      "isMatch": false,
+      "isComplete": true,
+      "foundMatch": false,
+      "status": "Pattern not found at position 5"
+    }
+  ],
+  "matches": [0, 2, 4],
+  "totalMatches": 3
+}

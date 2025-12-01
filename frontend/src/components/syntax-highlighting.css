@@ -1,0 +1,95 @@
+/* Enhanced syntax highlighting styles */
+
+/* Custom scrollbar for code blocks */
+.token-line {
+  transition: background-color 0.2s ease;
+}
+
+.token-line:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Enhanced token colors for better visibility */
+.token.comment {
+  color: #6b7280 !important;
+  font-style: italic;
+}
+
+.token.keyword {
+  color: #c792ea !important;
+  font-weight: 600;
+}
+
+.token.string {
+  color: #c3e88d !important;
+}
+
+.token.number {
+  color: #f78c6c !important;
+}
+
+.token.function {
+  color: #82aaff !important;
+}
+
+.token.class-name {
+  color: #ffcb6b !important;
+}
+
+.token.operator {
+  color: #89ddff !important;
+}
+
+.token.punctuation {
+  color: #89ddff !important;
+}
+
+.token.builtin {
+  color: #f07178 !important;
+}
+
+.token.variable {
+  color: #eeffff !important;
+}
+
+.token.constant {
+  color: #ff5370 !important;
+}
+
+/* Line numbers styling */
+.linenumber {
+  color: #64748b !important;
+  user-select: none;
+  border-right: 1px solid #334155 !important;
+  padding-right: 15px !important;
+  margin-right: 15px !important;
+}
+
+/* Custom scrollbar */
+pre[class*="language-"]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Selection styling */
+pre[class*="language-"] ::selection {
+  background: rgba(124, 58, 237, 0.3);
+}
+
+pre[class*="language-"] ::-moz-selection {
+  background: rgba(124, 58, 237, 0.3);
+}

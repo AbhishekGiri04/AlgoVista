@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topological Sort Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #20c997 0%, #6f42c1 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .controls { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn { background: linear-gradient(45deg, #20c997, #6f42c1); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(32,201,151,0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .visualization { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .graph-panel, .info-panel { background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        #canvas { border: 2px solid #e9ecef; border-radius: 10px; background: white; }
+        .algorithm-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab { background: #e9ecef; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; }
+        .tab.active { background: #20c997; color: white; }
+        .indegree-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .indegree-table th, .indegree-table td { padding: 8px; text-align: center; border: 1px solid #dee2e6; }
+        .indegree-table th { background: #f8f9fa; font-weight: 600; }
+        .zero-indegree { background: #d4edda !important; }
+        .processed { background: #f8d7da !important; }
+        .queue-display { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .topo-order { background: #e9ecef; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .vertex-item { display: inline-block; background: #20c997; color: white; padding: 5px 10px; margin: 2px; border-radius: 15px; }
+        .cycle-warning { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Topological Sort</h1>
+            <p>Linear ordering of vertices in a DAG</p>
+        </div>
+        
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn" onclick="generateDAG()">🔄 Generate DAG</button>
+                <button class="btn" onclick="startAlgorithm()" id="startBtn">▶️ Start</button>
+                <button class="btn" onclick="stepForward()" id="stepBtn" disabled>⏭️ Step</button>
+                <button class="btn" onclick="autoRun()" id="autoBtn" disabled>🚀 Auto</button>
+                <button class="btn" onclick="reset()">🔄 Reset</button>
+                <button class="btn" onclick="addCycle()">➕ Add Cycle</button>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <div class="graph-panel">
+                <canvas id="canvas" width="700" height="500"></canvas>
+                
+                <div class="queue-display" id="status">Ready to start</div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="algorithm-tabs">
+                    <button class="tab active" onclick="switchAlgorithm('kahn')" id="kahnTab">Kahn's Algorithm</button>
+                    <button class="tab" onclick="switchAlgorithm('dfs')" id="dfsTab">DFS Approach</button>
+                </div>
+                
+                <div id="kahnPanel">
+                    <h3>📋 In-Degree Table</h3>
+                    <table class="indegree-table" id="indegreeTable">
+                        <thead><tr><th>Vertex</th><th>In-Degree</th><th>Status</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    
+                    <div class="queue-display">
+                        <strong>Queue (In-degree = 0):</strong><br>
+                        <div id="queueDisplay">Empty</div>
+                    </div>
+                </div>
+                
+                <div id="dfsPanel" style="display: none;">
+                    <h3>📋 DFS Stack</h3>
+                    <div class="queue-display">
+                        <strong>Finish Order:</strong><br>
+                        <div id="finishOrder">Empty</div>
+                    </div>
+                    
+                    <div class="queue-display">
+                        <strong>Visited:</strong><br>
+                        <div id="visitedSet">Empty</div>
+                    </div>
+                </div>
+                
+                <div class="topo-order">
+                    <strong>Topological Order:</strong><br>
+                    <div id="topoOrder">Empty</div>
+                </div>
+                
+                <div id="cycleWarning" class="cycle-warning" style="display: none;">
+                    🔴 <strong>Cycle Detected!</strong><br>
+                    Topological ordering is not possible for cyclic graphs.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let graph = { vertices: [], edges: [] };
+        let inDegree = {}, queue = [], topoOrder = [];
+        let visited = new Set(), finishOrder = [];
+        let currentAlgorithm = 'kahn';
+        let step = 0, isRunning = false, hasCycle = false;
+
+        function generateDAG() {
+            const numVertices = 6;
+            graph.vertices = [];
+            graph.edges = [];
+            
+            for (let i = 0; i < numVertices; i++) {
+                graph.vertices.push({
+                    id: i,
+                    x: 100 + (i % 3) * 250,
+                    y: 80 + Math.floor(i / 3) * 180,
+                    label: String.fromCharCode(65 + i),
+                    status: 'unvisited'
+                });
+            }
+            
+            // Generate DAG edges (ensure no cycles by only connecting to higher indices)
+            for (let i = 0; i < numVertices; i++) {
+                for (let j = i + 1; j < numVertices; j++) {
+                    if (Math.random() < 0.4) {
+                        graph.edges.push({
+                            from: i, to: j,
+                            status: 'normal'
+                        });
+                    }
+                }
+            }
+            
+            calculateInDegrees();
+            drawGraph();
+            reset();
+        }
+
+        function addCycle() {
+            // Add an edge that creates a cycle
+            if (graph.vertices.length >= 3) {
+                graph.edges.push({
+                    from: 2, to: 0, // C -> A creates cycle
+                    status: 'normal'
+                });
+                calculateInDegrees();
+                drawGraph();
+                reset();
+            }
+        }
+
+        function calculateInDegrees() {
+            inDegree = {};
+            graph.vertices.forEach(v => inDegree[v.id] = 0);
+            graph.edges.forEach(edge => inDegree[edge.to]++);
+        }
+
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            graph.edges.forEach(edge => {
+                const from = graph.vertices[edge.from];
+                const to = graph.vertices[edge.to];
+                
+                let color = '#dee2e6';
+                if (edge.status === 'processed') color = '#28a745';
+                else if (edge.status === 'current') color = '#ffc107';
+                
+                // Draw arrow
+                const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                const arrowLength = 15;
+                const arrowAngle = Math.PI / 6;
+                
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x - 25 * Math.cos(angle), to.y - 25 * Math.sin(angle));
+                ctx.stroke();
+                
+                // Arrow head
+                const endX = to.x - 25 * Math.cos(angle);
+                const endY = to.y - 25 * Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle - arrowAngle), endY - arrowLength * Math.sin(angle - arrowAngle));
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle + arrowAngle), endY - arrowLength * Math.sin(angle + arrowAngle));
+                ctx.stroke();
+            });
+            
+            // Draw vertices
+            graph.vertices.forEach(vertex => {
+                let color = '#6c757d';
+                if (vertex.status === 'inqueue') color = '#ffc107';
+                else if (vertex.status === 'processed') color = '#28a745';
+                else if (vertex.status === 'visiting') color = '#007bff';
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 25, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(vertex.label, vertex.x, vertex.y + 6);
+                
+                // Show in-degree
+                if (currentAlgorithm === 'kahn') {
+                    ctx.fillStyle = '#495057';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText(inDegree[vertex.id] || 0, vertex.x, vertex.y - 35);
+                }
+            });
+        }
+
+        function switchAlgorithm(algorithm) {
+            currentAlgorithm = algorithm;
+            
+            document.getElementById('kahnTab').className = algorithm === 'kahn' ? 'tab active' : 'tab';
+            document.getElementById('dfsTab').className = algorithm === 'dfs' ? 'tab active' : 'tab';
+            
+            document.getElementById('kahnPanel').style.display = algorithm === 'kahn' ? 'block' : 'none';
+            document.getElementById('dfsPanel').style.display = algorithm === 'dfs' ? 'block' : 'none';
+            
+            reset();
+        }
+
+        function startAlgorithm() {
+            reset();
+            
+            if (currentAlgorithm === 'kahn') {
+                startKahn();
+            } else {
+                startDFS();
+            }
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('autoBtn').disabled = false;
+        }
+
+        function startKahn() {
+            calculateInDegrees();
+            queue = graph.vertices.filter(v => inDegree[v.id] === 0).map(v => v.id);
+            
+            queue.forEach(id => graph.vertices[id].status = 'inqueue');
+            
+            updateKahnDisplay();
+            updateStatus('Kahn\'s Algorithm started. Added vertices with in-degree 0 to queue.');
+        }
+
+        function startDFS() {
+            visited.clear();
+            finishOrder = [];
+            
+            updateDFSDisplay();
+            updateStatus('DFS approach started. Will visit vertices and track finish order.');
+        }
+
+        function stepForward() {
+            if (currentAlgorithm === 'kahn') {
+                stepKahn();
+            } else {
+                stepDFS();
+            }
+        }
+
+        function stepKahn() {
+            if (queue.length === 0) {
+                if (topoOrder.length !== graph.vertices.length) {
+                    hasCycle = true;
+                    document.getElementById('cycleWarning').style.display = 'block';
+                    updateStatus('🔴 Cycle detected! Some vertices remain unprocessed.');
+                } else {
+                    updateStatus('✅ Kahn\'s algorithm completed successfully!');
+                }
+                
+                document.getElementById('stepBtn').disabled = true;
+                document.getElementById('autoBtn').disabled = true;
+                return;
+            }
+            
+            const vertex = queue.shift();
+            topoOrder.push(vertex);
+            graph.vertices[vertex].status = 'processed';
+            
+            // Decrease in-degree of neighbors
+            graph.edges.forEach(edge => {
+                if (edge.from === vertex) {
+                    inDegree[edge.to]--;
+                    edge.status = 'processed';
+                    
+                    if (inDegree[edge.to] === 0) {
+                        queue.push(edge.to);
+                        graph.vertices[edge.to].status = 'inqueue';
+                    }
+                }
+            });
+            
+            step++;
+            updateKahnDisplay();
+            updateTopoOrder();
+            updateStatus(`Processed vertex ${graph.vertices[vertex].label}. Updated neighbors' in-degrees.`);
+            drawGraph();
+        }
+
+        function stepDFS() {
+            // Find next unvisited vertex
+            let nextVertex = null;
+            for (let v of graph.vertices) {
+                if (!visited.has(v.id)) {
+                    nextVertex = v.id;
+                    break;
+                }
+            }
+            
+            if (nextVertex === null) {
+                // All vertices visited, create topological order (reverse of finish order)
+                topoOrder = [...finishOrder].reverse();
+                updateTopoOrder();
+                updateStatus('✅ DFS completed! Topological order is reverse of finish order.');
+                document.getElementById('stepBtn').disabled = true;
+                document.getElementById('autoBtn').disabled = true;
+                return;
+            }
+            
+            dfsVisit(nextVertex);
+        }
+
+        function dfsVisit(vertex) {
+            visited.add(vertex);
+            graph.vertices[vertex].status = 'visiting';
+            
+            // Visit all unvisited neighbors
+            let hasUnvisitedNeighbor = false;
+            for (let edge of graph.edges) {
+                if (edge.from === vertex && !visited.has(edge.to)) {
+                    hasUnvisitedNeighbor = true;
+                    setTimeout(() => dfsVisit(edge.to), 100);
+                    return;
+                }
+            }
+            
+            // No unvisited neighbors, finish this vertex
+            finishOrder.push(vertex);
+            graph.vertices[vertex].status = 'processed';
+            
+            step++;
+            updateDFSDisplay();
+            updateStatus(`Finished vertex ${graph.vertices[vertex].label}. Added to finish order.`);
+            drawGraph();
+        }
+
+        function updateKahnDisplay() {
+            const tbody = document.querySelector('#indegreeTable tbody');
+            tbody.innerHTML = '';
+            
+            graph.vertices.forEach(v => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = v.label;
+                row.insertCell(1).textContent = inDegree[v.id];
+                
+                const statusCell = row.insertCell(2);
+                if (inDegree[v.id] === 0 && v.status !== 'processed') {
+                    statusCell.textContent = 'In Queue';
+                    row.className = 'zero-indegree';
+                } else if (v.status === 'processed') {
+                    statusCell.textContent = 'Processed';
+                    row.className = 'processed';
+                } else {
+                    statusCell.textContent = 'Waiting';
+                }
+            });
+            
+            // Update queue display
+            const queueDiv = document.getElementById('queueDisplay');
+            if (queue.length > 0) {
+                queueDiv.innerHTML = queue.map(id => 
+                    `<span class="vertex-item">${graph.vertices[id].label}</span>`
+                ).join(' ');
+            } else {
+                queueDiv.textContent = 'Empty';
+            }
+        }
+
+        function updateDFSDisplay() {
+            const finishDiv = document.getElementById('finishOrder');
+            if (finishOrder.length > 0) {
+                finishDiv.innerHTML = finishOrder.map(id => 
+                    `<span class="vertex-item">${graph.vertices[id].label}</span>`
+                ).join(' → ');
+            } else {
+                finishDiv.textContent = 'Empty';
+            }
+            
+            const visitedDiv = document.getElementById('visitedSet');
+            if (visited.size > 0) {
+                visitedDiv.innerHTML = Array.from(visited).map(id => 
+                    `<span class="vertex-item">${graph.vertices[id].label}</span>`
+                ).join(' ');
+            } else {
+                visitedDiv.textContent = 'Empty';
+            }
+        }
+
+        function updateTopoOrder() {
+            const topoDiv = document.getElementById('topoOrder');
+            if (topoOrder.length > 0) {
+                topoDiv.innerHTML = topoOrder.map(id => 
+                    `<span class="vertex-item">${graph.vertices[id].label}</span>`
+                ).join(' → ');
+            } else {
+                topoDiv.textContent = 'Empty';
+            }
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `<strong>Step ${step}:</strong> ${message}`;
+        }
+
+        function autoRun() {
+            if ((currentAlgorithm === 'kahn' && queue.length === 0) || 
+                (currentAlgorithm === 'dfs' && visited.size === graph.vertices.length)) {
+                return;
+            }
+            stepForward();
+            setTimeout(autoRun, 1000);
+        }
+
+        function reset() {
+            calculateInDegrees();
+            queue = []; topoOrder = []; visited.clear(); finishOrder = [];
+            step = 0; isRunning = false; hasCycle = false;
+            
+            graph.vertices.forEach(v => v.status = 'unvisited');
+            graph.edges.forEach(e => e.status = 'normal');
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('autoBtn').disabled = true;
+            document.getElementById('cycleWarning').style.display = 'none';
+            
+            updateStatus('Ready to start');
+            updateKahnDisplay();
+            updateDFSDisplay();
+            updateTopoOrder();
+            drawGraph();
+        }
+
+        generateDAG();
+    </script>
+</body>
+</html>

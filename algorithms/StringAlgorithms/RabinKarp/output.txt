@@ -1,0 +1,99 @@
+{
+  "text": "ABCCDDAEFG",
+  "pattern": "CDD",
+  "patternHash": 41,
+  "base": 256,
+  "modulus": 101,
+  "steps": [
+    {
+      "windowIndex": 0,
+      "windowText": "ABC",
+      "windowHash": 59,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 1,
+      "windowText": "BCC",
+      "windowHash": 100,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 2,
+      "windowText": "CCD",
+      "windowHash": 88,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 3,
+      "windowText": "CDD",
+      "windowHash": 41,
+      "patternHash": 41,
+      "hashMatch": true,
+      "actualMatch": true,
+      "isCollision": false,
+      "action": "Hash match + Character verification",
+      "status": "Pattern found at position 3"
+    },
+    {
+      "windowIndex": 4,
+      "windowText": "DDA",
+      "windowHash": 25,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 5,
+      "windowText": "DAE",
+      "windowHash": 69,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 6,
+      "windowText": "AEF",
+      "windowHash": 22,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    },
+    {
+      "windowIndex": 7,
+      "windowText": "EFG",
+      "windowHash": 25,
+      "patternHash": 41,
+      "hashMatch": false,
+      "actualMatch": false,
+      "isCollision": false,
+      "action": "Hash comparison",
+      "status": "Hash mismatch - skip character verification"
+    }
+  ],
+  "matches": [3],
+  "totalMatches": 1
+}

@@ -1,0 +1,443 @@
+{
+  "stringX": "ABCBDAB",
+  "stringY": "BDCAB",
+  "lengthX": 7,
+  "lengthY": 5,
+  "dpTable": [
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1],
+    [0, 1, 1, 1, 1, 2],
+    [0, 1, 1, 2, 2, 2],
+    [0, 1, 1, 2, 2, 3],
+    [0, 1, 2, 2, 2, 3],
+    [0, 1, 2, 2, 3, 3],
+    [0, 1, 2, 2, 3, 4]
+  ],
+  "steps": [
+    {
+      "i": 0,
+      "j": 1,
+      "charX": " ",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 0,
+      "j": 2,
+      "charX": " ",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 0,
+      "j": 3,
+      "charX": " ",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 0,
+      "j": 4,
+      "charX": " ",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 0,
+      "j": 5,
+      "charX": " ",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 1,
+      "j": 0,
+      "charX": "A",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 1,
+      "j": 1,
+      "charX": "A",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 1,
+      "j": 2,
+      "charX": "A",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 1,
+      "j": 3,
+      "charX": "A",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 1,
+      "j": 4,
+      "charX": "A",
+      "charY": "A",
+      "isMatch": true,
+      "dpValue": 1,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 1,
+      "j": 5,
+      "charX": "A",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 2,
+      "j": 0,
+      "charX": "B",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 2,
+      "j": 1,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 1,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 2,
+      "j": 2,
+      "charX": "B",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 2,
+      "j": 3,
+      "charX": "B",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 2,
+      "j": 4,
+      "charX": "B",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 2,
+      "j": 5,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 2,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 3,
+      "j": 0,
+      "charX": "C",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 3,
+      "j": 1,
+      "charX": "C",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 3,
+      "j": 2,
+      "charX": "C",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 3,
+      "j": 3,
+      "charX": "C",
+      "charY": "C",
+      "isMatch": true,
+      "dpValue": 2,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 3,
+      "j": 4,
+      "charX": "C",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 3,
+      "j": 5,
+      "charX": "C",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 4,
+      "j": 0,
+      "charX": "B",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 4,
+      "j": 1,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 1,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 4,
+      "j": 2,
+      "charX": "B",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 4,
+      "j": 3,
+      "charX": "B",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 4,
+      "j": 4,
+      "charX": "B",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 4,
+      "j": 5,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 3,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 5,
+      "j": 0,
+      "charX": "D",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 5,
+      "j": 1,
+      "charX": "D",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 5,
+      "j": 2,
+      "charX": "D",
+      "charY": "D",
+      "isMatch": true,
+      "dpValue": 2,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 5,
+      "j": 3,
+      "charX": "D",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 5,
+      "j": 4,
+      "charX": "D",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 5,
+      "j": 5,
+      "charX": "D",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 3,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 6,
+      "j": 0,
+      "charX": "A",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 6,
+      "j": 1,
+      "charX": "A",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 1,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 6,
+      "j": 2,
+      "charX": "A",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 6,
+      "j": 3,
+      "charX": "A",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 6,
+      "j": 4,
+      "charX": "A",
+      "charY": "A",
+      "isMatch": true,
+      "dpValue": 3,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 6,
+      "j": 5,
+      "charX": "A",
+      "charY": "B",
+      "isMatch": false,
+      "dpValue": 3,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 7,
+      "j": 0,
+      "charX": "B",
+      "charY": " ",
+      "isMatch": false,
+      "dpValue": 0,
+      "action": "Base case: empty string"
+    },
+    {
+      "i": 7,
+      "j": 1,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 1,
+      "action": "Match: take diagonal + 1"
+    },
+    {
+      "i": 7,
+      "j": 2,
+      "charX": "B",
+      "charY": "D",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 7,
+      "j": 3,
+      "charX": "B",
+      "charY": "C",
+      "isMatch": false,
+      "dpValue": 2,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 7,
+      "j": 4,
+      "charX": "B",
+      "charY": "A",
+      "isMatch": false,
+      "dpValue": 3,
+      "action": "No match: take max(top, left)"
+    },
+    {
+      "i": 7,
+      "j": 5,
+      "charX": "B",
+      "charY": "B",
+      "isMatch": true,
+      "dpValue": 4,
+      "action": "Match: take diagonal + 1"
+    }
+  ],
+  "lcsString": "BDAB",
+  "lcsLength": 4
+}

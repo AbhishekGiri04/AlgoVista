@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellman-Ford Algorithm Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .controls { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .btn { background: linear-gradient(45deg, #6f42c1, #e83e8c); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(111,66,193,0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .visualization { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .graph-panel, .info-panel { background: rgba(255,255,255,0.95); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        #canvas { border: 2px solid #e9ecef; border-radius: 10px; background: white; }
+        .distance-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .distance-table th, .distance-table td { padding: 10px; text-align: center; border: 1px solid #dee2e6; }
+        .distance-table th { background: #f8f9fa; font-weight: 600; }
+        .updated { background: #d4edda !important; animation: highlight 0.5s; }
+        .iteration-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #6f42c1; }
+        .edge-list { max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; }
+        .edge-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .edge-item.current { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .negative-cycle { background: #f8d7da !important; color: #721c24; }
+        @keyframes highlight { 0% { background: #fff3cd; } 100% { background: #d4edda; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Bellman-Ford Algorithm</h1>
+            <p>Find shortest paths with negative weights & detect negative cycles</p>
+        </div>
+        
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn" onclick="generateGraph()">🔄 Generate Graph</button>
+                <button class="btn" onclick="startAlgorithm()" id="startBtn">▶️ Start</button>
+                <button class="btn" onclick="stepForward()" id="stepBtn" disabled>⏭️ Step</button>
+                <button class="btn" onclick="autoRun()" id="autoBtn" disabled>🚀 Auto</button>
+                <button class="btn" onclick="reset()">🔄 Reset</button>
+                <select id="sourceSelect" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;"></select>
+                <button class="btn" onclick="addNegativeCycle()">➕ Add Negative Cycle</button>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <div class="graph-panel">
+                <canvas id="canvas" width="700" height="500"></canvas>
+            </div>
+            
+            <div class="info-panel">
+                <h3>📊 Algorithm Status</h3>
+                <div id="status" class="iteration-info">Ready to start</div>
+                
+                <div class="iteration-info">
+                    <strong>Progress:</strong><br>
+                    Iteration: <span id="currentIteration">0</span> / <span id="maxIterations">0</span><br>
+                    Edge: <span id="currentEdge">0</span> / <span id="totalEdges">0</span>
+                </div>
+                
+                <h3>📋 Distance Table</h3>
+                <table class="distance-table" id="distanceTable">
+                    <thead><tr><th>Vertex</th><th>Distance</th><th>Previous</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                
+                <h3>🔗 Current Edges</h3>
+                <div class="edge-list" id="edgeList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let graph = { vertices: [], edges: [] };
+        let distances = {}, previous = {};
+        let source = 0, currentIteration = 0, currentEdgeIndex = 0;
+        let step = 0, isRunning = false, hasNegativeCycle = false;
+
+        function generateGraph() {
+            const numVertices = 5;
+            graph.vertices = [];
+            graph.edges = [];
+            
+            for (let i = 0; i < numVertices; i++) {
+                graph.vertices.push({
+                    id: i,
+                    x: 150 + (i % 3) * 200 + (Math.random() - 0.5) * 80,
+                    y: 100 + Math.floor(i / 3) * 200 + (Math.random() - 0.5) * 80,
+                    label: String.fromCharCode(65 + i)
+                });
+            }
+            
+            // Generate directed edges
+            for (let i = 0; i < numVertices; i++) {
+                for (let j = 0; j < numVertices; j++) {
+                    if (i !== j && Math.random() < 0.3) {
+                        graph.edges.push({
+                            from: i, to: j,
+                            weight: Math.floor(Math.random() * 20) - 5, // Can be negative
+                            status: 'pending'
+                        });
+                    }
+                }
+            }
+            
+            updateSourceSelect();
+            displayEdges();
+            drawGraph();
+            reset();
+        }
+
+        function addNegativeCycle() {
+            // Add a simple negative cycle: A -> B -> C -> A with total weight < 0
+            const cycle = [0, 1, 2]; // A, B, C
+            
+            // Remove existing edges in cycle
+            graph.edges = graph.edges.filter(e => 
+                !(cycle.includes(e.from) && cycle.includes(e.to))
+            );
+            
+            // Add negative cycle
+            graph.edges.push(
+                { from: 0, to: 1, weight: 1, status: 'pending' },
+                { from: 1, to: 2, weight: -1, status: 'pending' },
+                { from: 2, to: 0, weight: -1, status: 'pending' }
+            );
+            
+            displayEdges();
+            drawGraph();
+            reset();
+        }
+
+        function updateSourceSelect() {
+            const select = document.getElementById('sourceSelect');
+            select.innerHTML = '';
+            graph.vertices.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v.id;
+                option.textContent = v.label;
+                select.appendChild(option);
+            });
+        }
+
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            graph.edges.forEach(edge => {
+                const from = graph.vertices[edge.from];
+                const to = graph.vertices[edge.to];
+                
+                let color = '#dee2e6', width = 2;
+                if (edge.status === 'current') { color = '#ffc107'; width = 4; }
+                else if (edge.status === 'relaxed') { color = '#28a745'; width = 3; }
+                else if (edge.status === 'negative-cycle') { color = '#dc3545'; width = 4; }
+                
+                // Draw arrow
+                const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                const arrowLength = 15;
+                const arrowAngle = Math.PI / 6;
+                
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x - 25 * Math.cos(angle), to.y - 25 * Math.sin(angle));
+                ctx.stroke();
+                
+                // Arrow head
+                const endX = to.x - 25 * Math.cos(angle);
+                const endY = to.y - 25 * Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle - arrowAngle), endY - arrowLength * Math.sin(angle - arrowAngle));
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - arrowLength * Math.cos(angle + arrowAngle), endY - arrowLength * Math.sin(angle + arrowAngle));
+                ctx.stroke();
+                
+                // Weight
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                ctx.fillStyle = edge.weight < 0 ? '#dc3545' : '#495057';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(edge.weight, midX, midY - 10);
+            });
+            
+            // Draw vertices
+            graph.vertices.forEach(vertex => {
+                let color = '#6c757d';
+                if (vertex.id === source) color = '#ffc107';
+                if (hasNegativeCycle) color = '#dc3545';
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 25, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(vertex.label, vertex.x, vertex.y + 6);
+                
+                // Distance
+                if (distances[vertex.id] !== undefined) {
+                    const dist = distances[vertex.id] === Infinity ? '∞' : distances[vertex.id];
+                    ctx.fillStyle = hasNegativeCycle ? '#dc3545' : '#495057';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(dist, vertex.x, vertex.y - 40);
+                }
+            });
+        }
+
+        function startAlgorithm() {
+            source = parseInt(document.getElementById('sourceSelect').value);
+            reset();
+            
+            // Initialize distances
+            graph.vertices.forEach(v => {
+                distances[v.id] = v.id === source ? 0 : Infinity;
+                previous[v.id] = null;
+            });
+            
+            currentIteration = 1;
+            currentEdgeIndex = 0;
+            
+            document.getElementById('maxIterations').textContent = graph.vertices.length - 1;
+            document.getElementById('totalEdges').textContent = graph.edges.length;
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('autoBtn').disabled = false;
+            
+            updateDisplay();
+            updateStatus(`Started from vertex ${graph.vertices[source].label}. Beginning relaxation...`);
+        }
+
+        function stepForward() {
+            if (currentIteration > graph.vertices.length - 1) {
+                // Check for negative cycles
+                checkNegativeCycle();
+                return;
+            }
+            
+            if (currentEdgeIndex >= graph.edges.length) {
+                // Move to next iteration
+                currentIteration++;
+                currentEdgeIndex = 0;
+                
+                if (currentIteration <= graph.vertices.length - 1) {
+                    updateStatus(`Starting iteration ${currentIteration}`);
+                    updateDisplay();
+                    return;
+                } else {
+                    checkNegativeCycle();
+                    return;
+                }
+            }
+            
+            const edge = graph.edges[currentEdgeIndex];
+            
+            // Reset edge statuses
+            graph.edges.forEach(e => e.status = 'pending');
+            edge.status = 'current';
+            
+            // Relax edge
+            if (distances[edge.from] !== Infinity) {
+                const newDist = distances[edge.from] + edge.weight;
+                if (newDist < distances[edge.to]) {
+                    distances[edge.to] = newDist;
+                    previous[edge.to] = edge.from;
+                    edge.status = 'relaxed';
+                    updateStatus(`Relaxed edge ${graph.vertices[edge.from].label}→${graph.vertices[edge.to].label}: distance to ${graph.vertices[edge.to].label} = ${newDist}`);
+                } else {
+                    updateStatus(`No relaxation for edge ${graph.vertices[edge.from].label}→${graph.vertices[edge.to].label}`);
+                }
+            } else {
+                updateStatus(`Skipped edge ${graph.vertices[edge.from].label}→${graph.vertices[edge.to].label} (source unreachable)`);
+            }
+            
+            currentEdgeIndex++;
+            step++;
+            
+            updateDisplay();
+            highlightCurrentEdge();
+        }
+
+        function checkNegativeCycle() {
+            let cycleDetected = false;
+            
+            graph.edges.forEach(edge => {
+                if (distances[edge.from] !== Infinity && 
+                    distances[edge.from] + edge.weight < distances[edge.to]) {
+                    cycleDetected = true;
+                    edge.status = 'negative-cycle';
+                }
+            });
+            
+            if (cycleDetected) {
+                hasNegativeCycle = true;
+                updateStatus('🔴 NEGATIVE CYCLE DETECTED! Shortest paths are undefined.');
+                document.querySelector('#distanceTable').className += ' negative-cycle';
+            } else {
+                updateStatus('✅ Algorithm completed! No negative cycles found.');
+            }
+            
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('autoBtn').disabled = true;
+            drawGraph();
+        }
+
+        function displayEdges() {
+            const edgeList = document.getElementById('edgeList');
+            edgeList.innerHTML = '';
+            
+            graph.edges.forEach((edge, index) => {
+                const div = document.createElement('div');
+                div.className = 'edge-item';
+                div.id = `edge-${index}`;
+                div.innerHTML = `
+                    <span><strong>${graph.vertices[edge.from].label}→${graph.vertices[edge.to].label}</strong></span>
+                    <span>Weight: ${edge.weight}</span>
+                `;
+                edgeList.appendChild(div);
+            });
+        }
+
+        function highlightCurrentEdge() {
+            document.querySelectorAll('.edge-item').forEach((item, index) => {
+                item.className = 'edge-item';
+                if (index === currentEdgeIndex - 1) {
+                    item.className += ' current';
+                }
+            });
+        }
+
+        function updateDisplay() {
+            updateDistanceTable();
+            updateProgress();
+            drawGraph();
+        }
+
+        function updateDistanceTable() {
+            const tbody = document.querySelector('#distanceTable tbody');
+            tbody.innerHTML = '';
+            
+            graph.vertices.forEach(v => {
+                const row = tbody.insertRow();
+                const distCell = row.insertCell(0);
+                const valueCell = row.insertCell(1);
+                const prevCell = row.insertCell(2);
+                
+                distCell.textContent = v.label;
+                valueCell.textContent = distances[v.id] === Infinity ? '∞' : distances[v.id];
+                prevCell.textContent = previous[v.id] !== null ? graph.vertices[previous[v.id]].label : '-';
+                
+                if (v.id === source) {
+                    row.style.background = '#fff3cd';
+                }
+            });
+        }
+
+        function updateProgress() {
+            document.getElementById('currentIteration').textContent = currentIteration;
+            document.getElementById('currentEdge').textContent = currentEdgeIndex;
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `<strong>Step ${step}:</strong> ${message}`;
+        }
+
+        function autoRun() {
+            if (currentIteration > graph.vertices.length - 1 && currentEdgeIndex >= graph.edges.length) return;
+            stepForward();
+            setTimeout(autoRun, 800);
+        }
+
+        function reset() {
+            distances = {}; previous = {};
+            currentIteration = 0; currentEdgeIndex = 0;
+            step = 0; isRunning = false; hasNegativeCycle = false;
+            
+            graph.edges.forEach(e => e.status = 'pending');
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('autoBtn').disabled = true;
+            
+            document.querySelector('#distanceTable').className = 'distance-table';
+            
+            updateStatus('Ready to start');
+            updateProgress();
+            document.querySelector('#distanceTable tbody').innerHTML = '';
+            drawGraph();
+        }
+
+        generateGraph();
+    </script>
+</body>
+</html>

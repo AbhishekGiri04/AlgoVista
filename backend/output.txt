@@ -1,0 +1,15 @@
+{
+  "algorithm": "Linear Search",
+  "array": [],
+  "target": -1850499072,
+  "found": false,
+  "foundIndex": -1,
+  "totalComparisons": 0,
+  "steps": [
+  ],
+  "result": {
+    "message": "Target -1850499072 not found in array",
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "n": 4,
+  "distanceMatrix": [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+  ],
+  "steps": [
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 3,
+      "cost": 20,
+      "path": [0, 1, 2, 3, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 7,
+      "maskBinary": "0111",
+      "currentCity": 2,
+      "cost": 50,
+      "path": [0, 1, 2],
+      "action": "Exploring from city 2",
+      "isComplete": false
+    },
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 2,
+      "cost": 15,
+      "path": [0, 1, 3, 2, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 11,
+      "maskBinary": "1011",
+      "currentCity": 3,
+      "cost": 45,
+      "path": [0, 1, 3],
+      "action": "Exploring from city 3",
+      "isComplete": false
+    },
+    {
+      "mask": 3,
+      "maskBinary": "0011",
+      "currentCity": 1,
+      "cost": 70,
+      "path": [0, 1],
+      "action": "Exploring from city 1",
+      "isComplete": false
+    },
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 3,
+      "cost": 20,
+      "path": [0, 2, 1, 3, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 7,
+      "maskBinary": "0111",
+      "currentCity": 1,
+      "cost": 45,
+      "path": [0, 2, 1],
+      "action": "Exploring from city 1",
+      "isComplete": false
+    },
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 1,
+      "cost": 10,
+      "path": [0, 2, 3, 1, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 13,
+      "maskBinary": "1101",
+      "currentCity": 3,
+      "cost": 35,
+      "path": [0, 2, 3],
+      "action": "Exploring from city 3",
+      "isComplete": false
+    },
+    {
+      "mask": 5,
+      "maskBinary": "0101",
+      "currentCity": 2,
+      "cost": 65,
+      "path": [0, 2],
+      "action": "Exploring from city 2",
+      "isComplete": false
+    },
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 2,
+      "cost": 15,
+      "path": [0, 3, 1, 2, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 11,
+      "maskBinary": "1011",
+      "currentCity": 1,
+      "cost": 50,
+      "path": [0, 3, 1],
+      "action": "Exploring from city 1",
+      "isComplete": false
+    },
+    {
+      "mask": 15,
+      "maskBinary": "1111",
+      "currentCity": 1,
+      "cost": 10,
+      "path": [0, 3, 2, 1, 0],
+      "action": "Return to start city",
+      "isComplete": true
+    },
+    {
+      "mask": 13,
+      "maskBinary": "1101",
+      "currentCity": 2,
+      "cost": 45,
+      "path": [0, 3, 2],
+      "action": "Exploring from city 2",
+      "isComplete": false
+    },
+    {
+      "mask": 9,
+      "maskBinary": "1001",
+      "currentCity": 3,
+      "cost": 75,
+      "path": [0, 3],
+      "action": "Exploring from city 3",
+      "isComplete": false
+    },
+    {
+      "mask": 1,
+      "maskBinary": "0001",
+      "currentCity": 0,
+      "cost": 80,
+      "path": [0],
+      "action": "Exploring from city 0",
+      "isComplete": false
+    }
+  ],
+  "minCost": 80,
+  "bestPath": [0, 1, 3, 2, 0]
+}
