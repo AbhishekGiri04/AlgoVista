@@ -14,6 +14,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use('/api', algorithmRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: '🚀 ALGOVISTA Backend API', 
+    version: '1.0.0',
+    endpoints: ['/health', '/api/*']
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'Backend server is running!' });
