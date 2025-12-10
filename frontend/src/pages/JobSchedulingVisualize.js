@@ -20,7 +20,7 @@ const JobSchedulingVisualize = () => {
   const runVisualization = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/jobscheduling', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/jobscheduling', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobs })

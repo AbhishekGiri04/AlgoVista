@@ -6,7 +6,7 @@ const StackVisualizer = () => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = 'http://localhost:8000/api';
+  const API_BASE = 'https://algovista-flux.onrender.com/api';
 
   const pushValue = async () => {
     if (!inputValue) return;

@@ -19,7 +19,7 @@ const TravellingSalesmanProblemVisualize = () => {
   const runVisualization = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/tsp', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/tsp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ distanceMatrix })

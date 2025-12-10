@@ -15,7 +15,7 @@ const ActivitySelectionVisualize = () => {
   const runActivitySelection = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/activityselection', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/activityselection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ activities })

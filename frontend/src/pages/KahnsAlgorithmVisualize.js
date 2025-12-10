@@ -7,7 +7,7 @@ const KahnsAlgorithmVisualize = () => {
   const runKahns = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/algorithms/kahns', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/algorithms/kahns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({})

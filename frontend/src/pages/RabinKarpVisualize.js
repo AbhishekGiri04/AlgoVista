@@ -14,7 +14,7 @@ const RabinKarpVisualize = () => {
   const runVisualization = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/rabinkarp', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/rabinkarp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, pattern })

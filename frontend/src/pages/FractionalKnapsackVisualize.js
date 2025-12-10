@@ -13,7 +13,7 @@ const FractionalKnapsackVisualize = () => {
   const runFractionalKnapsack = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/fractionalknapsack', {
+      const response = await fetch('https://algovista-flux.onrender.com/api/fractionalknapsack', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, capacity })
