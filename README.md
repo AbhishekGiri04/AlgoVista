@@ -234,8 +234,8 @@ DataStructureAlgorithm/
 1. Clone and setup the project:
 
    ```bash
-   git clone https://github.com/abhishekgiri04/DataStructureAlgorithm.git
-   cd DataStructureAlgorithm
+   git clone https://github.com/AbhishekGiri04/AlgoVista.git
+   cd AlgoVista
    ```
 
 2. Install dependencies and compile algorithms:
