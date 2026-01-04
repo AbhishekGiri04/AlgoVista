@@ -235,7 +235,7 @@ AlgoVista/
 1. Clone and setup the project:
 
    ```bash
-   git clone https://github.com/abhishekgiri04/AlgoVista.git07bb764a6d8ad025a24a9b3412513c90e
+   git clone https://github.com/AbhishekGiri04/AlgoVista.git
    cd AlgoVista
    ```
 
@@ -394,7 +394,7 @@ cd backend && rm -rf node_modules && npm install
 <a href="https://www.linkedin.com/in/abhishek-giri04/">
   <img src="https://img.shields.io/badge/Connect%20on-LinkedIn-blue?style=for-the-badge&logo=linkedin" alt="LinkedIn - Abhishek Giri"/>
 </a>  
-<a href="https://github.com/abhishekgiri04">
+<a href="https://github.com/AbhishekGiri04">
   <img src="https://img.shields.io/badge/Follow%20on-GitHub-black?style=for-the-badge&logo=github" alt="GitHub - Abhishek Giri"/>
 </a>  
 <a href="https://t.me/AbhishekGiri7">
