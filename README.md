@@ -235,7 +235,7 @@ AlgoVista/
 1. Clone and setup the project:
 
    ```bash
-   git clone https://github.com/abhishekgiri04/AlgoVista.git
+   git clone https://github.com/abhishekgiri04/AlgoVista.git07bb764a6d8ad025a24a9b3412513c90e
    cd AlgoVista
    ```
 
