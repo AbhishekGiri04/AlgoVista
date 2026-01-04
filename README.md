@@ -97,7 +97,7 @@ ALGOVISTA is a full-stack interactive learning platform built to:
 ## 📁 Project Directory Structure
 
 ```
-DataStructureAlgorithm/
+AlgoVista/
 ├── 📂 algorithms/                  # 🔧 C++ algorithm implementations
 │   ├── 📂 Sorting/
 │   │   ├── 📂 BubbleSort/         # 🫧 Bubble sort with step recording
@@ -157,10 +157,9 @@ DataStructureAlgorithm/
 │   ├── 📂 public/
 │   │   └── 📄 index.html          # 📄 Main HTML template
 │   ├── 📂 src/
+│   │   ├── 📂 algorithms/         # 🧮 Algorithm utility functions
 │   │   ├── 📂 components/         # 🧩 Reusable UI components
-│   │   │   ├── 📄 AdvancedAnimations.js # ✨ Animation components
-│   │   │   ├── 📄 CodeBlock.js    # 💻 Code display component
-│   │   │   └── 📄 StackVisualizer.js # 📚 Stack visualization
+│   │   ├── 📂 data/               # 📊 Static data and configurations
 │   │   ├── 📂 pages/              # 📄 Main application pages
 │   │   │   ├── 📄 Home.js         # 🏠 Landing page
 │   │   │   ├── 📄 About.js        # ℹ️ Platform information
@@ -174,8 +173,10 @@ DataStructureAlgorithm/
 │   │   │   ├── 📄 StringAlgorithms.js # 📝 String algorithms menu
 │   │   │   ├── 📄 BranchAndBound.js # 🌳 Branch & bound menu
 │   │   │   └── 📄 [100+ Algorithm Pages] # 🎯 Individual algorithm visualizers
+│   │   ├── 📂 utils/              # 🛠️ Utility functions and helpers
 │   │   ├── 📄 App.js              # 🔄 Main React component
 │   │   ├── 📄 index.js            # 🚀 React entry point
+│   │   ├── 📄 index.css           # 🎨 Global CSS styles
 │   │   └── 📄 LoadingPage.js      # ⏳ Loading screen component
 │   ├── 📄 package.json            # 📦 Frontend dependencies
 │   ├── 📄 tailwind.config.js     # 🎨 Tailwind CSS configuration
@@ -234,8 +235,8 @@ DataStructureAlgorithm/
 1. Clone and setup the project:
 
    ```bash
-   git clone https://github.com/abhishekgiri04/DataStructureAlgorithm.git
-   cd DataStructureAlgorithm
+   git clone https://github.com/abhishekgiri04/AlgoVista.git
+   cd AlgoVista
    ```
 
 2. Install dependencies and compile algorithms:
