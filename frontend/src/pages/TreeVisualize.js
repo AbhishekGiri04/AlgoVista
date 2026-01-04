@@ -1,748 +1,782 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, Box, OrbitControls } from '@react-three/drei';
-import { motion, AnimatePresence } from 'framer-motion';
 
 class TreeNode {
-  constructor(value) {
+  constructor(value, id) {
     this.value = value;
+    this.id = id;
     this.left = null;
     this.right = null;
   }
 }
 
-class BST {
-  constructor() {
-    this.root = null;
-  }
-  
-  insert(value) {
-    this.root = this._insertNode(this.root, value);
-  }
-  
-  _insertNode(node, value) {
-    if (!node) return new TreeNode(value);
-    
-    if (value < node.value) {
-      node.left = this._insertNode(node.left, value);
-    } else if (value > node.value) {
-      node.right = this._insertNode(node.right, value);
-    }
-    return node;
-  }
-  
-  delete(value) {
-    this.root = this._deleteNode(this.root, value);
-  }
-  
-  _deleteNode(node, value) {
-    if (!node) return null;
-    
-    if (value < node.value) {
-      node.left = this._deleteNode(node.left, value);
-    } else if (value > node.value) {
-      node.right = this._deleteNode(node.right, value);
-    } else {
-      if (!node.left) return node.right;
-      if (!node.right) return node.left;
-      
-      const minRight = this._findMin(node.right);
-      node.value = minRight.value;
-      node.right = this._deleteNode(node.right, minRight.value);
-    }
-    return node;
-  }
-  
-  _findMin(node) {
-    while (node.left) node = node.left;
-    return node;
-  }
-  
-  inorder(node = this.root, result = []) {
-    if (node) {
-      this.inorder(node.left, result);
-      result.push(node.value);
-      this.inorder(node.right, result);
-    }
-    return result;
-  }
-  
-  preorder(node = this.root, result = []) {
-    if (node) {
-      result.push(node.value);
-      this.preorder(node.left, result);
-      this.preorder(node.right, result);
-    }
-    return result;
-  }
-  
-  postorder(node = this.root, result = []) {
-    if (node) {
-      this.postorder(node.left, result);
-      this.postorder(node.right, result);
-      result.push(node.value);
-    }
-    return result;
-  }
-  
-  levelOrder() {
-    if (!this.root) return [];
-    const result = [];
-    const queue = [this.root];
-    
-    while (queue.length > 0) {
-      const node = queue.shift();
-      result.push(node.value);
-      if (node.left) queue.push(node.left);
-      if (node.right) queue.push(node.right);
-    }
-    return result;
-  }
-  
-  toArray() {
-    const result = [];
-    const traverse = (node, x = 0, y = 0, level = 0) => {
-      if (node) {
-        result.push({ value: node.value, x, y, level });
-        const offset = Math.pow(2, Math.max(0, 3 - level));
-        traverse(node.left, x - offset, y - 1.5, level + 1);
-        traverse(node.right, x + offset, y - 1.5, level + 1);
-      }
-    };
-    traverse(this.root);
-    return result;
-  }
-}
-
-const TreeNodeComponent = ({ position, value, isRoot, isNew, isDeleting, isTraversing, hasLeft, hasRight }) => {
-  const meshRef = useRef();
-  const [hovered, setHovered] = useState(false);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      if (isNew) {
-        meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 8) * 0.1);
-        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 4) * 0.2;
-      } else if (isDeleting) {
-        meshRef.current.scale.setScalar(Math.max(0.1, 1 - (state.clock.elapsedTime % 2)));
-        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 6) * 0.3;
-      } else if (isTraversing) {
-        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 5) * 0.2;
-      } else {
-        meshRef.current.scale.setScalar(hovered ? 1.2 : 1);
-        meshRef.current.position.y = position[1];
-        meshRef.current.rotation.y = 0;
-      }
-    }
-  });
-  
-  const getColor = () => {
-    if (isNew) return '#10b981'; // Green for new
-    if (isDeleting) return '#ef4444'; // Red for deleting
-    if (isTraversing) return '#f59e0b'; // Yellow for traversing
-    if (isRoot) return '#8b5cf6'; // Purple for root
-    return '#3b82f6'; // Blue default
-  };
-  
-  return (
-    <group position={position}>
-      {/* Node Sphere */}
-      <mesh
-        ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <sphereGeometry args={[0.5, 16, 16]} />
-        <meshStandardMaterial 
-          color={getColor()} 
-          transparent 
-          opacity={isDeleting ? 0.5 : 1}
-        />
-      </mesh>
-      
-      {/* Value Text */}
-      <Text
-        position={[0, 0, 0.6]}
-        fontSize={0.4}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {value}
-      </Text>
-      
-      {/* Root Label */}
-      {isRoot && (
-        <Text
-          position={[0, 1, 0]}
-          fontSize={0.25}
-          color="#8b5cf6"
-          anchorX="center"
-          anchorY="middle"
-        >
-          ROOT
-        </Text>
-      )}
-    </group>
-  );
-};
-
-const TreeEdge = ({ start, end }) => {
-  const points = [start, end];
-  const direction = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
-  const length = Math.sqrt(direction[0] ** 2 + direction[1] ** 2 + direction[2] ** 2);
-  const midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2, (start[2] + end[2]) / 2];
-  
-  return (
-    <mesh position={midpoint}>
-      <boxGeometry args={[0.05, length, 0.05]} />
-      <meshStandardMaterial color="#64748b" />
-    </mesh>
-  );
-};
-
 const TreeVisualize = () => {
-  const [bst] = useState(() => {
-    const tree = new BST();
-    [50, 30, 70, 20, 40, 60, 80].forEach(val => tree.insert(val));
-    return tree;
-  });
-  const [treeNodes, setTreeNodes] = useState(() => bst.toArray());
-  const [inputValue, setInputValue] = useState('');
-  const [currentOperation, setCurrentOperation] = useState('');
+  const [root, setRoot] = useState(null);
+  const [value, setValue] = useState('');
+  const [bulkValues, setBulkValues] = useState('');
+  const [activePath, setActivePath] = useState([]);
+  const [activeNodeId, setActiveNodeId] = useState(null);
+  const [visited, setVisited] = useState([]);
+  const [traversalOrder, setTraversalOrder] = useState([]);
+  const [traversalType, setTraversalType] = useState('inorder');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationSpeed, setAnimationSpeed] = useState(800);
+  const [stepMode, setStepMode] = useState(false);
   const [operationLog, setOperationLog] = useState([]);
-  const [newNodeValue, setNewNodeValue] = useState(null);
-  const [deletingValue, setDeletingValue] = useState(null);
-  const [traversingValues, setTraversingValues] = useState([]);
-  const [traversalResult, setTraversalResult] = useState([]);
-  
-  const addLog = (message, type = 'info') => {
+  const idCounter = useRef(1);
+  const nextResolver = useRef(null);
+
+  const addToLog = (operation, details) => {
     const timestamp = new Date().toLocaleTimeString();
-    setOperationLog(prev => [...prev.slice(-4), { message, type, timestamp }]);
+    setOperationLog(prev => [{
+      id: Date.now(),
+      operation,
+      details,
+      timestamp
+    }, ...prev.slice(0, 9)]);
   };
-  
-  const updateTreeDisplay = () => {
-    setTreeNodes(bst.toArray());
+
+  const makeNode = (val) => {
+    return new TreeNode(val, idCounter.current++);
   };
-  
-  const insertNode = async () => {
-    if (!inputValue || isAnimating) return;
-    
-    const value = parseInt(inputValue);
+
+  const cloneTree = (node) => {
+    if (!node) return null;
+    const newNode = new TreeNode(node.value, node.id);
+    newNode.left = cloneTree(node.left);
+    newNode.right = cloneTree(node.right);
+    return newNode;
+  };
+
+  const insertBST = (root, value) => {
+    const steps = [];
+    if (!root) {
+      const newRoot = makeNode(value);
+      steps.push({ type: 'create', nodeId: newRoot.id, value, description: `Created root node with value ${value}` });
+      return { rootAfter: newRoot, steps };
+    }
+
+    const newRoot = cloneTree(root);
+    let current = newRoot;
+    const path = [];
+
+    while (true) {
+      path.push(current.id);
+      steps.push({ type: 'focus', nodeId: current.id, value: current.value, description: `Comparing ${value} with ${current.value}` });
+
+      if (value === current.value) {
+        steps.push({ type: 'duplicate', nodeId: current.id, value, description: `Value ${value} already exists` });
+        return { rootAfter: newRoot, steps };
+      }
+
+      if (value < current.value) {
+        if (current.left) {
+          current = current.left;
+        } else {
+          current.left = makeNode(value);
+          steps.push({ type: 'insert', nodeId: current.left.id, value, description: `Inserted ${value} as left child` });
+          return { rootAfter: newRoot, steps };
+        }
+      } else {
+        if (current.right) {
+          current = current.right;
+        } else {
+          current.right = makeNode(value);
+          steps.push({ type: 'insert', nodeId: current.right.id, value, description: `Inserted ${value} as right child` });
+          return { rootAfter: newRoot, steps };
+        }
+      }
+    }
+  };
+
+  const searchBST = (root, value) => {
+    const steps = [];
+    let current = root;
+
+    while (current) {
+      steps.push({ type: 'focus', nodeId: current.id, value: current.value, description: `Comparing ${value} with ${current.value}` });
+      
+      if (value === current.value) {
+        steps.push({ type: 'found', nodeId: current.id, value, description: `Found ${value}!` });
+        return { found: true, steps };
+      }
+      
+      current = value < current.value ? current.left : current.right;
+    }
+
+    steps.push({ type: 'notfound', nodeId: -1, value, description: `Value ${value} not found` });
+    return { found: false, steps };
+  };
+
+  const waitForNextClick = () => {
+    return new Promise((resolve) => {
+      nextResolver.current = resolve;
+    });
+  };
+
+  const handleNext = () => {
+    if (nextResolver.current) {
+      nextResolver.current();
+      nextResolver.current = null;
+    }
+  };
+
+  const runWithSteps = async (steps, postApply) => {
     setIsAnimating(true);
-    setCurrentOperation(`Inserting ${value}...`);
     
-    bst.insert(value);
-    setNewNodeValue(value);
-    updateTreeDisplay();
-    
-    addLog(`✅ Inserted ${value} (O(log n))`, 'success');
-    
-    setTimeout(() => {
-      setNewNodeValue(null);
-      setCurrentOperation('');
-      setIsAnimating(false);
-    }, 1500);
-    
-    setInputValue('');
-  };
-  
-  const deleteNode = async () => {
-    if (!inputValue || isAnimating) return;
-    
-    const value = parseInt(inputValue);
-    setIsAnimating(true);
-    setCurrentOperation(`Deleting ${value}...`);
-    
-    setDeletingValue(value);
-    
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    bst.delete(value);
-    updateTreeDisplay();
-    setDeletingValue(null);
-    
-    addLog(`❌ Deleted ${value} (O(log n))`, 'warning');
-    
-    setTimeout(() => {
-      setCurrentOperation('');
-      setIsAnimating(false);
-    }, 500);
-    
-    setInputValue('');
-  };
-  
-  const performTraversal = async (type) => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    setCurrentOperation(`${type} traversal...`);
-    
-    let result = [];
-    switch (type) {
-      case 'Inorder':
-        result = bst.inorder();
-        break;
-      case 'Preorder':
-        result = bst.preorder();
-        break;
-      case 'Postorder':
-        result = bst.postorder();
-        break;
-      case 'Level Order':
-        result = bst.levelOrder();
-        break;
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      
+      if (step.type === 'focus') {
+        setActiveNodeId(step.nodeId);
+        setActivePath(prev => prev.includes(step.nodeId) ? prev : [...prev, step.nodeId]);
+      } else if (step.type === 'visit' || step.type === 'process') {
+        setVisited(prev => prev.includes(step.nodeId) ? prev : [...prev, step.nodeId]);
+      }
+
+      if (stepMode) {
+        await waitForNextClick();
+      } else {
+        await new Promise(resolve => setTimeout(resolve, animationSpeed));
+      }
     }
     
-    setTraversalResult(result);
-    
-    for (let i = 0; i < result.length; i++) {
-      setTraversingValues([result[i]]);
-      addLog(`🔄 Visiting: ${result[i]}`, 'info');
-      await new Promise(resolve => setTimeout(resolve, 600));
-    }
-    
-    setTraversingValues([]);
-    addLog(`✅ ${type}: [${result.join(', ')}] (O(n))`, 'success');
-    setCurrentOperation('');
+    if (postApply) postApply();
     setIsAnimating(false);
   };
-  
+
+  const resetHighlights = () => {
+    setActivePath([]);
+    setActiveNodeId(null);
+    setVisited([]);
+    setTraversalOrder([]);
+  };
+
+  const insertNode = async () => {
+    if (!value.trim()) return;
+    const numValue = parseInt(value);
+    if (isNaN(numValue)) return;
+
+    resetHighlights();
+    const { rootAfter, steps } = insertBST(root, numValue);
+    
+    await runWithSteps(steps, () => {
+      setRoot(rootAfter);
+      addToLog('INSERT', `Inserted ${numValue} into BST`);
+    });
+    
+    setValue('');
+  };
+
+  const searchNode = async () => {
+    if (!value.trim() || !root) return;
+    const numValue = parseInt(value);
+    if (isNaN(numValue)) return;
+
+    resetHighlights();
+    const { found, steps } = searchBST(root, numValue);
+    
+    await runWithSteps(steps, () => {
+      addToLog('SEARCH', found ? `Found ${numValue}` : `${numValue} not found`);
+    });
+  };
+
+  const traverseTree = async (type) => {
+    if (!root) return;
+    
+    resetHighlights();
+    setTraversalType(type);
+    
+    const sequence = [];
+    const orderValues = [];
+    
+    const pushVisit = (node) => {
+      if (!node) return;
+      sequence.push({ type: 'visit', nodeId: node.id, value: node.value });
+      orderValues.push(node.value);
+    };
+
+    const inorder = (node) => {
+      if (!node) return;
+      sequence.push({ type: 'focus', nodeId: node.id, value: node.value });
+      inorder(node.left);
+      pushVisit(node);
+      inorder(node.right);
+    };
+
+    const preorder = (node) => {
+      if (!node) return;
+      sequence.push({ type: 'focus', nodeId: node.id, value: node.value });
+      pushVisit(node);
+      preorder(node.left);
+      preorder(node.right);
+    };
+
+    const postorder = (node) => {
+      if (!node) return;
+      sequence.push({ type: 'focus', nodeId: node.id, value: node.value });
+      postorder(node.left);
+      postorder(node.right);
+      pushVisit(node);
+    };
+
+    const levelOrder = (node) => {
+      const queue = [node];
+      while (queue.length) {
+        const current = queue.shift();
+        sequence.push({ type: 'focus', nodeId: current.id, value: current.value });
+        pushVisit(current);
+        if (current.left) queue.push(current.left);
+        if (current.right) queue.push(current.right);
+      }
+    };
+
+    if (type === 'inorder') inorder(root);
+    else if (type === 'preorder') preorder(root);
+    else if (type === 'postorder') postorder(root);
+    else if (type === 'levelorder') levelOrder(root);
+
+    setTraversalOrder(orderValues);
+    await runWithSteps(sequence, () => {
+      addToLog(type.toUpperCase(), `Traversal: [${orderValues.join(', ')}]`);
+    });
+  };
+
+  const insertBulkNodes = () => {
+    if (!bulkValues.trim()) return;
+    
+    const values = bulkValues.split(/[,\s]+/).map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+    let currentRoot = root;
+    
+    values.forEach(val => {
+      const { rootAfter } = insertBST(currentRoot, val);
+      currentRoot = rootAfter;
+    });
+    
+    setRoot(currentRoot);
+    addToLog('BULK_INSERT', `Inserted ${values.length} nodes: [${values.join(', ')}]`);
+    setBulkValues('');
+  };
+
   const clearTree = () => {
-    if (isAnimating) return;
-    bst.root = null;
-    updateTreeDisplay();
-    setTraversalResult([]);
-    addLog('🧹 Tree cleared', 'info');
+    setRoot(null);
+    resetHighlights();
+    addToLog('CLEAR', 'Cleared entire tree');
   };
-  
-  const getTreeHeight = () => {
-    const calculateHeight = (node) => {
-      if (!node) return 0;
-      return 1 + Math.max(calculateHeight(node.left), calculateHeight(node.right));
+
+  const layoutTree = (root) => {
+    if (!root) return { nodes: [], links: [], viewBox: [0, 0, 100, 100] };
+
+    const nodes = [];
+    const links = [];
+    let minX = 0, maxX = 0, minY = 0, maxY = 0;
+
+    const calculatePositions = (node, x, y, level, spacing) => {
+      if (!node) return;
+
+      nodes.push({ id: node.id, value: node.value, x, y });
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
+
+      const childSpacing = spacing / 2;
+      const childY = y + 80;
+
+      if (node.left) {
+        const leftX = x - childSpacing;
+        links.push({ source: { id: node.id, x, y }, target: { id: node.left.id, x: leftX, y: childY } });
+        calculatePositions(node.left, leftX, childY, level + 1, childSpacing);
+      }
+
+      if (node.right) {
+        const rightX = x + childSpacing;
+        links.push({ source: { id: node.id, x, y }, target: { id: node.right.id, x: rightX, y: childY } });
+        calculatePositions(node.right, rightX, childY, level + 1, childSpacing);
+      }
     };
-    return calculateHeight(bst.root);
+
+    calculatePositions(root, 0, 0, 0, 200);
+
+    const padding = 50;
+    const viewBox = [minX - padding, minY - padding, maxX - minX + 2 * padding, maxY - minY + 2 * padding];
+
+    return { nodes, links, viewBox };
   };
-  
-  const getTreeSize = () => {
-    const calculateSize = (node) => {
-      if (!node) return 0;
-      return 1 + calculateSize(node.left) + calculateSize(node.right);
+
+  const layout = layoutTree(root);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) insertNode();
+      if ((event.key === 'n' || event.key === 'N') && stepMode) handleNext();
     };
-    return calculateSize(bst.root);
-  };
-  
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [stepMode, value, root]);
+
   return (
     <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
+      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
       minHeight: '100vh',
-      padding: '20px',
-      fontFamily: 'Inter, sans-serif'
+      padding: '40px',
+      fontFamily: 'Inter, sans-serif',
+      color: 'white'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
-        padding: '12px 20px',
+        padding: '14px 24px',
         border: 'none',
-        borderRadius: '12px',
+        borderRadius: '16px',
         fontWeight: '600',
         cursor: 'pointer',
         textDecoration: 'none',
-        boxShadow: '0 6px 20px rgba(124, 58, 237, 0.4)',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
         display: 'inline-block',
-        marginBottom: '20px'
+        marginBottom: '40px'
       }}>
         ← Back to Data Structures
       </a>
-      
-      <h1 style={{
-        fontSize: '2.5rem',
-        fontWeight: '800',
-        textAlign: 'center',
-        marginBottom: '2rem',
-        background: 'linear-gradient(135deg, #10b981, #8b5cf6)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent'
-      }}>
-        🌲 3D Binary Search Tree Visualizer
-      </h1>
-      
-      <div style={{ display: 'flex', gap: '20px', height: '80vh' }}>
-        {/* 3D Visualization */}
-        <div style={{ 
-          flex: 2, 
-          background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9))', 
-          borderRadius: '16px', 
-          overflow: 'hidden',
-          border: '1px solid rgba(16, 185, 129, 0.2)',
-          position: 'relative'
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          textAlign: 'center'
         }}>
-          <div style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            zIndex: 10,
-            background: 'rgba(0, 0, 0, 0.7)',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: '600'
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px'
           }}>
-            🌲 Binary Search Tree (BST)
-          </div>
-          
-          <Canvas camera={{ position: [0, 2, 12], fov: 60 }}>
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            <pointLight position={[-10, -10, -10]} intensity={0.3} />
-            
-            {/* Tree Nodes */}
-            {treeNodes.map((node, index) => {
-              const isRoot = node.level === 0;
-              const isNew = newNodeValue === node.value;
-              const isDeleting = deletingValue === node.value;
-              const isTraversing = traversingValues.includes(node.value);
-              
-              return (
-                <TreeNodeComponent
-                  key={`${node.value}-${index}`}
-                  position={[node.x, node.y, 0]}
-                  value={node.value}
-                  isRoot={isRoot}
-                  isNew={isNew}
-                  isDeleting={isDeleting}
-                  isTraversing={isTraversing}
-                />
-              );
-            })}
-            
-            {/* Tree Edges */}
-            {treeNodes.map((node, index) => {
-              const edges = [];
-              const parentNode = treeNodes.find(n => {
-                if (n.level === node.level - 1) {
-                  const leftChild = treeNodes.find(c => c.level === node.level && c.x < n.x);
-                  const rightChild = treeNodes.find(c => c.level === node.level && c.x > n.x);
-                  return (leftChild && leftChild.value === node.value) || (rightChild && rightChild.value === node.value);
-                }
-                return false;
-              });
-              
-              if (parentNode) {
-                edges.push(
-                  <TreeEdge
-                    key={`edge-${parentNode.value}-${node.value}`}
-                    start={[parentNode.x, parentNode.y, 0]}
-                    end={[node.x, node.y, 0]}
-                  />
-                );
-              }
-              
-              return edges;
-            })}
-            
-            {/* Empty Tree Message */}
-            {treeNodes.length === 0 && (
-              <Text
-                position={[0, 0, 0]}
-                fontSize={0.5}
-                color="#64748b"
-                anchorX="center"
-                anchorY="middle"
-              >
-                Empty Tree
-              </Text>
-            )}
-            
-            <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-          </Canvas>
-          
-          {/* Tree Stats */}
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '20px',
-            right: '20px',
-            background: 'rgba(0, 0, 0, 0.8)',
-            padding: '16px',
-            borderRadius: '12px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <div>
-              <span style={{ color: '#94a3b8', fontSize: '14px' }}>Nodes: </span>
-              <span style={{ color: 'white', fontWeight: '600', fontSize: '16px' }}>{getTreeSize()}</span>
-            </div>
-            <div>
-              <span style={{ color: '#94a3b8', fontSize: '14px' }}>Height: </span>
-              <span style={{ color: '#10b981', fontWeight: '600', fontSize: '16px' }}>{getTreeHeight()}</span>
-            </div>
-            <div>
-              <span style={{ color: '#94a3b8', fontSize: '14px' }}>Root: </span>
-              <span style={{ color: '#8b5cf6', fontWeight: '600', fontSize: '16px' }}>
-                {bst.root ? bst.root.value : 'NULL'}
-              </span>
-            </div>
-          </div>
-          
-          {/* Traversal Result */}
-          {traversalResult.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '60px',
-              left: '20px',
-              right: '20px',
-              background: 'rgba(16, 185, 129, 0.9)',
-              padding: '12px',
-              borderRadius: '8px',
-              textAlign: 'center',
-              fontWeight: '600'
-            }}>
-              Result: [{traversalResult.join(', ')}]
-            </div>
-          )}
+            Enhanced Binary Search Tree Visualizer
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
+            Interactive BST with step-by-step animations and real-time C++ execution
+          </p>
         </div>
-        
-        {/* Control Panel */}
-        <div style={{ 
-          flex: 1, 
-          background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9))', 
-          borderRadius: '24px', 
-          padding: '24px',
-          border: '1px solid rgba(16, 185, 129, 0.2)',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
-        }}>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '24px'
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '24px',
+            padding: '40px',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
+            {/* Tree Visualization */}
             <div style={{
-              width: '40px',
-              height: '40px',
-              background: 'linear-gradient(135deg, #10b981, #8b5cf6)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '20px'
-            }}>🌲</div>
-            <h3 style={{ 
-              color: 'white', 
-              fontSize: '1.4rem',
-              fontWeight: '700',
-              margin: 0
-            }}>BST Operations</h3>
-          </div>
-          
-          {/* Current Operation */}
-          {currentOperation && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{
-                background: 'linear-gradient(135deg, #10b981, #8b5cf6)',
-                padding: '16px',
-                borderRadius: '16px',
-                marginBottom: '24px',
-                textAlign: 'center',
-                fontWeight: '600'
-              }}
-            >
-              {currentOperation}
-            </motion.div>
-          )}
-          
-          {/* Input */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              color: '#94a3b8', 
-              fontSize: '14px', 
-              fontWeight: '500',
-              marginBottom: '8px'
-            }}>Node Value</label>
-            <input
-              type="number"
-              placeholder="Enter value"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                borderRadius: '12px',
-                border: '2px solid rgba(16, 185, 129, 0.2)',
-                background: 'rgba(30, 41, 59, 0.8)',
-                color: 'white',
-                fontSize: '16px',
-                outline: 'none'
-              }}
-            />
-          </div>
-          
-          {/* Basic Operations */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-            {[
-              { onClick: insertNode, bg: 'linear-gradient(135deg, #10b981, #059669)', icon: '➕', text: 'Insert' },
-              { onClick: deleteNode, bg: 'linear-gradient(135deg, #ef4444, #dc2626)', icon: '❌', text: 'Delete' },
-            ].map((btn, i) => (
-              <motion.button
-                key={i}
-                onClick={btn.onClick}
-                disabled={isAnimating}
-                whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                  padding: '14px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: btn.bg,
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: isAnimating ? 'not-allowed' : 'pointer',
-                  opacity: isAnimating ? 0.6 : 1,
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '16px',
+              padding: '30px',
+              marginBottom: '30px',
+              minHeight: '400px',
+              position: 'relative'
+            }}>
+              {root ? (
+                <svg
+                  style={{ width: '100%', height: '400px' }}
+                  viewBox={layout.viewBox.join(' ')}
+                  preserveAspectRatio="xMidYMid meet"
+                >
+                  {/* Edges */}
+                  {layout.links.map((link, index) => (
+                    <line
+                      key={index}
+                      x1={link.source.x}
+                      y1={link.source.y}
+                      x2={link.target.x}
+                      y2={link.target.y}
+                      stroke="#64748b"
+                      strokeWidth="2"
+                    />
+                  ))}
+                  
+                  {/* Nodes */}
+                  {layout.nodes.map((node) => {
+                    const isActive = node.id === activeNodeId;
+                    const inPath = activePath.includes(node.id);
+                    const isVisited = visited.includes(node.id);
+                    
+                    return (
+                      <g key={node.id} transform={`translate(${node.x},${node.y})`}>
+                        <circle
+                          r="25"
+                          fill={isActive ? '#10b981' : inPath ? '#3b82f6' : isVisited ? '#8b5cf6' : '#1e293b'}
+                          stroke={isActive ? '#34d399' : inPath ? '#60a5fa' : isVisited ? '#a78bfa' : '#475569'}
+                          strokeWidth="3"
+                          style={{
+                            filter: isActive ? 'drop-shadow(0 0 10px #10b981)' : 'none',
+                            transition: 'all 0.3s ease'
+                          }}
+                        />
+                        <text
+                          textAnchor="middle"
+                          dy="6"
+                          fill="white"
+                          fontSize="14"
+                          fontWeight="600"
+                        >
+                          {node.value}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              ) : (
+                <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: '14px'
-                }}
-              >
-                <span>{btn.icon}</span>
-                {btn.text}
-              </motion.button>
-            ))}
-          </div>
-          
-          {/* Traversal Operations */}
-          <div style={{ marginBottom: '20px' }}>
-            <h4 style={{ color: '#f59e0b', marginBottom: '12px', fontSize: '16px' }}>🔄 Traversals</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              {[
-                { type: 'Inorder', desc: 'L-R-Rt' },
-                { type: 'Preorder', desc: 'Rt-L-R' },
-                { type: 'Postorder', desc: 'L-R-Rt' },
-                { type: 'Level Order', desc: 'BFS' }
-              ].map((traversal, i) => (
-                <motion.button
-                  key={i}
-                  onClick={() => performTraversal(traversal.type)}
-                  disabled={isAnimating}
-                  whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  height: '100%',
+                  color: '#64748b',
+                  fontSize: '18px',
+                  fontStyle: 'italic'
+                }}>
+                  Tree is empty - insert nodes to begin
+                </div>
+              )}
+            </div>
+
+            {/* Controls */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '20px',
+              marginBottom: '20px'
+            }}>
+              {/* Insert Operations */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '16px',
+                padding: '20px'
+              }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                  Insert Operations
+                </h3>
+                
+                <div style={{ marginBottom: '15px' }}>
+                  <input
+                    type="number"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder="Enter value"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                      marginBottom: '10px'
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={insertNode}
+                      disabled={isAnimating}
+                      style={{
+                        flex: 1,
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: isAnimating ? 'not-allowed' : 'pointer',
+                        opacity: isAnimating ? 0.6 : 1
+                      }}
+                    >
+                      Insert
+                    </button>
+                    <button
+                      onClick={searchNode}
+                      disabled={isAnimating || !root}
+                      style={{
+                        flex: 1,
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: (isAnimating || !root) ? 'not-allowed' : 'pointer',
+                        opacity: (isAnimating || !root) ? 0.6 : 1
+                      }}
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+
+                <textarea
+                  value={bulkValues}
+                  onChange={(e) => setBulkValues(e.target.value)}
+                  placeholder="Bulk insert: 50,30,70,20,40"
                   style={{
+                    width: '100%',
                     padding: '10px',
                     borderRadius: '8px',
-                    border: 'none',
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
+                    fontSize: '12px',
+                    resize: 'none',
+                    rows: 2,
+                    marginBottom: '10px'
+                  }}
+                />
+                <button
+                  onClick={insertBulkNodes}
+                  disabled={isAnimating}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     cursor: isAnimating ? 'not-allowed' : 'pointer',
-                    opacity: isAnimating ? 0.6 : 1,
-                    fontSize: '11px',
-                    textAlign: 'center'
+                    opacity: isAnimating ? 0.6 : 1
                   }}
                 >
-                  {traversal.type}
-                  <div style={{ fontSize: '9px', opacity: 0.8 }}>{traversal.desc}</div>
-                </motion.button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Clear Button */}
-          <motion.button
-            onClick={clearTree}
-            disabled={isAnimating}
-            whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '12px',
-              border: 'none',
-              background: 'linear-gradient(135deg, #6b7280, #4b5563)',
-              color: 'white',
-              fontWeight: '600',
-              cursor: isAnimating ? 'not-allowed' : 'pointer',
-              opacity: isAnimating ? 0.6 : 1,
-              marginBottom: '20px'
-            }}
-          >
-            🧹 Clear Tree
-          </motion.button>
-          
-          {/* Performance Table */}
-          <div style={{
-            background: 'rgba(16, 185, 129, 0.1)',
-            padding: '16px',
-            borderRadius: '12px',
-            marginBottom: '20px',
-            border: '1px solid rgba(16, 185, 129, 0.2)'
-          }}>
-            <h4 style={{ color: '#10b981', marginBottom: '12px', fontSize: '16px' }}>⚡ Performance</h4>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                <span>Insert:</span><span style={{ color: '#10b981' }}>O(log n)</span>
+                  Bulk Insert
+                </button>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                <span>Delete:</span><span style={{ color: '#ef4444' }}>O(log n)</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                <span>Search:</span><span style={{ color: '#3b82f6' }}>O(log n)</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Traversal:</span><span style={{ color: '#f59e0b' }}>O(n)</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* Operation Log */}
-          <div style={{
-            background: 'rgba(15, 23, 42, 0.9)',
-            padding: '16px',
-            borderRadius: '12px',
-            maxHeight: '180px',
-            overflowY: 'auto'
-          }}>
-            <h4 style={{ color: '#10b981', marginBottom: '12px', fontSize: '16px' }}>📝 Operation Log</h4>
-            <AnimatePresence>
-              {operationLog.length === 0 ? (
-                <div style={{ color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
-                  No operations yet. Try inserting nodes!
+
+              {/* Traversal Operations */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '16px',
+                padding: '20px'
+              }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                  Tree Traversals
+                </h3>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '15px' }}>
+                  {[
+                    { key: 'inorder', label: 'Inorder', color: '#3b82f6' },
+                    { key: 'preorder', label: 'Preorder', color: '#8b5cf6' },
+                    { key: 'postorder', label: 'Postorder', color: '#f59e0b' },
+                    { key: 'levelorder', label: 'Level Order', color: '#06b6d4' }
+                  ].map(({ key, label, color }) => (
+                    <button
+                      key={key}
+                      onClick={() => traverseTree(key)}
+                      disabled={isAnimating || !root}
+                      style={{
+                        background: `linear-gradient(135deg, ${color}, ${color}dd)`,
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: (isAnimating || !root) ? 'not-allowed' : 'pointer',
+                        opacity: (isAnimating || !root) ? 0.6 : 1
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                operationLog.map((log, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
+
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#cbd5e1' }}>
+                    <input
+                      type="checkbox"
+                      checked={stepMode}
+                      onChange={(e) => setStepMode(e.target.checked)}
+                    />
+                    Step-by-step mode
+                  </label>
+                </div>
+
+                {!stepMode && (
+                  <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#cbd5e1', marginBottom: '5px' }}>
+                      Animation Speed: {animationSpeed}ms
+                    </label>
+                    <input
+                      type="range"
+                      min="200"
+                      max="1500"
+                      step="100"
+                      value={animationSpeed}
+                      onChange={(e) => setAnimationSpeed(Number(e.target.value))}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                )}
+
+                {stepMode && (
+                  <button
+                    onClick={handleNext}
+                    disabled={!isAnimating}
                     style={{
-                      padding: '6px 8px',
-                      fontSize: '11px',
-                      color: log.type === 'error' ? '#ef4444' : 
-                             log.type === 'success' ? '#10b981' :
-                             log.type === 'warning' ? '#f59e0b' : '#e2e8f0',
-                      borderBottom: '1px solid rgba(255,255,255,0.1)',
-                      marginBottom: '4px',
-                      borderRadius: '4px',
-                      background: 'rgba(255, 255, 255, 0.02)'
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: !isAnimating ? 'not-allowed' : 'pointer',
+                      opacity: !isAnimating ? 0.6 : 1,
+                      marginBottom: '10px'
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>{log.message}</span>
-                      <span style={{ color: '#64748b', fontSize: '9px' }}>{log.timestamp}</span>
+                    Next Step (N)
+                  </button>
+                )}
+
+                <button
+                  onClick={clearTree}
+                  disabled={isAnimating}
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #64748b, #475569)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: isAnimating ? 'not-allowed' : 'pointer',
+                    opacity: isAnimating ? 0.6 : 1
+                  }}
+                >
+                  Clear Tree
+                </button>
+              </div>
+            </div>
+
+            {/* Traversal Results */}
+            {traversalOrder.length > 0 && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '16px',
+                padding: '20px'
+              }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                  {traversalType.charAt(0).toUpperCase() + traversalType.slice(1)} Traversal Result
+                </h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {traversalOrder.map((value, index) => (
+                    <React.Fragment key={index}>
+                      <span style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}>
+                        {value}
+                      </span>
+                      {index < traversalOrder.length - 1 && (
+                        <span style={{ color: '#64748b', alignSelf: 'center' }}>→</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Side Panel */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Legend */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '20px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                Legend
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { color: '#10b981', label: 'Current Node' },
+                  { color: '#3b82f6', label: 'Active Path' },
+                  { color: '#8b5cf6', label: 'Visited Node' },
+                  { color: '#1e293b', label: 'Regular Node' }
+                ].map(({ color, label }) => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: color,
+                      border: '2px solid rgba(255,255,255,0.3)'
+                    }} />
+                    <span style={{ fontSize: '12px', color: '#cbd5e1' }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Operation Log */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '20px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              flex: 1
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                Operation Log
+              </h3>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {operationLog.length > 0 ? operationLog.map((log) => (
+                  <div key={log.id} style={{
+                    padding: '10px',
+                    marginBottom: '8px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    fontSize: '12px'
+                  }}>
+                    <div style={{ 
+                      fontWeight: '600', 
+                      color: log.operation === 'INSERT' ? '#10b981' :
+                             log.operation === 'SEARCH' ? '#3b82f6' :
+                             log.operation.includes('ORDER') ? '#8b5cf6' :
+                             log.operation === 'CLEAR' ? '#64748b' : '#f59e0b'
+                    }}>
+                      {log.operation}
                     </div>
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
+                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                      {log.details}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>
+                      {log.timestamp}
+                    </div>
+                  </div>
+                )) : (
+                  <div style={{ color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
+                    No operations yet. Try inserting nodes!
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,800 +1,523 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, Box, OrbitControls } from '@react-three/drei';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const ArrayBox = ({ position, value, index, isHighlighted, isNew, isDeleting, color = '#3b82f6' }) => {
-  const meshRef = useRef();
-  const [hovered, setHovered] = useState(false);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      if (isHighlighted) {
-        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 3) * 0.2;
-        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 4) * 0.1;
-      } else {
-        meshRef.current.rotation.y = 0;
-        meshRef.current.position.y = position[1];
-      }
-      
-      if (isNew) {
-        meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 6) * 0.1);
-      } else {
-        meshRef.current.scale.setScalar(hovered ? 1.1 : 1);
-      }
-    }
-  });
-  
-  const boxColor = isHighlighted ? '#10b981' : isNew ? '#f59e0b' : isDeleting ? '#ef4444' : color;
-  
-  return (
-    <group position={position}>
-      <Box
-        ref={meshRef}
-        args={[1.5, 1, 1]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <meshStandardMaterial color={boxColor} transparent opacity={isDeleting ? 0.3 : 1} />
-      </Box>
-      <Text
-        position={[0, 0, 0.6]}
-        fontSize={0.4}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        font="/fonts/inter-bold.woff"
-      >
-        {value}
-      </Text>
-      <Text
-        position={[0, -0.8, 0]}
-        fontSize={0.25}
-        color="#94a3b8"
-        anchorX="center"
-        anchorY="middle"
-      >
-        [{index}]
-      </Text>
-    </group>
-  );
-};
-
-const ArrayPointer = ({ position, label, color = '#f59e0b' }) => {
-  const meshRef = useRef();
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = position[1] + 2 + Math.sin(state.clock.elapsedTime * 3) * 0.2;
-    }
-  });
-  
-  return (
-    <group>
-      <mesh ref={meshRef} position={[position[0], position[1] + 2, position[2]]}>
-        <coneGeometry args={[0.2, 0.8, 8]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-      <Text
-        position={[position[0], position[1] + 3, position[2]]}
-        fontSize={0.3}
-        color={color}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {label}
-      </Text>
-    </group>
-  );
-};
+import React, { useState, useEffect, useRef } from 'react';
 
 const ArrayVisualize = () => {
   const [array, setArray] = useState([10, 20, 30, 40, 50]);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [newIndex, setNewIndex] = useState(-1);
-  const [deletingIndex, setDeletingIndex] = useState(-1);
-  const [currentOperation, setCurrentOperation] = useState('');
-  const [inputValue, setInputValue] = useState('');
-  const [inputIndex, setInputIndex] = useState('');
+  const [value, setValue] = useState('');
+  const [index, setIndex] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [highlightIndex, setHighlightIndex] = useState(null);
+  const [operation, setOperation] = useState('');
   const [operationLog, setOperationLog] = useState([]);
-  const [pointerPosition, setPointerPosition] = useState(-1);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [arraySize, setArraySize] = useState(10);
-  
-  const addLog = (message) => {
-    setOperationLog(prev => [...prev.slice(-4), message]);
+  const animationRef = useRef(null);
+
+  const addToLog = (op, details) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setOperationLog(prev => [{
+      id: Date.now(),
+      operation: op,
+      details,
+      timestamp
+    }, ...prev.slice(0, 9)]);
   };
-  
-  const insertElement = async () => {
-    if (!inputValue || isAnimating) return;
+
+  const animateOperation = (callback, duration = 800) => {
     setIsAnimating(true);
-    setCurrentOperation('Inserting element...');
-    
-    const value = parseInt(inputValue);
-    const index = inputIndex ? parseInt(inputIndex) : array.length;
-    
-    if (index < 0 || index > array.length) {
-      addLog(`❌ Invalid index ${index}`);
-      setIsAnimating(false);
-      return;
-    }
-    
-    // Highlight insertion point
-    setHighlightedIndex(index);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Insert element
-    const newArray = [...array];
-    newArray.splice(index, 0, value);
-    setArray(newArray);
-    setNewIndex(index);
-    setHighlightedIndex(-1);
-    
-    addLog(`✅ Inserted ${value} at index ${index}`);
-    
-    // Reset animations
     setTimeout(() => {
-      setNewIndex(-1);
-      setCurrentOperation('');
+      callback();
       setIsAnimating(false);
-    }, 1500);
-    
-    setInputValue('');
-    setInputIndex('');
+    }, duration);
   };
-  
-  const deleteElement = async () => {
-    if (!inputIndex || isAnimating || array.length === 0) return;
-    setIsAnimating(true);
-    setCurrentOperation('Deleting element...');
+
+  const insertElement = () => {
+    if (!value.trim()) return;
     
-    const index = parseInt(inputIndex);
+    const newValue = parseInt(value);
+    const insertIndex = index === '' ? array.length : Math.max(0, Math.min(parseInt(index), array.length));
     
-    if (index < 0 || index >= array.length) {
-      addLog(`❌ Invalid index ${index}`);
-      setIsAnimating(false);
-      return;
-    }
-    
-    // Highlight element to delete
-    setHighlightedIndex(index);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Mark for deletion
-    setDeletingIndex(index);
-    setHighlightedIndex(-1);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Remove element
-    const deletedValue = array[index];
-    const newArray = array.filter((_, i) => i !== index);
-    setArray(newArray);
-    setDeletingIndex(-1);
-    
-    addLog(`❌ Deleted ${deletedValue} from index ${index}`);
-    
-    setTimeout(() => {
-      setCurrentOperation('');
-      setIsAnimating(false);
-    }, 500);
-    
-    setInputIndex('');
+    animateOperation(() => {
+      const newArray = [...array];
+      newArray.splice(insertIndex, 0, newValue);
+      setArray(newArray);
+      addToLog('INSERT', `Added ${newValue} at index ${insertIndex}`);
+      setValue('');
+      setIndex('');
+    });
   };
-  
-  const searchElement = async () => {
-    if (!searchValue || isAnimating) return;
-    setIsAnimating(true);
-    setCurrentOperation('Searching element...');
+
+  const deleteElement = () => {
+    if (index === '' || array.length === 0) return;
     
-    const target = parseInt(searchValue);
-    let found = false;
+    const deleteIndex = Math.max(0, Math.min(parseInt(index), array.length - 1));
+    const deletedValue = array[deleteIndex];
     
-    // Linear search animation
-    for (let i = 0; i < array.length; i++) {
-      setHighlightedIndex(i);
-      setPointerPosition(i);
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      if (array[i] === target) {
-        found = true;
-        addLog(`🔍 Found ${target} at index ${i}`);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        break;
-      }
+    animateOperation(() => {
+      const newArray = [...array];
+      newArray.splice(deleteIndex, 1);
+      setArray(newArray);
+      addToLog('DELETE', `Removed ${deletedValue} from index ${deleteIndex}`);
+      setIndex('');
+    });
+  };
+
+  const updateElement = () => {
+    if (!value.trim() || index === '' || array.length === 0) return;
+    
+    const updateIndex = Math.max(0, Math.min(parseInt(index), array.length - 1));
+    const newValue = parseInt(value);
+    const oldValue = array[updateIndex];
+    
+    animateOperation(() => {
+      const newArray = [...array];
+      newArray[updateIndex] = newValue;
+      setArray(newArray);
+      addToLog('UPDATE', `Changed index ${updateIndex}: ${oldValue} → ${newValue}`);
+      setValue('');
+      setIndex('');
+    });
+  };
+
+  const searchElement = () => {
+    if (!searchValue.trim()) return;
+    
+    const searchVal = parseInt(searchValue);
+    const foundIndex = array.indexOf(searchVal);
+    
+    if (foundIndex !== -1) {
+      setHighlightIndex(foundIndex);
+      addToLog('SEARCH', `Found ${searchVal} at index ${foundIndex}`);
+      setTimeout(() => setHighlightIndex(null), 2000);
+    } else {
+      addToLog('SEARCH', `${searchVal} not found in array`);
     }
-    
-    if (!found) {
-      addLog(`❌ ${target} not found in array`);
-    }
-    
-    setHighlightedIndex(-1);
-    setPointerPosition(-1);
-    setCurrentOperation('');
-    setIsAnimating(false);
     setSearchValue('');
   };
-  
-  const traverseArray = async () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentOperation('Traversing array...');
-    
-    for (let i = 0; i < array.length; i++) {
-      setHighlightedIndex(i);
-      setPointerPosition(i);
-      addLog(`🔁 Visiting index ${i}: ${array[i]}`);
-      await new Promise(resolve => setTimeout(resolve, 800));
-    }
-    
-    setHighlightedIndex(-1);
-    setPointerPosition(-1);
-    addLog(`✅ Traversal complete`);
-    setCurrentOperation('');
-    setIsAnimating(false);
-  };
-  
-  const resizeArray = () => {
-    if (isAnimating) return;
-    setCurrentOperation('Resizing array...');
-    
-    const newSize = Math.max(5, Math.min(15, arraySize));
-    if (newSize > array.length) {
-      // Expand array
-      const newArray = [...array];
-      while (newArray.length < newSize) {
-        newArray.push(0);
+
+  const traverseArray = () => {
+    let currentIndex = 0;
+    const traverse = () => {
+      if (currentIndex < array.length) {
+        setHighlightIndex(currentIndex);
+        currentIndex++;
+        setTimeout(traverse, 500);
+      } else {
+        setHighlightIndex(null);
+        addToLog('TRAVERSE', `Visited all ${array.length} elements`);
       }
+    };
+    traverse();
+  };
+
+  const resizeArray = () => {
+    const newSize = Math.max(1, Math.min(20, arraySize));
+    if (newSize > array.length) {
+      const newArray = [...array, ...Array(newSize - array.length).fill(0)];
       setArray(newArray);
-      addLog(`📈 Expanded array to size ${newSize}`);
+      addToLog('RESIZE', `Expanded array to size ${newSize}`);
     } else if (newSize < array.length) {
-      // Shrink array
       const newArray = array.slice(0, newSize);
       setArray(newArray);
-      addLog(`📉 Shrunk array to size ${newSize}`);
+      addToLog('RESIZE', `Reduced array to size ${newSize}`);
     }
-    
-    setTimeout(() => setCurrentOperation(''), 1000);
   };
-  
-  const updateElement = async () => {
-    if (!inputValue || !inputIndex || isAnimating) return;
-    setIsAnimating(true);
-    setCurrentOperation('Updating element...');
-    
-    const index = parseInt(inputIndex);
-    const newValue = parseInt(inputValue);
-    
-    if (index < 0 || index >= array.length) {
-      addLog(`❌ Invalid index ${index}`);
-      setIsAnimating(false);
-      return;
-    }
-    
-    // Highlight element to update
-    setHighlightedIndex(index);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const oldValue = array[index];
-    const newArray = [...array];
-    newArray[index] = newValue;
-    setArray(newArray);
-    setNewIndex(index);
-    
-    addLog(`✏️ Updated index ${index}: ${oldValue} → ${newValue}`);
-    
-    setTimeout(() => {
-      setHighlightedIndex(-1);
-      setNewIndex(-1);
-      setCurrentOperation('');
-      setIsAnimating(false);
-    }, 1500);
-    
-    setInputValue('');
-    setInputIndex('');
+
+  const getElementStyle = (idx) => {
+    const baseStyle = {
+      width: '60px',
+      height: '60px',
+      background: highlightIndex === idx 
+        ? 'linear-gradient(135deg, #10b981, #34d399)' 
+        : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+      border: '2px solid rgba(255, 255, 255, 0.2)',
+      borderRadius: '12px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontWeight: '700',
+      fontSize: '16px',
+      boxShadow: highlightIndex === idx 
+        ? '0 8px 25px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255,255,255,0.2)' 
+        : '0 6px 20px rgba(59, 130, 246, 0.3), inset 0 2px 4px rgba(255,255,255,0.1)',
+      transform: highlightIndex === idx 
+        ? 'scale(1.1) translateY(-5px) rotateX(15deg) rotateY(5deg)' 
+        : 'scale(1) rotateX(10deg) rotateY(2deg)',
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+      position: 'relative',
+      cursor: 'pointer',
+      transformStyle: 'preserve-3d',
+      perspective: '1000px'
+    };
+    return baseStyle;
   };
-  
+
   return (
     <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
+      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
       minHeight: '100vh',
-      padding: '20px',
-      fontFamily: 'Inter, sans-serif'
+      padding: '40px',
+      fontFamily: 'Inter, sans-serif',
+      color: 'white'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
-        padding: '12px 20px',
+        padding: '14px 24px',
         border: 'none',
-        borderRadius: '12px',
+        borderRadius: '16px',
         fontWeight: '600',
         cursor: 'pointer',
         textDecoration: 'none',
-        boxShadow: '0 6px 20px rgba(124, 58, 237, 0.4)',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
         display: 'inline-block',
-        marginBottom: '20px'
+        marginBottom: '40px'
       }}>
         ← Back to Data Structures
       </a>
-      
-      <h1 style={{
-        fontSize: '2.5rem',
-        fontWeight: '800',
-        textAlign: 'center',
-        marginBottom: '2rem',
-        background: 'linear-gradient(135deg, #3b82f6, #10b981)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent'
-      }}>
-        🧩 3D Array Operations Visualizer
-      </h1>
-      
-      <div style={{ display: 'flex', gap: '20px', height: '80vh' }}>
-        {/* 3D Visualization */}
-        <div style={{ 
-          flex: 2, 
-          background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9))', 
-          borderRadius: '16px', 
-          overflow: 'hidden',
-          border: '1px solid rgba(59, 130, 246, 0.2)',
-          position: 'relative'
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          textAlign: 'center'
         }}>
-          <div style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            zIndex: 10,
-            background: 'rgba(0, 0, 0, 0.7)',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: '600'
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #60a5fa, #34d399)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px'
           }}>
-            🧩 3D Array Visualization
-          </div>
-          
-          <Canvas 
-            camera={{ position: [0, 3, 8], fov: 75 }}
-            style={{ width: '100%', height: '100%' }}
-          >
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            <pointLight position={[-10, -10, -10]} intensity={0.3} />
-            
-            {/* Array Elements */}
-            {array.map((value, index) => {
-              const xPos = (index - (array.length - 1) / 2) * 1.8;
-              return (
-                <ArrayBox
-                  key={`${index}-${value}-${array.length}`}
-                  position={[xPos, 0, 0]}
-                  value={value}
-                  index={index}
-                  isHighlighted={highlightedIndex === index}
-                  isNew={newIndex === index}
-                  isDeleting={deletingIndex === index}
-                />
-              );
-            })}
-            
-            {/* Pointer */}
-            {pointerPosition >= 0 && (
-              <ArrayPointer
-                position={[(pointerPosition - (array.length - 1) / 2) * 1.8, 0, 0]}
-                label="PTR"
-              />
-            )}
-            
-            {/* Memory Layout Base */}
-            <mesh position={[0, -1.5, 0]}>
-              <boxGeometry args={[array.length * 1.8 + 0.5, 0.1, 1.5]} />
-              <meshStandardMaterial color="#1e293b" transparent opacity={0.4} />
-            </mesh>
-            
-            {/* Memory Address Labels */}
-            {array.map((_, index) => {
-              const xPos = (index - (array.length - 1) / 2) * 1.8;
-              return (
-                <Text
-                  key={`addr-${index}`}
-                  position={[xPos, -2.2, 0]}
-                  fontSize={0.2}
-                  color="#64748b"
-                  anchorX="center"
-                  anchorY="middle"
-                >
-                  0x{(1000 + index * 4).toString(16)}
-                </Text>
-              );
-            })}
-            
-            <Text
-              position={[0, -2.8, 0]}
-              fontSize={0.3}
-              color="#3b82f6"
-              anchorX="center"
-              anchorY="middle"
-            >
-              Contiguous Memory Layout
-            </Text>
-            
-            <OrbitControls 
-              enablePan={true} 
-              enableZoom={true} 
-              enableRotate={true}
-              maxDistance={15}
-              minDistance={3}
-            />
-          </Canvas>
-          
-          {/* Array Display */}
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '20px',
-            right: '20px',
-            background: 'rgba(0, 0, 0, 0.8)',
-            padding: '16px',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            overflowX: 'auto'
-          }}>
-            <span style={{ color: '#94a3b8', fontSize: '14px', fontWeight: '600', minWidth: 'fit-content' }}>Array:</span>
-            {array.map((value, index) => (
-              <div
-                key={index}
-                style={{
-                  minWidth: '40px',
-                  height: '40px',
-                  background: highlightedIndex === index ? '#10b981' : 
-                             newIndex === index ? '#f59e0b' :
-                             deletingIndex === index ? '#ef4444' : '#3b82f6',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: '8px',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                {value}
-              </div>
-            ))}
-          </div>
+            Array Operations Visualizer
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
+            Interactive visualization of array data structure operations
+          </p>
         </div>
-        
-        {/* Modern Control Panel */}
-        <div style={{ 
-          flex: 1, 
-          background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9))', 
-          borderRadius: '24px', 
-          padding: '24px',
-          border: '1px solid rgba(59, 130, 246, 0.2)',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
-        }}>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+          {/* Main Visualization */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '24px'
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '24px',
+            padding: '40px',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
+            <h2 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '700', 
+              marginBottom: '30px',
+              color: '#e2e8f0'
+            }}>
+              Array Visualization
+            </h2>
+
+            {/* Array Display */}
             <div style={{
-              width: '40px',
-              height: '40px',
-              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-              borderRadius: '12px',
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '16px',
+              padding: '30px',
+              marginBottom: '30px',
+              minHeight: '120px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '20px'
-            }}>🎮</div>
-            <h3 style={{ 
-              color: 'white', 
-              fontSize: '1.4rem',
-              fontWeight: '700',
-              margin: 0,
-              background: 'linear-gradient(135deg, #3b82f6, #10b981)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>Array Operations</h3>
-          </div>
-          
-          {/* Status Display */}
-          {currentOperation && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-                padding: '16px',
-                borderRadius: '16px',
-                marginBottom: '24px',
-                textAlign: 'center',
-                fontWeight: '600',
-                boxShadow: '0 8px 25px rgba(124, 58, 237, 0.3)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              <div style={{ fontSize: '14px', opacity: 0.8, marginBottom: '4px' }}>Current Operation</div>
-              <div style={{ fontSize: '16px' }}>{currentOperation}</div>
-            </motion.div>
-          )}
-          
-          {/* Modern Input Section */}
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ 
-                display: 'block', 
-                color: '#94a3b8', 
-                fontSize: '14px', 
-                fontWeight: '500',
-                marginBottom: '8px'
-              }}>Value</label>
-              <input
-                type="number"
-                placeholder="Enter value"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: '12px',
-                  border: '2px solid rgba(59, 130, 246, 0.2)',
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  color: 'white',
-                  fontSize: '16px',
-                  transition: 'all 0.3s ease',
-                  outline: 'none'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(59, 130, 246, 0.2)'}
-              />
-            </div>
-            <div>
-              <label style={{ 
-                display: 'block', 
-                color: '#94a3b8', 
-                fontSize: '14px', 
-                fontWeight: '500',
-                marginBottom: '8px'
-              }}>Index (optional)</label>
-              <input
-                type="number"
-                placeholder="Enter index"
-                value={inputIndex}
-                onChange={(e) => setInputIndex(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: '12px',
-                  border: '2px solid rgba(59, 130, 246, 0.2)',
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  color: 'white',
-                  fontSize: '16px',
-                  transition: 'all 0.3s ease',
-                  outline: 'none'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(59, 130, 246, 0.2)'}
-              />
-            </div>
-          </div>
-          
-          {/* Modern Operation Buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-            {[
-              { onClick: insertElement, bg: 'linear-gradient(135deg, #10b981, #059669)', icon: '➕', text: 'Insert' },
-              { onClick: deleteElement, bg: 'linear-gradient(135deg, #ef4444, #dc2626)', icon: '🗑️', text: 'Delete' },
-              { onClick: updateElement, bg: 'linear-gradient(135deg, #f59e0b, #d97706)', icon: '✏️', text: 'Update' },
-              { onClick: traverseArray, bg: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', icon: '🔄', text: 'Traverse' }
-            ].map((btn, i) => (
-              <motion.button
-                key={i}
-                onClick={btn.onClick}
-                disabled={isAnimating}
-                whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                  padding: '14px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: btn.bg,
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: isAnimating ? 'not-allowed' : 'pointer',
-                  opacity: isAnimating ? 0.6 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: '14px',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                <span style={{ fontSize: '16px' }}>{btn.icon}</span>
-                {btn.text}
-              </motion.button>
-            ))}
-          </div>
-          
-          {/* Search Section */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              color: '#94a3b8', 
-              fontSize: '14px', 
-              fontWeight: '500',
-              marginBottom: '8px'
-            }}>Search Element</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="number"
-                placeholder="Search value"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '14px 16px',
-                  borderRadius: '12px',
-                  border: '2px solid rgba(59, 130, 246, 0.2)',
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  color: 'white',
-                  fontSize: '16px',
-                  outline: 'none'
-                }}
-              />
-              <motion.button 
-                onClick={searchElement} 
-                disabled={isAnimating}
-                whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                  padding: '14px 20px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: isAnimating ? 'not-allowed' : 'pointer',
-                  opacity: isAnimating ? 0.6 : 1,
-                  fontSize: '16px',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                🔍
-              </motion.button>
-            </div>
-          </div>
-          
-          {/* Resize Section */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              color: '#94a3b8', 
-              fontSize: '14px', 
-              fontWeight: '500',
-              marginBottom: '8px'
-            }}>Array Size: {arraySize}</label>
-            <input
-              type="range"
-              min="5"
-              max="15"
-              value={arraySize}
-              onChange={(e) => setArraySize(parseInt(e.target.value))}
-              style={{ 
-                width: '100%', 
-                marginBottom: '12px',
-                accentColor: '#3b82f6'
-              }}
-            />
-            <motion.button 
-              onClick={resizeArray} 
-              disabled={isAnimating}
-              whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{
-                width: '100%',
-                padding: '14px',
-                borderRadius: '12px',
-                border: 'none',
-                background: 'linear-gradient(135deg, #ec4899, #db2777)',
-                color: 'white',
-                fontWeight: '600',
-                cursor: isAnimating ? 'not-allowed' : 'pointer',
-                opacity: isAnimating ? 0.6 : 1,
+              justifyContent: 'center'
+            }}>
+              <div style={{
                 display: 'flex',
-                alignItems: 'center',
+                gap: '12px',
+                flexWrap: 'wrap',
                 justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)'
-              }}
-            >
-              <span>🧱</span> Resize to {arraySize}
-            </motion.button>
-          </div>
-          
-          {/* Array Info Card */}
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
-            padding: '20px',
-            borderRadius: '16px',
-            marginBottom: '24px',
-            border: '1px solid rgba(59, 130, 246, 0.2)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '20px' }}>📊</span>
-              <h4 style={{ color: '#3b82f6', margin: 0, fontWeight: '600' }}>Array Statistics</h4>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div style={{ textAlign: 'center', padding: '8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px' }}>
-                <div style={{ color: '#94a3b8', fontSize: '12px' }}>Size</div>
-                <div style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>{array.length}</div>
-              </div>
-              <div style={{ textAlign: 'center', padding: '8px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px' }}>
-                <div style={{ color: '#94a3b8', fontSize: '12px' }}>Memory</div>
-                <div style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>{array.length * 4}B</div>
-              </div>
-            </div>
-            <div style={{ textAlign: 'center', marginTop: '12px', padding: '8px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px' }}>
-              <div style={{ color: '#94a3b8', fontSize: '12px' }}>Access Time</div>
-              <div style={{ color: '#f59e0b', fontWeight: '600', fontSize: '16px' }}>O(1)</div>
-            </div>
-          </div>
-          
-          {/* Operation Log */}
-          <div style={{
-            background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8))',
-            padding: '20px',
-            borderRadius: '16px',
-            maxHeight: '200px',
-            overflowY: 'auto',
-            border: '1px solid rgba(16, 185, 129, 0.2)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '20px' }}>📝</span>
-              <h4 style={{ color: '#10b981', margin: 0, fontWeight: '600' }}>Operation Log</h4>
-            </div>
-            <div style={{ minHeight: '60px' }}>
-              <AnimatePresence>
-                {operationLog.length === 0 ? (
-                  <div style={{ 
-                    color: '#64748b', 
-                    fontStyle: 'italic', 
-                    textAlign: 'center',
-                    padding: '20px 0'
+                alignItems: 'center',
+                perspective: '1000px',
+                transformStyle: 'preserve-3d'
+              }}>
+                {array.length > 0 ? array.map((val, idx) => (
+                  <div key={idx} style={getElementStyle(idx)}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div>{val}</div>
+                      <div style={{ 
+                        fontSize: '10px', 
+                        opacity: 0.7, 
+                        position: 'absolute',
+                        bottom: '-20px',
+                        left: '50%',
+                        transform: 'translateX(-50%)'
+                      }}>
+                        [{idx}]
+                      </div>
+                    </div>
+                  </div>
+                )) : (
+                  <div style={{
+                    color: '#64748b',
+                    fontSize: '18px',
+                    fontStyle: 'italic'
                   }}>
+                    Array is empty
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '25px',
+              marginBottom: '20px'
+            }}>
+              <h3 style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: '600', 
+                marginBottom: '20px',
+                color: '#e2e8f0'
+              }}>
+                Array Operations
+              </h3>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                    Value
+                  </label>
+                  <input
+                    type="number"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder="Enter value"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                    Index (optional)
+                  </label>
+                  <input
+                    type="number"
+                    value={index}
+                    onChange={(e) => setIndex(e.target.value)}
+                    placeholder="Enter index"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                {[
+                  { label: 'Insert', action: insertElement, color: '#10b981' },
+                  { label: 'Delete', action: deleteElement, color: '#ef4444' },
+                  { label: 'Update', action: updateElement, color: '#f59e0b' },
+                  { label: 'Traverse', action: traverseArray, color: '#8b5cf6' }
+                ].map(({ label, action, color }) => (
+                  <button
+                    key={label}
+                    onClick={action}
+                    disabled={isAnimating}
+                    style={{
+                      background: `linear-gradient(135deg, ${color}, ${color}dd)`,
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: isAnimating ? 'not-allowed' : 'pointer',
+                      opacity: isAnimating ? 0.6 : 1,
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Search */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '25px'
+            }}>
+              <h3 style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: '600', 
+                marginBottom: '15px',
+                color: '#e2e8f0'
+              }}>
+                Search Element
+              </h3>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <input
+                  type="number"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Search value"
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px'
+                  }}
+                />
+                <button
+                  onClick={searchElement}
+                  style={{
+                    background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Array Stats */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '25px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                Array Size: {array.length}
+              </h3>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '15px' }}>
+                <input
+                  type="number"
+                  value={arraySize}
+                  onChange={(e) => setArraySize(parseInt(e.target.value) || 1)}
+                  min="1"
+                  max="20"
+                  style={{
+                    width: '80px',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '14px'
+                  }}
+                />
+                <button
+                  onClick={resizeArray}
+                  style={{
+                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Resize to {arraySize}
+                </button>
+              </div>
+            </div>
+
+            {/* Statistics */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '25px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                Array Statistics
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#94a3b8' }}>Size</span>
+                  <span style={{ fontWeight: '600' }}>{array.length}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#94a3b8' }}>Memory</span>
+                  <span style={{ fontWeight: '600' }}>{array.length * 4}B</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#94a3b8' }}>Access Time</span>
+                  <span style={{ fontWeight: '600' }}>O(1)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Operation Log */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '25px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              flex: 1
+            }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                Operation Log
+              </h3>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {operationLog.length > 0 ? operationLog.map((log) => (
+                  <div key={log.id} style={{
+                    padding: '10px',
+                    marginBottom: '8px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    fontSize: '12px'
+                  }}>
+                    <div style={{ fontWeight: '600', color: '#60a5fa' }}>
+                      {log.operation}
+                    </div>
+                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                      {log.details}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>
+                      {log.timestamp}
+                    </div>
+                  </div>
+                )) : (
+                  <div style={{ color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
                     No operations yet. Start by inserting elements!
                   </div>
-                ) : (
-                  operationLog.map((log, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      style={{
-                        padding: '8px 12px',
-                        fontSize: '14px',
-                        color: '#e2e8f0',
-                        borderBottom: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '6px',
-                        marginBottom: '4px',
-                        background: 'rgba(255, 255, 255, 0.02)'
-                      }}
-                    >
-                      {log}
-                    </motion.div>
-                  ))
                 )}
-              </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>

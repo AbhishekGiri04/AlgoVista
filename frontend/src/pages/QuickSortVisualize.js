@@ -205,6 +205,22 @@ const QuickSortVisualize = () => {
       padding: '20px',
       fontFamily: 'Inter, sans-serif'
     }}>
+      <a href="/sortingalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Sorting Algorithms
+      </a>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -671,6 +687,273 @@ const QuickSortVisualize = () => {
             </motion.p>
           </motion.div>
         )}
+      </div>
+
+      {/* Algorithm Analysis Section */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '30px'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Time Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-around', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '120px',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}>O(n log n)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Best Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Good pivot</span>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '120px',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}>O(n log n)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Average Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Random pivot</span>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '160px',
+                background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '12px'
+              }}>O(n²)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Worst Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Bad pivot</span>
+            </div>
+          </div>
+          
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(245, 158, 11, 0.2)'
+          }}>
+            <h4 style={{ color: '#d97706', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Performance Insights</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>Pivot selection affects performance</li>
+              <li>Cache-efficient due to in-place sorting</li>
+              <li>Average case is very fast in practice</li>
+              <li>Randomized version avoids worst case</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Space Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '80px',
+                height: '100px',
+                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '14px'
+              }}>O(log n)</div>
+              <span style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Recursion Stack</span>
+              <span style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center' }}>In-place sorting</span>
+            </div>
+          </div>
+          
+          <div style={{
+            background: 'rgba(139, 92, 246, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(139, 92, 246, 0.2)'
+          }}>
+            <h4 style={{ color: '#7c3aed', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Memory Usage</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>In-place sorting algorithm</li>
+              <li>Only recursion stack space needed</li>
+              <li>O(log n) average stack depth</li>
+              <li>O(n) worst case stack depth</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        background: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '24px',
+        padding: '50px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2 style={{ 
+          textAlign: 'center',
+          marginBottom: '40px', 
+          color: '#1e293b',
+          fontSize: '2rem',
+          fontWeight: '800'
+        }}>How Quick Sort Works</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '30px', marginBottom: '40px' }}>
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>1</div>
+            <h4 style={{ color: '#d97706', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Choose Pivot</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Select a pivot element from the array (first, last, or random)</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(139, 92, 246, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(139, 92, 246, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>2</div>
+            <h4 style={{ color: '#7c3aed', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Partition</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Rearrange array so smaller elements are left of pivot, larger on right</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>3</div>
+            <h4 style={{ color: '#059669', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Recurse</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Recursively apply quick sort to the left and right partitions</p>
+          </div>
+        </div>
+        
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(139, 92, 246, 0.1))',
+          borderRadius: '16px',
+          padding: '30px',
+          border: '1px solid rgba(245, 158, 11, 0.2)'
+        }}>
+          <h4 style={{ color: '#d97706', marginBottom: '20px', fontSize: '20px', fontWeight: '700', textAlign: 'center' }}>Pivot-Based Partitioning</h4>
+          <p style={{ color: '#64748b', fontSize: '16px', lineHeight: '1.8', textAlign: 'center', margin: 0 }}>
+            Quick Sort's efficiency comes from its partitioning strategy. By choosing a good pivot and partitioning 
+            the array around it, we can divide the problem into smaller subproblems. The key insight is that after 
+            partitioning, the pivot is in its final sorted position, and we only need to sort the two partitions.
+          </p>
+        </div>
       </div>
     </div>
   );

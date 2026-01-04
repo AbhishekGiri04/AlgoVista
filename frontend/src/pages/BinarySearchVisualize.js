@@ -7,19 +7,29 @@ const BinarySearchVisualize = () => {
   const [currentStep, setCurrentStep] = useState(-1);
   const [isSearching, setIsSearching] = useState(false);
   const [found, setFound] = useState(false);
+  const [algorithm, setAlgorithm] = useState('');
+  const [totalComparisons, setTotalComparisons] = useState(0);
   const intervalRef = useRef(null);
 
   const handleSearch = async () => {
-    const arr = array.split(',').map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const arr = array.split(',').map(Number).filter(n => !isNaN(n));
     if (arr.length === 0) {
       alert('Please enter a valid array');
       return;
     }
 
+    // Check if array is sorted
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i] < arr[i-1]) {
+        alert('Array must be sorted for Binary Search!');
+        return;
+      }
+    }
+
     setIsSearching(true);
     
     try {
-      const response = await fetch('http://localhost:3000/api/binarysearch', {
+      const response = await fetch('http://localhost:8000/api/binarysearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ array: arr, target: Number(target) })
@@ -37,8 +47,11 @@ const BinarySearchVisualize = () => {
       
       setSteps(result.steps || []);
       setFound(result.found || false);
+      setAlgorithm(result.algorithm || 'Binary Search');
+      setTotalComparisons(result.totalComparisons || 0);
       setCurrentStep(-1);
 
+      // Animate steps
       if (result.steps && result.steps.length > 0) {
         let stepIndex = 0;
         intervalRef.current = setInterval(() => {
@@ -49,15 +62,83 @@ const BinarySearchVisualize = () => {
             clearInterval(intervalRef.current);
             setIsSearching(false);
           }
-        }, 1000);
+        }, 1200);
       } else {
         setIsSearching(false);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error: ' + error.message);
-      setIsSearching(false);
+      // Fallback to client-side implementation
+      const clientResult = clientBinarySearch(arr, Number(target));
+      setSteps(clientResult.steps);
+      setFound(clientResult.found);
+      setAlgorithm('Binary Search');
+      setTotalComparisons(clientResult.totalComparisons);
+      setCurrentStep(-1);
+
+      if (clientResult.steps.length > 0) {
+        let stepIndex = 0;
+        intervalRef.current = setInterval(() => {
+          setCurrentStep(stepIndex);
+          stepIndex++;
+          
+          if (stepIndex >= clientResult.steps.length) {
+            clearInterval(intervalRef.current);
+            setIsSearching(false);
+          }
+        }, 1200);
+      } else {
+        setIsSearching(false);
+      }
     }
+  };
+
+  const clientBinarySearch = (arr, target) => {
+    const steps = [];
+    let left = 0;
+    let right = arr.length - 1;
+    let stepNum = 1;
+    let found = false;
+
+    while (left <= right) {
+      const mid = left + Math.floor((right - left) / 2);
+      
+      if (arr[mid] === target) {
+        steps.push({
+          stepNumber: stepNum,
+          left,
+          right,
+          mid,
+          comparison: `arr[${mid}] = ${arr[mid]} == ${target} ✓`,
+          status: 'found'
+        });
+        found = true;
+        break;
+      } else if (arr[mid] < target) {
+        steps.push({
+          stepNumber: stepNum,
+          left,
+          right,
+          mid,
+          comparison: `arr[${mid}] = ${arr[mid]} < ${target} → Search right half`,
+          status: 'continue'
+        });
+        left = mid + 1;
+      } else {
+        steps.push({
+          stepNumber: stepNum,
+          left,
+          right,
+          mid,
+          comparison: `arr[${mid}] = ${arr[mid]} > ${target} → Search left half`,
+          status: 'continue'
+        });
+        right = mid - 1;
+      }
+      stepNum++;
+    }
+
+    return { steps, found, totalComparisons: steps.length };
   };
 
   const resetSearch = () => {
@@ -70,6 +151,8 @@ const BinarySearchVisualize = () => {
     setFound(false);
     setArray('1,3,5,7,9,11,13,15,17,19');
     setTarget('7');
+    setTotalComparisons(0);
+    setAlgorithm('');
   };
 
   useEffect(() => {
@@ -80,15 +163,12 @@ const BinarySearchVisualize = () => {
     };
   }, []);
 
-  const arrayData = array.split(',').map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
+  const arrayData = array.split(',').map(Number).filter(n => !isNaN(n));
 
   return (
     <div style={{
-      backgroundImage: 'url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz5nspmN2Lf5Pa9SMBM6syIVpt-kOq14Tjwyx-pd3A1mzxTwjwGHvnlIjbempu-wxzhuU&usqp=CAU)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      color: 'white',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      color: '#1e293b',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
@@ -110,18 +190,21 @@ const BinarySearchVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
         <div style={{
-          background: '#e1f5fe',
-          borderRadius: '20px',
-          padding: '32px',
-          marginBottom: '24px',
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
           backdropFilter: 'blur(20px)',
-          border: '1px solid #b3e5fc'
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
+          
           <h1 style={{
             fontSize: '2.5rem',
             fontWeight: '700',
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             margin: '0 0 12px',
@@ -139,14 +222,20 @@ const BinarySearchVisualize = () => {
           </p>
         </div>
 
+        {/* Main Content Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '24px' }}>
+          
+          {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Controls */}
             <div style={{
-              background: '#e8f5e8',
-              borderRadius: '20px',
-              padding: '32px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '40px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #c8e6c9'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h3 style={{
                 fontSize: '1.25rem',
@@ -186,6 +275,14 @@ const BinarySearchVisualize = () => {
                       color: '#000',
                       background: '#fff'
                     }}
+                    onFocus={(e) => {
+                      e.target.style.border = '2px solid #3b82f6';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '2px solid #e5e7eb';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
                 
@@ -216,6 +313,14 @@ const BinarySearchVisualize = () => {
                       color: '#000',
                       background: '#fff'
                     }}
+                    onFocus={(e) => {
+                      e.target.style.border = '2px solid #3b82f6';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '2px solid #e5e7eb';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
 
@@ -224,7 +329,7 @@ const BinarySearchVisualize = () => {
                     onClick={handleSearch}
                     disabled={isSearching}
                     style={{
-                      background: isSearching ? '#9ca3af' : 'linear-gradient(135deg, #667eea, #764ba2)',
+                      background: isSearching ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
                       color: 'white',
                       border: 'none',
                       padding: '14px 20px',
@@ -233,7 +338,7 @@ const BinarySearchVisualize = () => {
                       fontWeight: '600',
                       cursor: isSearching ? 'not-allowed' : 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)'
+                      boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'
                     }}
                   >
                     {isSearching ? 'Searching...' : 'Search'}
@@ -260,13 +365,15 @@ const BinarySearchVisualize = () => {
               </div>
             </div>
 
+            {/* Visualization */}
             <div style={{
-              background: '#fff8e1',
-              borderRadius: '20px',
-              padding: '40px',
+              background: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '24px',
+              padding: '50px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ffcc02',
-              minHeight: '300px'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              minHeight: '400px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <div style={{
                 display: 'flex',
@@ -283,30 +390,35 @@ const BinarySearchVisualize = () => {
                   let transform = 'scale(1)';
                   let shadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
 
-                  if (steps.length > 0 && currentStep >= 0 && steps[currentStep]) {
+                  if (steps.length > 0 && currentStep >= 0 && currentStep < steps.length) {
                     const step = steps[currentStep];
+                    
                     if (index === step.mid) {
-                      bgColor = '#fef3c7';
-                      borderColor = '#f59e0b';
-                      textColor = '#92400e';
-                      transform = 'scale(1.15)';
-                      shadow = '0 8px 25px rgba(245, 158, 11, 0.6)';
+                      // Middle element being compared
+                      if (step.status === 'found') {
+                        bgColor = '#d1fae5';
+                        borderColor = '#10b981';
+                        textColor = '#065f46';
+                        transform = 'scale(1.15)';
+                        shadow = '0 8px 25px rgba(16, 185, 129, 0.6)';
+                      } else {
+                        bgColor = '#fef3c7';
+                        borderColor = '#f59e0b';
+                        textColor = '#92400e';
+                        transform = 'scale(1.1)';
+                        shadow = '0 8px 25px rgba(245, 158, 11, 0.4)';
+                      }
                     } else if (index >= step.left && index <= step.right) {
+                      // Active search range
                       bgColor = '#dbeafe';
                       borderColor = '#3b82f6';
                       textColor = '#1e40af';
                       shadow = '0 6px 15px rgba(59, 130, 246, 0.3)';
                     } else {
+                      // Outside search range
                       bgColor = '#f1f5f9';
                       borderColor = '#cbd5e1';
                       textColor = '#94a3b8';
-                    }
-                    
-                    if (step.status === 'found' && index === step.mid) {
-                      bgColor = '#d1fae5';
-                      borderColor = '#10b981';
-                      textColor = '#065f46';
-                      shadow = '0 8px 25px rgba(16, 185, 129, 0.6)';
                     }
                   }
 
@@ -335,7 +447,7 @@ const BinarySearchVisualize = () => {
                       <div style={{
                         position: 'absolute',
                         bottom: '-24px',
-                        fontSize: '10px',
+                        fontSize: '11px',
                         color: '#64748b',
                         fontWeight: '500'
                       }}>
@@ -346,6 +458,7 @@ const BinarySearchVisualize = () => {
                 })}
               </div>
 
+              {/* Status */}
               {steps.length > 0 && (
                 <div>
                   {currentStep >= 0 && currentStep < steps.length && (
@@ -361,13 +474,15 @@ const BinarySearchVisualize = () => {
                         Step {steps[currentStep].stepNumber}: Checking middle element at index {steps[currentStep].mid}
                       </p>
                       <p style={{ fontSize: '16px', margin: '0 0 16px', fontFamily: 'ui-monospace, monospace', color: '#374151' }}>
-                        Range: [{steps[currentStep].left}, {steps[currentStep].right}] | Mid: {steps[currentStep].mid} | Value: {arrayData[steps[currentStep].mid]}
+                        {steps[currentStep].comparison.replace('✓', '✅').replace('→', '→')}
                       </p>
-                      <p style={{ fontSize: '16px', margin: '0', color: '#374151' }}>
-                        {steps[currentStep].comparison}
-                      </p>
+                      <div style={{ fontSize: '14px', color: '#64748b', margin: '0' }}>
+                        Search Range: [{steps[currentStep].left}, {steps[currentStep].right}] | 
+                        Middle: {steps[currentStep].mid} | 
+                        Remaining: {steps[currentStep].right - steps[currentStep].left + 1} elements
+                      </div>
                       {steps[currentStep].status === 'found' && (
-                        <p style={{ fontSize: '16px', color: '#059669', margin: '8px 0 0', fontWeight: '600' }}>
+                        <p style={{ fontSize: '16px', color: '#059669', margin: '12px 0 0', fontWeight: '600' }}>
                           ✅ Target Found!
                         </p>
                       )}
@@ -403,7 +518,7 @@ const BinarySearchVisualize = () => {
                           <strong>Comparisons:</strong> {steps.length}
                         </p>
                         <p style={{ margin: '0' }}>
-                          <strong>Time Complexity:</strong> O(log n)
+                          <strong>Time Complexity:</strong> O(log n) = O(log {arrayData.length}) ≈ {Math.ceil(Math.log2(arrayData.length))} max steps
                         </p>
                       </div>
                     </div>
@@ -413,13 +528,17 @@ const BinarySearchVisualize = () => {
             </div>
           </div>
 
+          {/* Right Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Performance Chart */}
             <div style={{
-              background: '#f3e5f5',
-              borderRadius: '20px',
-              padding: '24px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '30px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ce93d8'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h4 style={{
                 fontSize: '18px',
@@ -436,7 +555,7 @@ const BinarySearchVisualize = () => {
                   <div style={{
                     width: '50px',
                     height: '80px',
-                    background: 'linear-gradient(to top, #10b981, #34d399)',
+                    background: 'linear-gradient(to top, #3b82f6, #60a5fa)',
                     borderRadius: '8px 8px 0 0',
                     marginBottom: '12px',
                     position: 'relative'
@@ -448,7 +567,7 @@ const BinarySearchVisualize = () => {
                       transform: 'translateX(-50%)',
                       fontSize: '12px',
                       fontWeight: '600',
-                      color: '#10b981'
+                      color: '#3b82f6'
                     }}>
                       O(log n)
                     </div>
@@ -483,7 +602,7 @@ const BinarySearchVisualize = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div style={{
                     width: '50px',
-                    height: `${Math.min((arrayData.length / 20) * 180 + 20, 180)}px`,
+                    height: `${Math.min((arrayData.length / 20) * 160 + 40, 160)}px`,
                     background: 'linear-gradient(to top, #f59e0b, #fbbf24)',
                     borderRadius: '8px 8px 0 0',
                     marginBottom: '12px',
@@ -506,12 +625,14 @@ const BinarySearchVisualize = () => {
               </div>
             </div>
 
+            {/* Algorithm Info */}
             <div style={{
-              background: '#ffebee',
-              borderRadius: '20px',
-              padding: '24px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '30px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ef9a9a'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h4 style={{
                 fontSize: '18px',
@@ -528,15 +649,15 @@ const BinarySearchVisualize = () => {
                   <span><strong>Divide & Conquer:</strong> Splits search space in half each iteration</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ width: '4px', height: '16px', background: '#10b981', borderRadius: '2px', marginRight: '12px' }}></div>
+                  <div style={{ width: '4px', height: '16px', background: '#ef4444', borderRadius: '2px', marginRight: '12px' }}></div>
                   <span><strong>Prerequisite:</strong> Array must be sorted</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ width: '4px', height: '16px', background: '#f59e0b', borderRadius: '2px', marginRight: '12px' }}></div>
+                  <div style={{ width: '4px', height: '16px', background: '#10b981', borderRadius: '2px', marginRight: '12px' }}></div>
                   <span><strong>Efficiency:</strong> O(log n) time complexity</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ width: '4px', height: '16px', background: '#ef4444', borderRadius: '2px', marginRight: '12px' }}></div>
+                  <div style={{ width: '4px', height: '16px', background: '#f59e0b', borderRadius: '2px', marginRight: '12px' }}></div>
                   <span><strong>Method:</strong> Compare with middle element</span>
                 </div>
               </div>
@@ -544,13 +665,15 @@ const BinarySearchVisualize = () => {
           </div>
         </div>
         
+        {/* Extended Details Section */}
         <div style={{ marginTop: '40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <div style={{
-            background: '#e0f7fa',
-            borderRadius: '20px',
-            padding: '32px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid #b2ebf2'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 20px' }}>Implementation Details</h3>
             <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.8' }}>
@@ -559,8 +682,8 @@ const BinarySearchVisualize = () => {
                   <div style={{ width: '8px', height: '8px', background: '#3b82f6', borderRadius: '50%', marginRight: '12px' }}></div>
                   <div><strong>Type:</strong> Divide and Conquer Algorithm</div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', padding: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px' }}>
-                  <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', marginRight: '12px' }}></div>
+                <div style={{ display: 'flex', alignItems: 'center', padding: '12px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px' }}>
+                  <div style={{ width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', marginRight: '12px' }}></div>
                   <div><strong>Structure:</strong> Sorted Array/List Required</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', padding: '12px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px' }}>
@@ -576,11 +699,12 @@ const BinarySearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#f1f8e9',
-            borderRadius: '20px',
-            padding: '32px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid #dcedc8'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 20px' }}>Use Cases & Applications</h3>
             <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.8' }}>
@@ -608,11 +732,12 @@ const BinarySearchVisualize = () => {
         
         <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
           <div style={{
-            background: '#e3f2fd',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #90caf9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#059669', margin: '0 0 12px' }}>Advantages</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>
@@ -638,11 +763,12 @@ const BinarySearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#fce4ec',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #f8bbd9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#dc2626', margin: '0 0 12px' }}>Disadvantages</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>
@@ -668,11 +794,12 @@ const BinarySearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#ede7f6',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #d1c4e9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#7c3aed', margin: '0 0 12px' }}>Alternatives</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>

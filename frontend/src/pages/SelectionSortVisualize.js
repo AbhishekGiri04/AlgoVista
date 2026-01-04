@@ -139,6 +139,21 @@ const SelectionSortVisualize = () => {
       padding: '20px',
       fontFamily: 'Inter, sans-serif'
     }}>
+      <a href="/sortingalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Sorting Algorithms
+      </a>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -155,7 +170,7 @@ const SelectionSortVisualize = () => {
           Selection Sort Visualization
         </h1>
         <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center' }}>
-          Interactive Selection Sort visualization with step-by-step analysis
+          Interactive visualization of minimum-finding sorting algorithm
         </p>
       </motion.div>
 
@@ -635,6 +650,276 @@ const SelectionSortVisualize = () => {
             </motion.p>
           </motion.div>
         )}
+      </div>
+
+      {/* Algorithm Analysis Section */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '30px'
+      }}>
+        {/* Time Complexity Chart */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Time Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-around', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '160px',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '12px'
+              }}>O(n²)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Best Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Already sorted</span>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '160px',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '12px'
+              }}>O(n²)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Average Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Random order</span>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '60px',
+                height: '160px',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '12px'
+              }}>O(n²)</div>
+              <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Worst Case</span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>Reverse sorted</span>
+            </div>
+          </div>
+          
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(245, 158, 11, 0.2)'
+          }}>
+            <h4 style={{ color: '#d97706', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Performance Insights</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>Always performs n(n-1)/2 comparisons</li>
+              <li>Makes exactly n-1 swaps (minimum possible)</li>
+              <li>Performance unaffected by initial order</li>
+              <li>Not adaptive - doesn't improve on sorted data</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Space Complexity Chart */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Space Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '16px'
+              }}>O(1)</div>
+              <span style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Constant Space</span>
+              <span style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center' }}>In-place sorting</span>
+            </div>
+          </div>
+          
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(16, 185, 129, 0.2)'
+          }}>
+            <h4 style={{ color: '#059669', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Memory Usage</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>Uses only constant extra memory</li>
+              <li>Swaps elements in-place</li>
+              <li>No additional arrays needed</li>
+              <li>Memory efficient for any dataset size</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Algorithm Explanation Section */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        background: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '24px',
+        padding: '50px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2 style={{ 
+          textAlign: 'center',
+          marginBottom: '40px', 
+          color: '#1e293b',
+          fontSize: '2rem',
+          fontWeight: '800'
+        }}>How Selection Sort Works</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '30px', marginBottom: '40px' }}>
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>1</div>
+            <h4 style={{ color: '#d97706', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Find Minimum</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Find the smallest element in the unsorted portion of the array</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>2</div>
+            <h4 style={{ color: '#1d4ed8', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Swap Elements</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Swap the minimum element with the first element of unsorted portion</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>3</div>
+            <h4 style={{ color: '#059669', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Move Boundary</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Move the boundary between sorted and unsorted portions one position right</p>
+          </div>
+        </div>
+        
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(59, 130, 246, 0.1))',
+          borderRadius: '16px',
+          padding: '30px',
+          border: '1px solid rgba(245, 158, 11, 0.2)'
+        }}>
+          <h4 style={{ color: '#d97706', marginBottom: '20px', fontSize: '20px', fontWeight: '700', textAlign: 'center' }}>Why "Selection" Sort?</h4>
+          <p style={{ color: '#64748b', fontSize: '16px', lineHeight: '1.8', textAlign: 'center', margin: 0 }}>
+            The algorithm is called "Selection Sort" because it repeatedly selects the smallest (or largest) element 
+            from the unsorted portion and places it in its correct position. It maintains two portions: 
+            a sorted portion at the beginning and an unsorted portion at the end.
+          </p>
+        </div>
       </div>
     </div>
   );

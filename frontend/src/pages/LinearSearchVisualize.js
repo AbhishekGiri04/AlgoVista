@@ -22,7 +22,7 @@ const LinearSearchVisualize = () => {
     console.log('Sending request:', { array: arr, target: Number(target) });
     
     try {
-      const response = await fetch('http://localhost:3000/api/linearsearch', {
+      const response = await fetch('http://localhost:8000/api/linearsearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ array: arr, target: Number(target) })
@@ -93,11 +93,8 @@ const LinearSearchVisualize = () => {
 
   return (
     <div style={{
-      backgroundImage: 'url(https://img.freepik.com/premium-vector/black-abstract-background-dark-circles-sales-black-friday-cyber-monday-vector_127742-33.jpg?semt=ais_hybrid&w=740&q=80)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      color: 'white',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      color: '#1e293b',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
@@ -121,12 +118,13 @@ const LinearSearchVisualize = () => {
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{
-          background: '#e1f5fe',
-          borderRadius: '20px',
-          padding: '32px',
-          marginBottom: '24px',
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
           backdropFilter: 'blur(20px)',
-          border: '1px solid #b3e5fc'
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
           
           <h1 style={{
@@ -158,11 +156,12 @@ const LinearSearchVisualize = () => {
             
             {/* Controls */}
             <div style={{
-              background: '#e8f5e8',
-              borderRadius: '20px',
-              padding: '32px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '40px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #c8e6c9'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h3 style={{
                 fontSize: '1.25rem',
@@ -294,12 +293,13 @@ const LinearSearchVisualize = () => {
 
             {/* Visualization */}
             <div style={{
-              background: '#fff8e1',
-              borderRadius: '20px',
-              padding: '40px',
+              background: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '24px',
+              padding: '50px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ffcc02',
-              minHeight: '300px'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              minHeight: '400px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <div style={{
                 display: 'flex',
@@ -444,11 +444,12 @@ const LinearSearchVisualize = () => {
             
             {/* Performance Chart */}
             <div style={{
-              background: '#f3e5f5',
-              borderRadius: '20px',
-              padding: '24px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '30px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ce93d8'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h4 style={{
                 fontSize: '18px',
@@ -537,11 +538,12 @@ const LinearSearchVisualize = () => {
 
             {/* Algorithm Info */}
             <div style={{
-              background: '#ffebee',
-              borderRadius: '20px',
-              padding: '24px',
+              background: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '24px',
+              padding: '30px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #ef9a9a'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
             }}>
               <h4 style={{
                 fontSize: '18px',
@@ -577,11 +579,12 @@ const LinearSearchVisualize = () => {
         {/* Extended Details Section */}
         <div style={{ marginTop: '40px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <div style={{
-            background: '#e0f7fa',
-            borderRadius: '20px',
-            padding: '32px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid #b2ebf2'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 20px' }}>Implementation Details</h3>
             <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.8' }}>
@@ -607,11 +610,12 @@ const LinearSearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#f1f8e9',
-            borderRadius: '20px',
-            padding: '32px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid #dcedc8'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 20px' }}>Use Cases & Applications</h3>
             <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.8' }}>
@@ -639,11 +643,12 @@ const LinearSearchVisualize = () => {
         
         <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
           <div style={{
-            background: '#e3f2fd',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #90caf9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#059669', margin: '0 0 12px' }}>Advantages</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>
@@ -669,11 +674,12 @@ const LinearSearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#fce4ec',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #f8bbd9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#dc2626', margin: '0 0 12px' }}>Disadvantages</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>
@@ -699,11 +705,12 @@ const LinearSearchVisualize = () => {
           </div>
           
           <div style={{
-            background: '#ede7f6',
-            borderRadius: '20px',
-            padding: '24px',
-            border: '1px solid #d1c4e9',
-            textAlign: 'center'
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '30px',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#7c3aed', margin: '0 0 12px' }}>Alternatives</h4>
             <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.7' }}>

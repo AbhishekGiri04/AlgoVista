@@ -867,49 +867,70 @@ router.get('/linkedlist/display', (req, res) => {
   });
 });
 
-// Binary Search Tree Operations
+// Enhanced Binary Search Tree Operations with Step-by-Step Visualization
 router.post('/tree/insert', (req, res) => {
-  const { tree, value } = req.body;
+  const { value } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Simple BST insertion logic for API
-  const insertNode = (nodes, val) => {
-    if (!nodes || nodes.length === 0) {
-      return [{ value: val, left: null, right: null }];
-    }
-    
-    // Find insertion point and add node
-    const newNodes = [...nodes];
-    let inserted = false;
-    
-    for (let i = 0; i < newNodes.length && !inserted; i++) {
-      if (val < newNodes[i].value && !newNodes[i].left) {
-        newNodes[i].left = val;
-        newNodes.push({ value: val, left: null, right: null });
-        inserted = true;
-      } else if (val > newNodes[i].value && !newNodes[i].right) {
-        newNodes[i].right = val;
-        newNodes.push({ value: val, left: null, right: null });
-        inserted = true;
-      }
-    }
-    
-    if (!inserted) {
-      newNodes.push({ value: val, left: null, right: null });
-    }
-    
-    return newNodes;
-  };
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['insert', value.toString()]);
   
-  const newTree = insertNode(tree || [], value);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
-  res.json({
-    success: true,
-    tree: newTree,
-    operation: 'insert',
-    value: value,
-    size: newTree.length,
-    message: `Inserted ${value} into BST`,
-    performance: { timeComplexity: 'O(log n)', spaceComplexity: 'O(1)' }
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Insert',
+        operation: 'insert',
+        value: value,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+router.post('/tree/search', (req, res) => {
+  const { value } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['search', value.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Search',
+        operation: 'search',
+        value: value,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
@@ -934,66 +955,126 @@ router.post('/tree/delete', (req, res) => {
 });
 
 router.post('/tree/inorder', (req, res) => {
-  const { tree } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Simple inorder traversal simulation
-  const values = (tree || []).map(node => node.value).sort((a, b) => a - b);
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['inorder']);
   
-  res.json({
-    success: true,
-    tree: tree,
-    operation: 'inorder',
-    traversal: values,
-    message: `Inorder traversal: [${values.join(', ')}]`,
-    performance: { timeComplexity: 'O(n)', spaceComplexity: 'O(n)' }
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Inorder Traversal',
+        operation: 'inorder',
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/tree/preorder', (req, res) => {
-  const { tree } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Simple preorder traversal simulation
-  const values = (tree || []).map(node => node.value);
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['preorder']);
   
-  res.json({
-    success: true,
-    tree: tree,
-    operation: 'preorder',
-    traversal: values,
-    message: `Preorder traversal: [${values.join(', ')}]`,
-    performance: { timeComplexity: 'O(n)', spaceComplexity: 'O(n)' }
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Preorder Traversal',
+        operation: 'preorder',
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/tree/postorder', (req, res) => {
-  const { tree } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Simple postorder traversal simulation
-  const values = (tree || []).map(node => node.value).reverse();
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['postorder']);
   
-  res.json({
-    success: true,
-    tree: tree,
-    operation: 'postorder',
-    traversal: values,
-    message: `Postorder traversal: [${values.join(', ')}]`,
-    performance: { timeComplexity: 'O(n)', spaceComplexity: 'O(n)' }
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Postorder Traversal',
+        operation: 'postorder',
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/tree/levelorder', (req, res) => {
-  const { tree } = req.body;
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Simple level order traversal simulation
-  const values = (tree || []).map(node => node.value);
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const child = spawn(execPath, ['levelorder']);
   
-  res.json({
-    success: true,
-    tree: tree,
-    operation: 'levelorder',
-    traversal: values,
-    message: `Level order traversal: [${values.join(', ')}]`,
-    performance: { timeComplexity: 'O(n)', spaceComplexity: 'O(n)' }
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'BST Level Order Traversal',
+        operation: 'levelorder',
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
@@ -1012,6 +1093,58 @@ router.get('/tree/display', (req, res) => {
     height: calculateHeight(tree),
     message: tree.length > 0 ? `BST contains ${tree.length} nodes` : 'BST is empty',
     performance: { timeComplexity: 'O(n)', spaceComplexity: 'O(1)' }
+  });
+});
+
+// Exponential Search
+router.post('/exponentialsearch', (req, res) => {
+  const { array, target } = req.body;
+  const arrayStr = array.join(',');
+  
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Searching/ExponentialSearch/exponential_search_steps_exec');
+  const child = spawn(execPath, [arrayStr, target.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+});
+
+// Jump Search
+router.post('/jumpsearch', (req, res) => {
+  const { array, target } = req.body;
+  const arrayStr = array.join(',');
+  
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Searching/JumpSearch/jump_search_steps_exec');
+  const child = spawn(execPath, [arrayStr, target.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
   });
 });
 

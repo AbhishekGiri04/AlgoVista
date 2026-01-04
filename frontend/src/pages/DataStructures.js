@@ -13,7 +13,7 @@ const DataStructures = () => {
   return (
     <div style={{
       backgroundColor: '#0a0e1a',
-      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://edslash.com/wp-content/uploads/2023/09/Real-Life-examples-of-DSA-Use-of-DSA-in-real-world.jpg)',
+      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://www.crio.do/blog/content/images/2020/07/blog_default.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

@@ -222,6 +222,21 @@ const MergeSortVisualize = () => {
       padding: '20px',
       fontFamily: 'Inter, sans-serif'
     }}>
+      <a href="/sortingalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Sorting Algorithms
+      </a>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -237,7 +252,7 @@ const MergeSortVisualize = () => {
           Merge Sort Visualization
         </h1>
         <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center' }}>
-          Divide and Conquer - Split, Sort, and Merge
+          Interactive visualization of divide-and-conquer sorting algorithm
         </p>
       </motion.div>
 
@@ -688,6 +703,238 @@ const MergeSortVisualize = () => {
             </motion.p>
           </motion.div>
         )}
+      </div>
+
+      {/* Algorithm Analysis Section */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '30px'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Time Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-around', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            {[{label: 'Best', height: 120}, {label: 'Average', height: 120}, {label: 'Worst', height: 120}].map((item, i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{
+                  width: '60px',
+                  height: `${item.height}px`,
+                  background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  borderRadius: '12px',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontWeight: '700',
+                  fontSize: '11px'
+                }}>O(n log n)</div>
+                <span style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>{item.label} Case</span>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{
+            background: 'rgba(139, 92, 246, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(139, 92, 246, 0.2)'
+          }}>
+            <h4 style={{ color: '#7c3aed', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Performance Insights</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>Guaranteed O(n log n) in all cases</li>
+              <li>Stable sorting algorithm</li>
+              <li>Predictable performance</li>
+              <li>Divide and conquer approach</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '25px', 
+            color: '#1e293b',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>Space Complexity Analysis</h3>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'end', 
+            height: '200px', 
+            marginBottom: '25px',
+            padding: '20px 0'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: '80px',
+                height: '120px',
+                background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                borderRadius: '12px',
+                marginBottom: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '16px'
+              }}>O(n)</div>
+              <span style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', fontWeight: '600' }}>Linear Space</span>
+              <span style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center' }}>Additional arrays</span>
+            </div>
+          </div>
+          
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '1px solid rgba(239, 68, 68, 0.2)'
+          }}>
+            <h4 style={{ color: '#dc2626', marginBottom: '10px', fontSize: '16px', fontWeight: '600' }}>Memory Usage</h4>
+            <ul style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0, paddingLeft: '20px' }}>
+              <li>Requires additional O(n) space</li>
+              <li>Not in-place sorting</li>
+              <li>Creates temporary arrays for merging</li>
+              <li>Space overhead for recursion stack</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        maxWidth: '1400px',
+        margin: '40px auto 0',
+        background: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '24px',
+        padding: '50px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2 style={{ 
+          textAlign: 'center',
+          marginBottom: '40px', 
+          color: '#1e293b',
+          fontSize: '2rem',
+          fontWeight: '800'
+        }}>How Merge Sort Works</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '30px', marginBottom: '40px' }}>
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>1</div>
+            <h4 style={{ color: '#d97706', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Divide</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Recursively divide the array into smaller subarrays until each contains one element</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>2</div>
+            <h4 style={{ color: '#dc2626', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Conquer</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Compare elements from left and right subarrays to determine order</p>
+          </div>
+          
+          <div style={{
+            background: 'rgba(6, 182, 212, 0.1)',
+            borderRadius: '16px',
+            padding: '25px',
+            border: '1px solid rgba(6, 182, 212, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+              borderRadius: '50%',
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: '700'
+            }}>3</div>
+            <h4 style={{ color: '#0891b2', marginBottom: '15px', fontSize: '18px', fontWeight: '700' }}>Merge</h4>
+            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>Combine the sorted subarrays back together in the correct order</p>
+          </div>
+        </div>
+        
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1))',
+          borderRadius: '16px',
+          padding: '30px',
+          border: '1px solid rgba(139, 92, 246, 0.2)'
+        }}>
+          <h4 style={{ color: '#7c3aed', marginBottom: '20px', fontSize: '20px', fontWeight: '700', textAlign: 'center' }}>Divide and Conquer Strategy</h4>
+          <p style={{ color: '#64748b', fontSize: '16px', lineHeight: '1.8', textAlign: 'center', margin: 0 }}>
+            Merge Sort uses the divide and conquer paradigm: break the problem into smaller subproblems, 
+            solve them recursively, then combine the solutions. This approach guarantees O(n log n) time complexity 
+            in all cases, making it one of the most reliable sorting algorithms for large datasets.
+          </p>
+        </div>
       </div>
     </div>
   );

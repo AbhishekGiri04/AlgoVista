@@ -3,8 +3,8 @@ import React from 'react';
 const SearchingAlgorithms = () => {
   return (
     <div style={{
-      backgroundColor: '#0f1117',
-      backgroundImage: 'linear-gradient(rgba(15, 17, 23, 0.7), rgba(15, 17, 23, 0.7)), url(https://media.licdn.com/dms/image/v2/C4E12AQGvYlLlBU_Nxw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1623171092482?e=2147483647&v=beta&t=O8l_u73Ai2lN-y9Ne-zhsogLtwlOH7oimeG4jBS782c)',
+      backgroundColor: '#1a1f2e',
+      backgroundImage: 'linear-gradient(rgba(26, 31, 46, 0.6), rgba(26, 31, 46, 0.6)), url(https://img.freepik.com/premium-photo/magnifying-glass-gray-background-with-interconnected-lines-dots_1369729-85415.jpg?semt=ais_hybrid&w=740&q=80)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
