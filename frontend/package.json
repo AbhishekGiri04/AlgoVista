@@ -21,7 +21,7 @@
     "recharts": "^2.15.4",
     "styled-jsx": "^5.1.1",
     "tailwindcss": "^3.3.5",
-    "three": "^0.182.0"
+    "three": "^0.144.0"
   },
   "scripts": {
     "start": "react-scripts start",
