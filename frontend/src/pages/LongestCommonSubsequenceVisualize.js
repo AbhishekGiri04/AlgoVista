@@ -1,548 +1,244 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 const LongestCommonSubsequenceVisualize = () => {
-  const [stringX, setStringX] = useState('ABCBDAB');
-  const [stringY, setStringY] = useState('BDCAB');
-  const [steps, setSteps] = useState([]);
-  const [dpTable, setDpTable] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [lcsString, setLcsString] = useState('');
-  const [lcsLength, setLcsLength] = useState(0);
+  const [text1, setText1] = useState('ABCDGH');
+  const [text2, setText2] = useState('AEDFHR');
+  const [dp, setDp] = useState([]);
+  const [lcs, setLcs] = useState('');
+  const [currentCell, setCurrentCell] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [speed, setSpeed] = useState(800);
+  const [log, setLog] = useState([]);
 
-  const runVisualization = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/lcs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stringX, stringY })
-      });
-      const data = await response.json();
-      
-      if (data.steps) {
-        setSteps(data.steps);
-        setDpTable(data.dpTable);
-        setLcsString(data.lcsString);
-        setLcsLength(data.lcsLength);
-        setCurrentStep(0);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-    setLoading(false);
+  useEffect(() => {
+    reset();
+  }, [text1, text2]);
+
+  const reset = () => {
+    const m = text1.length;
+    const n = text2.length;
+    const table = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+    setDp(table);
+    setLcs('');
+    setCurrentCell(null);
+    setIsRunning(false);
+    setIsPaused(false);
+    setLog(['Algorithm initialized', `Text 1: ${text1}`, `Text 2: ${text2}`]);
   };
 
-  const playVisualization = () => {
-    setIsPlaying(true);
-    const interval = setInterval(() => {
-      setCurrentStep(prev => {
-        if (prev >= steps.length - 1) {
-          setIsPlaying(false);
-          clearInterval(interval);
-          return prev;
+  const runLCS = async () => {
+    setIsRunning(true);
+    setIsPaused(false);
+    
+    const m = text1.length;
+    const n = text2.length;
+    const table = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+    const newLog = [...log];
+
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        while (isPaused) await new Promise(resolve => setTimeout(resolve, 100));
+
+        setCurrentCell({ i, j });
+        
+        if (text1[i - 1] === text2[j - 1]) {
+          table[i][j] = table[i - 1][j - 1] + 1;
+          newLog.push(`✓ Match: ${text1[i - 1]} at [${i}][${j}] → ${table[i][j]}`);
+        } else {
+          table[i][j] = Math.max(table[i - 1][j], table[i][j - 1]);
+          newLog.push(`No match at [${i}][${j}] → max(${table[i - 1][j]}, ${table[i][j - 1]}) = ${table[i][j]}`);
         }
-        return prev + 1;
-      });
-    }, speed);
+
+        setDp(table.map(row => [...row]));
+        setLog([...newLog]);
+        await new Promise(resolve => setTimeout(resolve, speed));
+      }
+    }
+
+    // Backtrack to find LCS
+    let i = m, j = n;
+    const result = [];
+    
+    while (i > 0 && j > 0) {
+      if (text1[i - 1] === text2[j - 1]) {
+        result.unshift(text1[i - 1]);
+        i--;
+        j--;
+      } else if (table[i - 1][j] > table[i][j - 1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+
+    const lcsStr = result.join('');
+    setLcs(lcsStr);
+    setCurrentCell(null);
+    setIsRunning(false);
+    newLog.push(`LCS found: "${lcsStr}" (length: ${lcsStr.length})`);
+    setLog([...newLog]);
   };
 
-  const renderDPTable = () => {
-    if (!dpTable.length || !steps.length) return null;
-    
-    const step = steps[currentStep];
-    const m = stringX.length;
-    const n = stringY.length;
-    
-    return (
-      <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#3b82f6', marginBottom: '15px' }}>📊 DP Table</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${n + 2}, 1fr)`, gap: '2px', maxWidth: '600px' }}>
-          {/* Header row */}
-          <div style={{ padding: '8px', fontWeight: '600', textAlign: 'center' }}></div>
-          <div style={{ padding: '8px', fontWeight: '600', textAlign: 'center', color: '#64748b' }}>ε</div>
-          {stringY.split('').map((char, j) => (
-            <div key={j} style={{ padding: '8px', fontWeight: '600', textAlign: 'center', color: '#3b82f6' }}>
-              {char}
-            </div>
-          ))}
-          
-          {/* Table rows */}
-          {dpTable.map((row, i) => (
-            <React.Fragment key={i}>
-              <div style={{ padding: '8px', fontWeight: '600', textAlign: 'center', color: i === 0 ? '#64748b' : '#22c55e' }}>
-                {i === 0 ? 'ε' : stringX[i-1]}
-              </div>
-              {row.map((cell, j) => {
-                const isCurrent = step.i === i && step.j === j;
-                const isProcessed = (i * (n + 1) + j) <= (step.i * (n + 1) + step.j);
-                
-                return (
-                  <div
-                    key={j}
-                    style={{
-                      padding: '8px',
-                      textAlign: 'center',
-                      border: '2px solid',
-                      borderColor: isCurrent ? '#3b82f6' : isProcessed ? '#22c55e' : '#374151',
-                      borderRadius: '6px',
-                      backgroundColor: isCurrent ? '#3b82f615' : isProcessed ? '#22c55e15' : '#1e293b',
-                      color: 'white',
-                      fontWeight: '600',
-                      fontSize: '14px'
-                    }}
-                  >
-                    {cell}
-                  </div>
-                );
-              })}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  const togglePause = () => setIsPaused(!isPaused);
 
-  const renderStringComparison = () => {
-    if (!steps.length) return null;
-    
-    const step = steps[currentStep];
-    
-    return (
-      <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#22c55e', marginBottom: '15px' }}>🔤 Character Comparison</h3>
-        
-        {/* String X */}
-        <div style={{ marginBottom: '10px' }}>
-          <span style={{ color: '#94a3b8', marginRight: '10px', fontSize: '16px' }}>X:</span>
-          {stringX.split('').map((char, i) => {
-            const isCurrent = step.i > 0 && i === step.i - 1;
-            
-            return (
-              <span
-                key={i}
-                style={{
-                  backgroundColor: isCurrent ? '#22c55e' : '#374151',
-                  color: 'white',
-                  padding: '8px 12px',
-                  margin: '2px',
-                  borderRadius: '6px',
-                  border: isCurrent ? '2px solid #16a34a' : '2px solid transparent',
-                  display: 'inline-block',
-                  width: '20px',
-                  textAlign: 'center',
-                  fontWeight: '600'
-                }}
-              >
-                {char}
-              </span>
-            );
-          })}
-        </div>
-        
-        {/* String Y */}
-        <div style={{ marginBottom: '15px' }}>
-          <span style={{ color: '#94a3b8', marginRight: '10px', fontSize: '16px' }}>Y:</span>
-          {stringY.split('').map((char, j) => {
-            const isCurrent = step.j > 0 && j === step.j - 1;
-            
-            return (
-              <span
-                key={j}
-                style={{
-                  backgroundColor: isCurrent ? '#3b82f6' : '#374151',
-                  color: 'white',
-                  padding: '8px 12px',
-                  margin: '2px',
-                  borderRadius: '6px',
-                  border: isCurrent ? '2px solid #2563eb' : '2px solid transparent',
-                  display: 'inline-block',
-                  width: '20px',
-                  textAlign: 'center',
-                  fontWeight: '600'
-                }}
-              >
-                {char}
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
-  const renderVisualization = () => {
-    if (!steps.length) return null;
-    
-    const step = steps[currentStep];
-    
-    return (
-      <div style={{ margin: '30px 0', fontFamily: 'monospace', fontSize: '16px' }}>
-        {/* Current Step Info */}
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '20px', 
-          backgroundColor: step.isMatch ? '#22c55e15' : '#3b82f615',
-          borderRadius: '12px',
-          border: `2px solid ${step.isMatch ? '#22c55e' : '#3b82f6'}`
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px' }}>
-            DP[{step.i}][{step.j}] = {step.dpValue}
-          </div>
-          
-          {step.i > 0 && step.j > 0 && (
-            <div style={{ fontSize: '16px', color: '#e2e8f0', marginBottom: '8px' }}>
-              Comparing: X[{step.i-1}] = '{step.charX}' with Y[{step.j-1}] = '{step.charY}'
-              <span style={{ 
-                marginLeft: '15px', 
-                padding: '4px 8px', 
-                borderRadius: '4px',
-                backgroundColor: step.isMatch ? '#22c55e' : '#ef4444',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}>
-                {step.isMatch ? '✓ MATCH' : '✗ NO MATCH'}
-              </span>
-            </div>
-          )}
-          
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Action: {step.action}
-          </div>
-        </div>
-
-        {/* String Comparison */}
-        {renderStringComparison()}
-
-        {/* DP Table */}
-        {renderDPTable()}
-
-        {/* Recurrence Formula */}
-        <div style={{ 
-          marginTop: '15px', 
-          padding: '15px', 
-          backgroundColor: '#1e293b',
-          borderRadius: '8px',
-          border: '1px solid #374151'
-        }}>
-          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '5px' }}>
-            🧮 Recurrence: If X[i-1] == Y[j-1] → DP[i][j] = 1 + DP[i-1][j-1]
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Else → DP[i][j] = max(DP[i-1][j], DP[i][j-1])
-          </div>
-        </div>
-      </div>
-    );
+  const getCellColor = (i, j) => {
+    if (currentCell?.i === i && currentCell?.j === j) return 'bg-yellow-200 border-yellow-500';
+    if (dp[i] && dp[i][j] > 0) return 'bg-blue-100 border-blue-400';
+    return 'bg-white border-gray-300';
   };
 
   return (
-    <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
-      minHeight: '100vh',
-      padding: '40px',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <a href="/dynamicprogramming" style={{
-        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-        color: 'white',
-        padding: '12px 24px',
-        borderRadius: '12px',
-        textDecoration: 'none',
-        fontWeight: '600'
-      }}>
-        ← Back to Dynamic Programming
-      </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-blue-800 mb-2">Longest Common Subsequence (LCS)</h1>
+          <p className="text-blue-600">Find longest common sequence using dynamic programming</p>
+        </motion.div>
 
-      <div style={{ textAlign: 'center', margin: '40px 0' }}>
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem' }}>
-          🧬 LCS Visualizer
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#94a3b8' }}>
-          Longest Common Subsequence using Dynamic Programming
-        </p>
-        <div style={{ fontSize: '14px', color: '#64748b', marginTop: '10px' }}>
-          <span style={{ backgroundColor: '#22c55e', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🟢 Match</span>
-          <span style={{ backgroundColor: '#3b82f6', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🔵 Current</span>
-          <span style={{ backgroundColor: '#374151', padding: '2px 8px', borderRadius: '4px' }}>⚫ Processed</span>
-        </div>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">DP Table</h2>
+            
+            <div className="overflow-x-auto mb-4">
+              {dp.length > 0 && (
+                <table className="border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border p-2 bg-gray-100 text-xs"></th>
+                      <th className="border p-2 bg-gray-100 text-xs">ε</th>
+                      {text2.split('').map((char, idx) => (
+                        <th key={idx} className="border p-2 bg-gray-100 font-bold">{char}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dp.map((row, i) => (
+                      <tr key={i}>
+                        <td className="border p-2 bg-gray-100 font-bold text-xs">
+                          {i === 0 ? 'ε' : text1[i - 1]}
+                        </td>
+                        {row.map((val, j) => (
+                          <td
+                            key={j}
+                            className={`border p-3 text-center font-semibold transition-all ${getCellColor(i, j)}`}
+                          >
+                            {val}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
 
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        background: 'rgba(255,255,255,0.1)',
-        borderRadius: '20px',
-        padding: '30px'
-      }}>
-        {/* Input Controls */}
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1', minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>String X:</label>
-            <input
-              type="text"
-              value={stringX}
-              onChange={(e) => setStringX(e.target.value.toUpperCase())}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '2px solid #374151',
-                backgroundColor: '#1e293b',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-          </div>
-          <div style={{ flex: '1', minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>String Y:</label>
-            <input
-              type="text"
-              value={stringY}
-              onChange={(e) => setStringY(e.target.value.toUpperCase())}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '2px solid #374151',
-                backgroundColor: '#1e293b',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-          </div>
-          <div style={{ minWidth: '150px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Speed (ms):</label>
-            <input
-              type="range"
-              min="300"
-              max="2000"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              style={{ width: '100%' }}
-            />
-            <div style={{ textAlign: 'center', fontSize: '14px', color: '#94a3b8' }}>{speed}ms</div>
-          </div>
-        </div>
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Text 1:</label>
+                <input
+                  type="text"
+                  value={text1}
+                  onChange={(e) => setText1(e.target.value.toUpperCase())}
+                  disabled={isRunning}
+                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Text 2:</label>
+                <input
+                  type="text"
+                  value={text2}
+                  onChange={(e) => setText2(e.target.value.toUpperCase())}
+                  disabled={isRunning}
+                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                />
+              </div>
+            </div>
 
-        {/* Control Buttons */}
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <button
-            onClick={runVisualization}
-            disabled={loading}
-            style={{
-              background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {loading ? 'Computing...' : 'Compute LCS'}
-          </button>
-          
-          <button
-            onClick={playVisualization}
-            disabled={!steps.length || isPlaying}
-            style={{
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {isPlaying ? 'Playing...' : 'Play'}
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={!steps.length || currentStep === 0}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Previous
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-            disabled={!steps.length || currentStep >= steps.length - 1}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Next
-          </button>
-        </div>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={runLCS} disabled={isRunning} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50">
+                {isRunning ? 'Running...' : 'Start LCS'}
+              </button>
+              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
+              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Speed:</label>
+                <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              </div>
+              <a href="/dynamicprogramming" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
+            </div>
+          </motion.div>
 
-        {/* Result Summary */}
-        {lcsString && (
-          <div style={{ 
-            marginBottom: '30px', 
-            padding: '20px', 
-            backgroundColor: '#22c55e15',
-            borderRadius: '12px',
-            border: '2px solid #22c55e'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: '#22c55e' }}>
-              🏆 LCS Found!
-            </div>
-            <div style={{ fontSize: '16px', marginBottom: '8px' }}>
-              Longest Common Subsequence: "{lcsString}"
-            </div>
-            <div style={{ fontSize: '16px', color: '#94a3b8' }}>
-              Length: {lcsLength}
-            </div>
-          </div>
-        )}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            {lcs && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">LCS Result</h3>
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div className="text-3xl font-bold text-blue-600 font-mono text-center mb-2">{lcs}</div>
+                  <div className="text-sm text-gray-600 text-center">Length: {lcs.length}</div>
+                </div>
+              </div>
+            )}
 
-        {/* Progress */}
-        {steps.length > 0 && (
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span>Step {currentStep + 1} of {steps.length}</span>
-              <span>Filling DP table...</span>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Input Strings</h3>
+              <div className="space-y-3">
+                <div className="p-3 bg-gray-50 rounded">
+                  <div className="text-xs text-gray-500 mb-1">Text 1:</div>
+                  <div className="flex gap-1">
+                    {text1.split('').map((char, idx) => (
+                      <div key={idx} className={`w-10 h-10 flex items-center justify-center font-bold rounded ${lcs.includes(char) ? 'bg-blue-200 text-blue-800' : 'bg-gray-200'}`}>
+                        {char}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-3 bg-gray-50 rounded">
+                  <div className="text-xs text-gray-500 mb-1">Text 2:</div>
+                  <div className="flex gap-1">
+                    {text2.split('').map((char, idx) => (
+                      <div key={idx} className={`w-10 h-10 flex items-center justify-center font-bold rounded ${lcs.includes(char) ? 'bg-blue-200 text-blue-800' : 'bg-gray-200'}`}>
+                        {char}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div style={{
-              width: '100%',
-              height: '8px',
-              backgroundColor: '#374151',
-              borderRadius: '4px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${((currentStep + 1) / steps.length) * 100}%`,
-                height: '100%',
-                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                transition: 'width 0.3s ease'
-              }} />
-            </div>
-          </div>
-        )}
 
-        {/* Visualization Area */}
-        <div style={{
-          background: '#1e293b',
-          borderRadius: '12px',
-          padding: '30px',
-          minHeight: '400px'
-        }}>
-          {steps.length > 0 ? renderVisualization() : (
-            <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '18px' }}>
-              Enter two strings and click "Compute LCS" to start visualization
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">DP Recurrence</h3>
+              <div className="p-4 bg-gray-50 rounded font-mono text-sm">
+                <div className="mb-2">if (text1[i] == text2[j]):</div>
+                <div className="ml-4 text-blue-600">dp[i][j] = dp[i-1][j-1] + 1</div>
+                <div className="mt-2">else:</div>
+                <div className="ml-4 text-blue-600">dp[i][j] = max(dp[i-1][j], dp[i][j-1])</div>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Preset Examples */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          background: 'rgba(34, 197, 94, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #22c55e'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#22c55e' }}>Try These Examples:</h3>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => { setStringX('ABCBDAB'); setStringY('BDCAB'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #22c55e',
-                backgroundColor: 'transparent',
-                color: '#22c55e',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Classic Example
-            </button>
-            <button
-              onClick={() => { setStringX('AGGTAB'); setStringY('GXTXAYB'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #3b82f6',
-                backgroundColor: 'transparent',
-                color: '#3b82f6',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Complex Case
-            </button>
-            <button
-              onClick={() => { setStringX('ABCD'); setStringY('ACBDX'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #f59e0b',
-                backgroundColor: 'transparent',
-                color: '#f59e0b',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Simple Case
-            </button>
-          </div>
-        </div>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
+              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+                {log.map((entry, idx) => (
+                  <div key={idx} className={`p-2 rounded ${entry.includes('✓') ? 'text-green-700 bg-green-50' : 'text-gray-700'}`}>
+                    {entry}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Algorithm Info */}
-        <div style={{
-          marginTop: '20px',
-          padding: '20px',
-          background: 'rgba(124, 58, 237, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#7c3aed' }}>LCS Algorithm Explanation:</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Dynamic Programming:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li>🎯 DP[i][j] = LCS length of X[0..i-1] and Y[0..j-1]</li>
-                <li>✅ If chars match: DP[i][j] = 1 + DP[i-1][j-1]</li>
-                <li>❌ If no match: DP[i][j] = max(DP[i-1][j], DP[i][j-1])</li>
-                <li>🔄 Build table bottom-up</li>
-              </ul>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong>Time Complexity:</strong> O(m × n)</p>
+                <p><strong>Space Complexity:</strong> O(m × n)</p>
+                <p><strong>Approach:</strong> Dynamic Programming</p>
+                <p><strong>Use Case:</strong> Diff tools, DNA sequencing</p>
+              </div>
             </div>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Complexity:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li><strong>Time:</strong> O(m × n)</li>
-                <li><strong>Space:</strong> O(m × n)</li>
-                <li><strong>Applications:</strong> DNA analysis, diff tools</li>
-                <li><strong>Optimal:</strong> Guarantees longest subsequence</li>
-              </ul>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

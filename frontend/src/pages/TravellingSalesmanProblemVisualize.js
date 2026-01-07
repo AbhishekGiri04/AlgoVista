@@ -1,482 +1,319 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 const TravellingSalesmanProblemVisualize = () => {
-  const [distanceMatrix, setDistanceMatrix] = useState([
-    [0, 10, 15, 20],
-    [10, 0, 35, 25],
-    [15, 35, 0, 30],
-    [20, 25, 30, 0]
+  const [cities, setCities] = useState([
+    { id: 0, x: 150, y: 150, name: 'A' },
+    { id: 1, x: 350, y: 100, name: 'B' },
+    { id: 2, x: 400, y: 300, name: 'C' },
+    { id: 3, x: 200, y: 350, name: 'D' },
+    { id: 4, x: 100, y: 250, name: 'E' }
   ]);
-  const [steps, setSteps] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [minCost, setMinCost] = useState(0);
+
+  const [distances, setDistances] = useState([]);
   const [bestPath, setBestPath] = useState([]);
-  const [speed, setSpeed] = useState(1000);
-  const [n, setN] = useState(4);
+  const [bestCost, setBestCost] = useState(Infinity);
+  const [currentPath, setCurrentPath] = useState([]);
+  const [currentCost, setCurrentCost] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [speed, setSpeed] = useState(800);
+  const [log, setLog] = useState([]);
+  const [explored, setExplored] = useState(0);
 
-  const runVisualization = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/tsp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ distanceMatrix })
-      });
-      const data = await response.json();
+  useEffect(() => {
+    calculateDistances();
+  }, [cities]);
+
+  const calculateDistances = () => {
+    const n = cities.length;
+    const dist = Array(n).fill(0).map(() => Array(n).fill(0));
+    
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (i !== j) {
+          const dx = cities[i].x - cities[j].x;
+          const dy = cities[i].y - cities[j].y;
+          dist[i][j] = Math.sqrt(dx * dx + dy * dy);
+        }
+      }
+    }
+    
+    setDistances(dist);
+    reset();
+  };
+
+  const reset = () => {
+    setBestPath([]);
+    setBestCost(Infinity);
+    setCurrentPath([]);
+    setCurrentCost(0);
+    setIsRunning(false);
+    setIsPaused(false);
+    setExplored(0);
+    setLog(['Algorithm initialized', `Cities: ${cities.length}`, 'Using branch and bound approach']);
+  };
+
+  const tspBranchBound = async (path, visited, cost, newLog) => {
+    if (path.length === cities.length) {
+      const returnCost = cost + distances[path[path.length - 1]][path[0]];
+      setCurrentPath([...path, path[0]]);
+      setCurrentCost(returnCost);
       
-      if (data.steps) {
-        setSteps(data.steps.reverse()); // Reverse to show forward progression
-        setMinCost(data.minCost);
-        setBestPath(data.bestPath);
-        setN(data.n);
-        setCurrentStep(0);
+      if (returnCost < bestCost) {
+        setBestPath([...path, path[0]]);
+        setBestCost(returnCost);
+        newLog.push(`✓ New best path found: ${returnCost.toFixed(2)}`);
       }
-    } catch (error) {
-      console.error('Error:', error);
+      
+      setExplored(prev => prev + 1);
+      setLog([...newLog]);
+      await new Promise(resolve => setTimeout(resolve, speed));
+      return;
     }
-    setLoading(false);
-  };
 
-  const playVisualization = () => {
-    setIsPlaying(true);
-    const interval = setInterval(() => {
-      setCurrentStep(prev => {
-        if (prev >= steps.length - 1) {
-          setIsPlaying(false);
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, speed);
-  };
-
-  const updateMatrixSize = (newSize) => {
-    const newMatrix = Array(newSize).fill().map(() => Array(newSize).fill(0));
-    
-    // Copy existing values
-    for (let i = 0; i < Math.min(newSize, distanceMatrix.length); i++) {
-      for (let j = 0; j < Math.min(newSize, distanceMatrix[0].length); j++) {
-        newMatrix[i][j] = distanceMatrix[i][j];
-      }
-    }
-    
-    // Fill new positions with random values
-    for (let i = 0; i < newSize; i++) {
-      for (let j = 0; j < newSize; j++) {
-        if (i !== j && newMatrix[i][j] === 0) {
-          const randomDist = Math.floor(Math.random() * 50) + 10;
-          newMatrix[i][j] = randomDist;
-          newMatrix[j][i] = randomDist; // Symmetric
-        }
-      }
-    }
-    
-    setDistanceMatrix(newMatrix);
-    setN(newSize);
-  };
-
-  const renderDistanceMatrix = () => (
-    <div style={{ marginBottom: '20px' }}>
-      <h3 style={{ color: '#3b82f6', marginBottom: '15px' }}>📊 Distance Matrix</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${n + 1}, 1fr)`, gap: '2px', maxWidth: '400px' }}>
-        <div style={{ padding: '8px', fontWeight: '600', textAlign: 'center' }}></div>
-        {Array.from({ length: n }, (_, i) => (
-          <div key={i} style={{ padding: '8px', fontWeight: '600', textAlign: 'center', color: '#3b82f6' }}>
-            {String.fromCharCode(65 + i)}
-          </div>
-        ))}
+    for (let i = 0; i < cities.length; i++) {
+      while (isPaused) await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (!visited[i]) {
+        const newCost = path.length > 0 ? cost + distances[path[path.length - 1]][i] : 0;
         
-        {distanceMatrix.map((row, i) => (
-          <React.Fragment key={i}>
-            <div style={{ padding: '8px', fontWeight: '600', textAlign: 'center', color: '#3b82f6' }}>
-              {String.fromCharCode(65 + i)}
-            </div>
-            {row.map((cell, j) => (
-              <input
-                key={j}
-                type="number"
-                value={cell}
-                onChange={(e) => {
-                  const newMatrix = [...distanceMatrix];
-                  const value = parseInt(e.target.value) || 0;
-                  newMatrix[i][j] = value;
-                  if (i !== j) newMatrix[j][i] = value; // Keep symmetric
-                  setDistanceMatrix(newMatrix);
-                }}
-                style={{
-                  padding: '6px',
-                  textAlign: 'center',
-                  border: '1px solid #374151',
-                  borderRadius: '4px',
-                  backgroundColor: i === j ? '#374151' : '#1e293b',
-                  color: 'white',
-                  fontSize: '12px',
-                  width: '50px'
-                }}
-                disabled={i === j}
-              />
-            ))}
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderVisualization = () => {
-    if (!steps.length) return null;
-    
-    const step = steps[currentStep];
-    
-    return (
-      <div style={{ margin: '30px 0', fontFamily: 'monospace', fontSize: '16px' }}>
-        {/* Bitmask Visualization */}
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '15px', 
-          backgroundColor: '#7c3aed15',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
-            🎯 DP State: mask = {step.mask} (binary: {step.maskBinary})
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '8px' }}>
-            Current city: {String.fromCharCode(65 + step.currentCity)} | Cost: {step.cost}
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Visited cities: {step.maskBinary.split('').map((bit, i) => 
-              bit === '1' ? String.fromCharCode(65 + (n - 1 - i)) : ''
-            ).filter(Boolean).join(', ')}
-          </div>
-        </div>
-
-        {/* Cities Visualization */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-            {Array.from({ length: n }, (_, i) => {
-              const isVisited = (step.mask >> i) & 1;
-              const isCurrent = i === step.currentCity;
-              
-              return (
-                <div
-                  key={i}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    backgroundColor: isCurrent ? '#22c55e' : isVisited ? '#3b82f6' : '#64748b',
-                    color: 'white',
-                    border: isCurrent ? '3px solid #16a34a' : '2px solid transparent'
-                  }}
-                >
-                  {String.fromCharCode(65 + i)}
-                </div>
-              );
-            })}
-          </div>
+        if (newCost < bestCost) {
+          const newPath = [...path, i];
+          const newVisited = [...visited];
+          newVisited[i] = true;
           
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            🟢 Current | 🔵 Visited | ⚫ Unvisited
-          </div>
-        </div>
+          setCurrentPath(newPath);
+          setCurrentCost(newCost);
+          newLog.push(`Exploring: ${newPath.map(idx => cities[idx].name).join('→')} (cost: ${newCost.toFixed(2)})`);
+          setLog([...newLog]);
+          await new Promise(resolve => setTimeout(resolve, speed / 2));
+          
+          await tspBranchBound(newPath, newVisited, newCost, newLog);
+        }
+      }
+    }
+  };
 
-        {/* Path Visualization */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>
-            🛣️ Current Path: {step.path.map(city => String.fromCharCode(65 + city)).join(' → ')}
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Path cost calculation: {step.path.slice(0, -1).map((city, i) => {
-              if (i === step.path.length - 2) return '';
-              const nextCity = step.path[i + 1];
-              return `${String.fromCharCode(65 + city)}→${String.fromCharCode(65 + nextCity)}(${distanceMatrix[city][nextCity]})`;
-            }).filter(Boolean).join(' + ')}
-          </div>
-        </div>
+  const runTSP = async () => {
+    setIsRunning(true);
+    setIsPaused(false);
+    setBestCost(Infinity);
+    
+    const newLog = [...log];
+    const visited = Array(cities.length).fill(false);
+    visited[0] = true;
+    
+    await tspBranchBound([0], visited, 0, newLog);
+    
+    setCurrentPath([]);
+    setIsRunning(false);
+    newLog.push(`Algorithm completed!`);
+    newLog.push(`Best path: ${bestPath.map(idx => cities[idx].name).join('→')}`);
+    newLog.push(`Total distance: ${bestCost.toFixed(2)}`);
+    setLog([...newLog]);
+  };
 
-        {/* Step Details */}
-        <div style={{ 
-          marginTop: '20px', 
-          padding: '20px', 
-          backgroundColor: step.isComplete ? '#22c55e15' : '#3b82f615',
-          borderRadius: '12px',
-          border: `2px solid ${step.isComplete ? '#22c55e' : '#3b82f6'}`
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px' }}>
-            {step.action}
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            {step.isComplete ? 
-              `✅ Complete tour found with cost ${step.cost}` :
-              `🔄 Exploring subproblems from city ${String.fromCharCode(65 + step.currentCity)}`
-            }
-          </div>
-        </div>
+  const togglePause = () => setIsPaused(!isPaused);
 
-        {/* DP Formula */}
-        <div style={{ 
-          marginTop: '15px', 
-          padding: '15px', 
-          backgroundColor: '#1e293b',
-          borderRadius: '8px',
-          border: '1px solid #374151'
-        }}>
-          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '5px' }}>
-            🧮 DP Formula: DP[mask][i] = min(DP[mask^(1&lt;&lt;i)][j] + dist[j][i])
-          </div>
-          <div style={{ fontSize: '12px', color: '#64748b' }}>
-            Where mask represents visited cities, i is current city
-          </div>
-        </div>
-      </div>
-    );
+  const getEdgeColor = (from, to) => {
+    if (bestPath.length > 0) {
+      for (let i = 0; i < bestPath.length - 1; i++) {
+        if ((bestPath[i] === from && bestPath[i + 1] === to) || 
+            (bestPath[i] === to && bestPath[i + 1] === from)) {
+          return '#10B981';
+        }
+      }
+    }
+    if (currentPath.length > 0) {
+      for (let i = 0; i < currentPath.length - 1; i++) {
+        if ((currentPath[i] === from && currentPath[i + 1] === to) || 
+            (currentPath[i] === to && currentPath[i + 1] === from)) {
+          return '#F59E0B';
+        }
+      }
+    }
+    return '#E5E7EB';
   };
 
   return (
-    <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
-      minHeight: '100vh',
-      padding: '40px',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <a href="/branchandbound" style={{
-        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-        color: 'white',
-        padding: '12px 24px',
-        borderRadius: '12px',
-        textDecoration: 'none',
-        fontWeight: '600'
-      }}>
-        ← Back to Branch & Bound
-      </a>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-cyan-800 mb-2">Travelling Salesman Problem (TSP)</h1>
+          <p className="text-cyan-600">Find shortest route visiting all cities using branch and bound</p>
+        </motion.div>
 
-      <div style={{ textAlign: 'center', margin: '40px 0' }}>
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem' }}>
-          🧭 TSP Visualizer (DP + Bitmask)
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#94a3b8' }}>
-          Travelling Salesman Problem using Dynamic Programming with Bitmasking
-        </p>
-        <div style={{ fontSize: '14px', color: '#64748b', marginTop: '10px' }}>
-          <span style={{ backgroundColor: '#22c55e', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🟢 Current</span>
-          <span style={{ backgroundColor: '#3b82f6', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🔵 Visited</span>
-          <span style={{ backgroundColor: '#64748b', padding: '2px 8px', borderRadius: '4px' }}>⚫ Unvisited</span>
-        </div>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">City Map</h2>
+            
+            <div className="relative bg-gray-50 rounded-lg p-4 h-96">
+              <svg width="100%" height="100%" viewBox="0 0 500 400">
+                {/* All edges (light) */}
+                {cities.map((city1, i) => 
+                  cities.slice(i + 1).map((city2, j) => {
+                    const idx2 = i + j + 1;
+                    return (
+                      <line
+                        key={`${i}-${idx2}`}
+                        x1={city1.x}
+                        y1={city1.y}
+                        x2={city2.x}
+                        y2={city2.y}
+                        stroke={getEdgeColor(i, idx2)}
+                        strokeWidth={getEdgeColor(i, idx2) === '#E5E7EB' ? 1 : 3}
+                        opacity={getEdgeColor(i, idx2) === '#E5E7EB' ? 0.3 : 1}
+                      />
+                    );
+                  })
+                )}
 
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        background: 'rgba(255,255,255,0.1)',
-        borderRadius: '20px',
-        padding: '30px'
-      }}>
-        {/* Controls */}
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Cities:</label>
-            <select
-              value={n}
-              onChange={(e) => updateMatrixSize(parseInt(e.target.value))}
-              style={{
-                padding: '8px',
-                borderRadius: '6px',
-                border: '2px solid #374151',
-                backgroundColor: '#1e293b',
-                color: 'white'
-              }}
-            >
-              <option value={3}>3 Cities</option>
-              <option value={4}>4 Cities</option>
-              <option value={5}>5 Cities</option>
-            </select>
-          </div>
-          
-          <div style={{ minWidth: '150px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Speed (ms):</label>
-            <input
-              type="range"
-              min="500"
-              max="3000"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              style={{ width: '100%' }}
-            />
-            <div style={{ textAlign: 'center', fontSize: '14px', color: '#94a3b8' }}>{speed}ms</div>
-          </div>
-        </div>
+                {/* Cities */}
+                {cities.map((city, idx) => (
+                  <g key={city.id}>
+                    <circle
+                      cx={city.x}
+                      cy={city.y}
+                      r="20"
+                      fill={idx === 0 ? '#06B6D4' : currentPath.includes(idx) ? '#FCD34D' : '#E5E7EB'}
+                      stroke="#0E7490"
+                      strokeWidth="3"
+                    />
+                    <text
+                      x={city.x}
+                      y={city.y + 5}
+                      textAnchor="middle"
+                      className="text-sm font-bold"
+                      fill="#374151"
+                    >
+                      {city.name}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            </div>
 
-        {/* Distance Matrix */}
-        {renderDistanceMatrix()}
+            <div className="flex flex-wrap gap-2 mt-4">
+              <button onClick={runTSP} disabled={isRunning} className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 disabled:opacity-50">
+                {isRunning ? 'Running...' : 'Start TSP'}
+              </button>
+              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
+              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Speed:</label>
+                <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              </div>
+              <a href="/branchandbound" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
+            </div>
+          </motion.div>
 
-        {/* Control Buttons */}
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <button
-            onClick={runVisualization}
-            disabled={loading}
-            style={{
-              background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {loading ? 'Solving...' : 'Solve TSP'}
-          </button>
-          
-          <button
-            onClick={playVisualization}
-            disabled={!steps.length || isPlaying}
-            style={{
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {isPlaying ? 'Playing...' : 'Play'}
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={!steps.length || currentStep === 0}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Previous
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-            disabled={!steps.length || currentStep >= steps.length - 1}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Next
-          </button>
-        </div>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            {bestPath.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Best Solution</h3>
+                <div className="space-y-3">
+                  <div className="p-4 bg-cyan-50 rounded-lg">
+                    <div className="text-sm text-gray-600 mb-1">Shortest Distance:</div>
+                    <div className="text-3xl font-bold text-cyan-600">{bestCost.toFixed(2)}</div>
+                  </div>
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <div className="text-sm text-gray-600 mb-2">Best Path:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {bestPath.map((idx, i) => (
+                        <React.Fragment key={i}>
+                          <span className="px-3 py-1 bg-green-500 text-white rounded font-semibold">
+                            {cities[idx].name}
+                          </span>
+                          {i < bestPath.length - 1 && <span className="text-gray-400">→</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Result Summary */}
-        {bestPath.length > 0 && (
-          <div style={{ 
-            marginBottom: '30px', 
-            padding: '20px', 
-            backgroundColor: '#22c55e15',
-            borderRadius: '12px',
-            border: '2px solid #22c55e'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: '#22c55e' }}>
-              🏆 Optimal Solution Found!
-            </div>
-            <div style={{ fontSize: '16px', marginBottom: '8px' }}>
-              Best Path: {bestPath.map(city => String.fromCharCode(65 + city)).join(' → ')}
-            </div>
-            <div style={{ fontSize: '16px', color: '#94a3b8' }}>
-              Minimum Cost: {minCost}
-            </div>
-          </div>
-        )}
+            {currentPath.length > 0 && isRunning && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Current Exploration</h3>
+                <div className="space-y-2">
+                  <div className="p-3 bg-yellow-50 rounded">
+                    <div className="text-sm text-gray-600">Current Path:</div>
+                    <div className="font-mono text-yellow-700">
+                      {currentPath.map(idx => cities[idx].name).join(' → ')}
+                    </div>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    <div className="text-sm text-gray-600">Current Cost:</div>
+                    <div className="font-bold text-gray-800">{currentCost.toFixed(2)}</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Progress */}
-        {steps.length > 0 && (
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span>Step {currentStep + 1} of {steps.length}</span>
-              <span>Exploring DP states...</span>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-gray-50 rounded">
+                  <div className="text-xs text-gray-600">Cities</div>
+                  <div className="text-xl font-bold text-gray-800">{cities.length}</div>
+                </div>
+                <div className="p-3 bg-gray-50 rounded">
+                  <div className="text-xs text-gray-600">Paths Explored</div>
+                  <div className="text-xl font-bold text-gray-800">{explored}</div>
+                </div>
+              </div>
             </div>
-            <div style={{
-              width: '100%',
-              height: '8px',
-              backgroundColor: '#374151',
-              borderRadius: '4px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${((currentStep + 1) / steps.length) * 100}%`,
-                height: '100%',
-                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-                transition: 'width 0.3s ease'
-              }} />
-            </div>
-          </div>
-        )}
 
-        {/* Visualization Area */}
-        <div style={{
-          background: '#1e293b',
-          borderRadius: '12px',
-          padding: '30px',
-          minHeight: '400px'
-        }}>
-          {steps.length > 0 ? renderVisualization() : (
-            <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '18px' }}>
-              Set up your distance matrix and click "Solve TSP" to start visualization
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Cities</h3>
+              <div className="space-y-2">
+                {cities.map((city, idx) => (
+                  <div
+                    key={city.id}
+                    className={`p-2 rounded flex justify-between ${
+                      idx === 0 ? 'bg-cyan-100' :
+                      bestPath.includes(idx) ? 'bg-green-50' :
+                      'bg-gray-50'
+                    }`}
+                  >
+                    <span className="font-bold">{city.name}</span>
+                    <span className="text-sm text-gray-600">
+                      {idx === 0 ? '(Start)' : `(${city.x}, ${city.y})`}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Algorithm Info */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          background: 'rgba(124, 58, 237, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#7c3aed' }}>TSP Algorithm Explanation:</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Dynamic Programming:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li>🎯 DP[mask][i] = min cost to visit cities in mask, end at i</li>
-                <li>🔢 Bitmask represents visited cities (1=visited, 0=not)</li>
-                <li>🔄 Try all unvisited cities from current position</li>
-                <li>📊 Memoization avoids recomputing subproblems</li>
-              </ul>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
+              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+                {log.slice(-20).map((entry, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-2 rounded ${
+                      entry.includes('✓') ? 'text-green-700 bg-green-50' :
+                      'text-gray-700'
+                    }`}
+                  >
+                    {entry}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Complexity:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li><strong>Time:</strong> O(n² × 2ⁿ)</li>
-                <li><strong>Space:</strong> O(n × 2ⁿ)</li>
-                <li><strong>Practical for:</strong> n ≤ 20 cities</li>
-                <li><strong>Optimal:</strong> Guarantees shortest tour</li>
-              </ul>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong>Time Complexity:</strong> O(n!)</p>
+                <p><strong>Space Complexity:</strong> O(n)</p>
+                <p><strong>Approach:</strong> Branch and Bound</p>
+                <p><strong>Use Case:</strong> Route optimization, logistics</p>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

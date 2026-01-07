@@ -1,518 +1,264 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 const HuffmanCodingVisualize = () => {
-  const [text, setText] = useState('ABCDEF');
+  const [inputText, setInputText] = useState('ABRACADABRA');
   const [frequencies, setFrequencies] = useState({});
-  const [steps, setSteps] = useState([]);
-  const [codes, setCodes] = useState({});
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [originalBits, setOriginalBits] = useState(0);
-  const [compressedBits, setCompressedBits] = useState(0);
+  const [huffmanCodes, setHuffmanCodes] = useState({});
+  const [tree, setTree] = useState(null);
+  const [encodedText, setEncodedText] = useState('');
   const [compressionRatio, setCompressionRatio] = useState(0);
-  const [speed, setSpeed] = useState(1200);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [speed, setSpeed] = useState(1000);
+  const [log, setLog] = useState([]);
+  const [currentNodes, setCurrentNodes] = useState([]);
 
-  const runVisualization = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/huffman', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-      });
-      const data = await response.json();
-      
-      if (data.steps) {
-        setFrequencies(data.frequencies);
-        setSteps(data.steps);
-        setCodes(data.codes);
-        setOriginalBits(data.originalBits);
-        setCompressedBits(data.compressedBits);
-        setCompressionRatio(data.compressionRatio);
-        setCurrentStep(0);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  useEffect(() => {
+    reset();
+  }, []);
+
+  const reset = () => {
+    const freq = {};
+    for (const char of inputText) {
+      freq[char] = (freq[char] || 0) + 1;
     }
-    setLoading(false);
+    setFrequencies(freq);
+    setHuffmanCodes({});
+    setTree(null);
+    setEncodedText('');
+    setCompressionRatio(0);
+    setIsRunning(false);
+    setIsPaused(false);
+    setCurrentNodes([]);
+    setLog(['Algorithm initialized', `Input: ${inputText}`, `Unique characters: ${Object.keys(freq).length}`]);
   };
 
-  const playVisualization = () => {
-    setIsPlaying(true);
-    const interval = setInterval(() => {
-      setCurrentStep(prev => {
-        if (prev >= steps.length - 1) {
-          setIsPlaying(false);
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, speed);
+  const buildHuffmanTree = async () => {
+    setIsRunning(true);
+    setIsPaused(false);
+    
+    const newLog = [...log];
+    const nodes = Object.entries(frequencies).map(([char, freq]) => ({
+      char,
+      freq,
+      left: null,
+      right: null
+    }));
+
+    nodes.sort((a, b) => a.freq - b.freq);
+    setCurrentNodes([...nodes]);
+    newLog.push('Created leaf nodes for each character');
+    setLog([...newLog]);
+    await new Promise(resolve => setTimeout(resolve, speed));
+
+    while (nodes.length > 1) {
+      while (isPaused) await new Promise(resolve => setTimeout(resolve, 100));
+
+      nodes.sort((a, b) => a.freq - b.freq);
+      const left = nodes.shift();
+      const right = nodes.shift();
+
+      newLog.push(`Merging: ${left.char || 'node'}(${left.freq}) + ${right.char || 'node'}(${right.freq})`);
+      setLog([...newLog]);
+
+      const parent = {
+        char: null,
+        freq: left.freq + right.freq,
+        left,
+        right
+      };
+
+      nodes.push(parent);
+      setCurrentNodes([...nodes]);
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+
+    const root = nodes[0];
+    setTree(root);
+    newLog.push('Huffman tree constructed');
+    setLog([...newLog]);
+
+    // Generate codes
+    const codes = {};
+    const generateCodes = (node, code = '') => {
+      if (node.char) {
+        codes[node.char] = code || '0';
+        return;
+      }
+      if (node.left) generateCodes(node.left, code + '0');
+      if (node.right) generateCodes(node.right, code + '1');
+    };
+    generateCodes(root);
+    setHuffmanCodes(codes);
+
+    // Encode text
+    const encoded = inputText.split('').map(c => codes[c]).join('');
+    setEncodedText(encoded);
+
+    const originalBits = inputText.length * 8;
+    const compressedBits = encoded.length;
+    const ratio = ((1 - compressedBits / originalBits) * 100).toFixed(2);
+    setCompressionRatio(ratio);
+
+    newLog.push('Generated Huffman codes');
+    newLog.push(`Compression: ${originalBits} bits → ${compressedBits} bits (${ratio}% saved)`);
+    setLog([...newLog]);
+    setIsRunning(false);
   };
 
-  const renderFrequencyTable = () => (
-    <div style={{ marginBottom: '20px' }}>
-      <h3 style={{ color: '#3b82f6', marginBottom: '15px' }}>📊 Character Frequencies</h3>
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-        {Object.entries(frequencies).map(([char, freq]) => (
-          <div
-            key={char}
-            style={{
-              padding: '10px 15px',
-              borderRadius: '8px',
-              backgroundColor: '#22c55e',
-              color: 'white',
-              fontWeight: '600',
-              textAlign: 'center',
-              minWidth: '60px'
-            }}
-          >
-            <div style={{ fontSize: '18px' }}>{char}</div>
-            <div style={{ fontSize: '12px' }}>freq: {freq}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const togglePause = () => setIsPaused(!isPaused);
 
-  const renderHuffmanCodes = () => {
-    if (!Object.keys(codes).length) return null;
+  const renderTree = (node, x = 250, y = 50, offset = 80) => {
+    if (!node) return null;
     
     return (
-      <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#7c3aed', marginBottom: '15px' }}>🔤 Huffman Codes</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px' }}>
-          {Object.entries(codes)
-            .sort((a, b) => a[1].length - b[1].length)
-            .map(([char, code]) => (
-            <div
-              key={char}
-              style={{
-                padding: '12px',
-                borderRadius: '8px',
-                backgroundColor: '#7c3aed',
-                color: 'white',
-                fontWeight: '600',
-                textAlign: 'center'
-              }}
-            >
-              <div style={{ fontSize: '18px' }}>{char}</div>
-              <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>{code}</div>
-              <div style={{ fontSize: '10px', color: '#c4b5fd' }}>{code.length} bits</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderVisualization = () => {
-    if (!steps.length) return null;
-    
-    const step = steps[currentStep];
-    
-    return (
-      <div style={{ margin: '30px 0', fontFamily: 'monospace', fontSize: '16px' }}>
-        {/* Current Step Info */}
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '20px', 
-          backgroundColor: '#22c55e15',
-          borderRadius: '12px',
-          border: '2px solid #22c55e'
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px' }}>
-            Step {step.stepNum}: Building Huffman Tree
-          </div>
-          
-          <div style={{ fontSize: '16px', color: '#e2e8f0', marginBottom: '8px' }}>
-            Merging: {step.leftChar}({step.leftFreq}) + {step.rightChar}({step.rightFreq}) = *({step.mergedFreq})
-          </div>
-          
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            {step.action}
-          </div>
-        </div>
-
-        {/* Tree Building Visualization */}
-        <div style={{ marginBottom: '20px' }}>
-          <h4 style={{ color: '#f59e0b', marginBottom: '10px' }}>🌳 Tree Construction</h4>
-          <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
-            {/* Left Node */}
-            <div style={{
-              padding: '15px',
-              borderRadius: '12px',
-              backgroundColor: '#ef4444',
-              color: 'white',
-              fontWeight: '600',
-              textAlign: 'center',
-              minWidth: '80px'
-            }}>
-              <div style={{ fontSize: '16px' }}>{step.leftChar}</div>
-              <div style={{ fontSize: '12px' }}>freq: {step.leftFreq}</div>
-            </div>
-            
-            <span style={{ fontSize: '24px', color: '#94a3b8' }}>+</span>
-            
-            {/* Right Node */}
-            <div style={{
-              padding: '15px',
-              borderRadius: '12px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              fontWeight: '600',
-              textAlign: 'center',
-              minWidth: '80px'
-            }}>
-              <div style={{ fontSize: '16px' }}>{step.rightChar}</div>
-              <div style={{ fontSize: '12px' }}>freq: {step.rightFreq}</div>
-            </div>
-            
-            <span style={{ fontSize: '24px', color: '#94a3b8' }}>=</span>
-            
-            {/* Merged Node */}
-            <div style={{
-              padding: '15px',
-              borderRadius: '12px',
-              backgroundColor: '#22c55e',
-              color: 'white',
-              fontWeight: '600',
-              textAlign: 'center',
-              minWidth: '80px',
-              border: '3px solid #16a34a'
-            }}>
-              <div style={{ fontSize: '16px' }}>*</div>
-              <div style={{ fontSize: '12px' }}>freq: {step.mergedFreq}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Algorithm Explanation */}
-        <div style={{ 
-          marginTop: '15px', 
-          padding: '15px', 
-          backgroundColor: '#1e293b',
-          borderRadius: '8px',
-          border: '1px solid #374151'
-        }}>
-          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '5px' }}>
-            🧮 Greedy Strategy: Always merge two nodes with lowest frequencies
-          </div>
-          <div style={{ fontSize: '12px', color: '#64748b' }}>
-            Left child → 0, Right child → 1. Leaf nodes contain characters and their codes.
-          </div>
-        </div>
-      </div>
+      <g key={`${x}-${y}`}>
+        {node.left && (
+          <>
+            <line x1={x} y1={y} x2={x - offset} y2={y + 60} stroke="#6B7280" strokeWidth="2" />
+            <text x={x - offset / 2 - 10} y={y + 35} className="text-xs fill-blue-600 font-bold">0</text>
+            {renderTree(node.left, x - offset, y + 60, offset / 2)}
+          </>
+        )}
+        {node.right && (
+          <>
+            <line x1={x} y1={y} x2={x + offset} y2={y + 60} stroke="#6B7280" strokeWidth="2" />
+            <text x={x + offset / 2 + 5} y={y + 35} className="text-xs fill-red-600 font-bold">1</text>
+            {renderTree(node.right, x + offset, y + 60, offset / 2)}
+          </>
+        )}
+        <circle cx={x} cy={y} r="20" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
+        <text x={x} y={y - 5} textAnchor="middle" className="text-xs font-bold fill-white">
+          {node.char || 'N'}
+        </text>
+        <text x={x} y={y + 8} textAnchor="middle" className="text-xs fill-white">
+          {node.freq}
+        </text>
+      </g>
     );
   };
 
   return (
-    <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
-      minHeight: '100vh',
-      padding: '40px',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <a href="/greedyalgorithms" style={{
-        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-        color: 'white',
-        padding: '12px 24px',
-        borderRadius: '12px',
-        textDecoration: 'none',
-        fontWeight: '600'
-      }}>
-        ← Back to Greedy Algorithms
-      </a>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-green-800 mb-2">Huffman Coding</h1>
+          <p className="text-green-600">Data compression using binary trees</p>
+        </motion.div>
 
-      <div style={{ textAlign: 'center', margin: '40px 0' }}>
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem' }}>
-          🗜️ Huffman Coding Visualizer
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#94a3b8' }}>
-          Optimal prefix-free binary encoding using greedy tree construction
-        </p>
-        <div style={{ fontSize: '14px', color: '#64748b', marginTop: '10px' }}>
-          <span style={{ backgroundColor: '#ef4444', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🔴 Left Node</span>
-          <span style={{ backgroundColor: '#3b82f6', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🔵 Right Node</span>
-          <span style={{ backgroundColor: '#22c55e', padding: '2px 8px', borderRadius: '4px' }}>🟢 Merged</span>
-        </div>
-      </div>
-
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        background: 'rgba(255,255,255,0.1)',
-        borderRadius: '20px',
-        padding: '30px'
-      }}>
-        {/* Input Control */}
-        <div style={{ marginBottom: '30px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Input Text:</label>
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value.toUpperCase())}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: '2px solid #374151',
-              backgroundColor: '#1e293b',
-              color: 'white',
-              fontSize: '16px'
-            }}
-            placeholder="Enter text to encode..."
-          />
-        </div>
-
-        {/* Speed Control */}
-        <div style={{ marginBottom: '30px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Speed (ms):</label>
-          <input
-            type="range"
-            min="500"
-            max="3000"
-            value={speed}
-            onChange={(e) => setSpeed(parseInt(e.target.value))}
-            style={{ width: '200px' }}
-          />
-          <span style={{ marginLeft: '10px', fontSize: '14px', color: '#94a3b8' }}>{speed}ms</span>
-        </div>
-
-        {/* Control Buttons */}
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <button
-            onClick={runVisualization}
-            disabled={loading}
-            style={{
-              background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {loading ? 'Encoding...' : 'Generate Huffman Codes'}
-          </button>
-          
-          <button
-            onClick={playVisualization}
-            disabled={!steps.length || isPlaying}
-            style={{
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {isPlaying ? 'Playing...' : 'Play'}
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={!steps.length || currentStep === 0}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Previous
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-            disabled={!steps.length || currentStep >= steps.length - 1}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Next
-          </button>
-        </div>
-
-        {/* Compression Stats */}
-        {originalBits > 0 && (
-          <div style={{ 
-            marginBottom: '30px', 
-            padding: '20px', 
-            backgroundColor: '#22c55e15',
-            borderRadius: '12px',
-            border: '2px solid #22c55e'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: '#22c55e' }}>
-              🗜️ Compression Results
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Huffman Tree</h2>
+            
+            <div className="relative bg-gray-50 rounded-lg p-4 h-96 overflow-auto">
+              {tree ? (
+                <svg width="500" height="350">
+                  {renderTree(tree)}
+                </svg>
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Build tree to visualize
+                </div>
+              )}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-              <div>
-                <div style={{ fontSize: '16px', marginBottom: '5px' }}>Original Size</div>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: '#ef4444' }}>{originalBits} bits</div>
-                <div style={{ fontSize: '12px', color: '#94a3b8' }}>8 bits per character</div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Input Text:</label>
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value.toUpperCase())}
+                disabled={isRunning}
+                className="w-full px-4 py-2 border rounded-lg"
+                placeholder="Enter text"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              <button onClick={reset} disabled={isRunning} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50">
+                Calculate Frequencies
+              </button>
+              <button onClick={buildHuffmanTree} disabled={isRunning || Object.keys(frequencies).length === 0} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50">
+                {isRunning ? 'Building...' : 'Build Huffman Tree'}
+              </button>
+              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Speed:</label>
+                <input type="range" min="200" max="2000" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
               </div>
-              <div>
-                <div style={{ fontSize: '16px', marginBottom: '5px' }}>Compressed Size</div>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: '#22c55e' }}>{compressedBits} bits</div>
-                <div style={{ fontSize: '12px', color: '#94a3b8' }}>Variable length codes</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '16px', marginBottom: '5px' }}>Compression Ratio</div>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>{(compressionRatio * 100).toFixed(1)}%</div>
-                <div style={{ fontSize: '12px', color: '#94a3b8' }}>Space saved: {((1 - compressionRatio) * 100).toFixed(1)}%</div>
+              <a href="/greedyalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Character Frequencies</h3>
+              <div className="space-y-2">
+                {Object.entries(frequencies).map(([char, freq]) => (
+                  <div key={char} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span className="font-bold text-lg">{char}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                        <div className="bg-green-500 h-2 rounded-full" style={{ width: `${(freq / inputText.length) * 100}%` }} />
+                      </div>
+                      <span className="text-sm text-gray-600">{freq}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Frequency Table */}
-        {Object.keys(frequencies).length > 0 && renderFrequencyTable()}
+            {Object.keys(huffmanCodes).length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Huffman Codes</h3>
+                <div className="space-y-2">
+                  {Object.entries(huffmanCodes).map(([char, code]) => (
+                    <div key={char} className="flex justify-between p-2 bg-green-50 rounded">
+                      <span className="font-bold">{char}</span>
+                      <span className="font-mono text-green-700">{code}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* Huffman Codes */}
-        {renderHuffmanCodes()}
+            {encodedText && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Compression Result</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Original: {inputText.length * 8} bits</p>
+                    <p className="text-sm text-gray-600">Compressed: {encodedText.length} bits</p>
+                    <p className="text-lg font-bold text-green-600">Saved: {compressionRatio}%</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    <p className="text-xs text-gray-500 mb-1">Encoded:</p>
+                    <p className="font-mono text-xs break-all">{encodedText}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Progress */}
-        {steps.length > 0 && (
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span>Step {currentStep + 1} of {steps.length}</span>
-              <span>Building Huffman tree...</span>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
+              <div className="space-y-1 max-h-48 overflow-y-auto text-sm">
+                {log.map((entry, idx) => (
+                  <div key={idx} className="p-2 rounded text-gray-700">{entry}</div>
+                ))}
+              </div>
             </div>
-            <div style={{
-              width: '100%',
-              height: '8px',
-              backgroundColor: '#374151',
-              borderRadius: '4px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${((currentStep + 1) / steps.length) * 100}%`,
-                height: '100%',
-                background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                transition: 'width 0.3s ease'
-              }} />
-            </div>
-          </div>
-        )}
 
-        {/* Visualization Area */}
-        <div style={{
-          background: '#1e293b',
-          borderRadius: '12px',
-          padding: '30px',
-          minHeight: '400px'
-        }}>
-          {steps.length > 0 ? renderVisualization() : (
-            <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '18px' }}>
-              Enter text and click "Generate Huffman Codes" to start visualization
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong>Time Complexity:</strong> O(n log n)</p>
+                <p><strong>Space Complexity:</strong> O(n)</p>
+                <p><strong>Approach:</strong> Greedy with Priority Queue</p>
+                <p><strong>Use Case:</strong> Data compression, encoding</p>
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Preset Examples */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          background: 'rgba(34, 197, 94, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #22c55e'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#22c55e' }}>Try These Examples:</h3>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setText('AAAAABBBCCDDEEF')}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #22c55e',
-                backgroundColor: 'transparent',
-                color: '#22c55e',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Varied Frequencies
-            </button>
-            <button
-              onClick={() => setText('HELLO WORLD')}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #3b82f6',
-                backgroundColor: 'transparent',
-                color: '#3b82f6',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Common Text
-            </button>
-            <button
-              onClick={() => setText('ABCDEFGHIJKLMNOP')}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #f59e0b',
-                backgroundColor: 'transparent',
-                color: '#f59e0b',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Equal Frequencies
-            </button>
-          </div>
-        </div>
-
-        {/* Algorithm Info */}
-        <div style={{
-          marginTop: '20px',
-          padding: '20px',
-          background: 'rgba(124, 58, 237, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#7c3aed' }}>Huffman Coding Algorithm:</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Greedy Approach:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li>🏗️ Build min-heap of character frequencies</li>
-                <li>🔄 Repeatedly merge two lowest frequency nodes</li>
-                <li>🌳 Create binary tree (left=0, right=1)</li>
-                <li>📝 Assign codes by tree traversal</li>
-              </ul>
-            </div>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Properties:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li><strong>Time:</strong> O(n log n)</li>
-                <li><strong>Optimal:</strong> Minimum average code length</li>
-                <li><strong>Prefix-free:</strong> No code is prefix of another</li>
-                <li><strong>Applications:</strong> ZIP, JPEG, MP3 compression</li>
-              </ul>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

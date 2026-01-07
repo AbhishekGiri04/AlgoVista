@@ -163,9 +163,9 @@ const AppContent = () => {
       <Route path="/queue" element={<Queue />} />
       <Route path="/linkedlist" element={<LinkedList />} />
       <Route path="/tree" element={<Tree />} />
-      <Route path="/dijkstra" element={<Dijkstra />} />
-      <Route path="/kruskal" element={<Kruskal />} />
-      <Route path="/prims" element={<Prims />} />
+      <Route path="/dijkstra" element={<DijkstrasAlgorithmVisualize />} />
+      <Route path="/kruskal" element={<KruskalsAlgorithmVisualize />} />
+      <Route path="/prims" element={<PrimsAlgorithmVisualize />} />
       <Route path="/bubblesortvisualize" element={<BubbleSortVisualize />} />
       <Route path="/bubblesortcode" element={<BubbleSortCode />} />
       <Route path="/selectionsortvisualize" element={<SelectionSortVisualize />} />

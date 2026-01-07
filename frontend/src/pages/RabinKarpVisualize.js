@@ -1,534 +1,326 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 const RabinKarpVisualize = () => {
-  const [text, setText] = useState('ABCCDDAEFG');
-  const [pattern, setPattern] = useState('CDD');
-  const [steps, setSteps] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [matches, setMatches] = useState([]);
+  const [text, setText] = useState('ABABCABABA');
+  const [pattern, setPattern] = useState('ABABA');
   const [patternHash, setPatternHash] = useState(0);
-  const [speed, setSpeed] = useState(1000);
+  const [currentHash, setCurrentHash] = useState(0);
+  const [currentPos, setCurrentPos] = useState(-1);
+  const [matches, setMatches] = useState([]);
+  const [spurious, setSpurious] = useState([]);
+  const [comparisons, setComparisons] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [speed, setSpeed] = useState(800);
+  const [log, setLog] = useState([]);
 
-  const runVisualization = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/rabinkarp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, pattern })
-      });
-      const data = await response.json();
-      
-      if (data.steps) {
-        setSteps(data.steps);
-        setMatches(data.matches || []);
-        setPatternHash(data.patternHash);
-        setCurrentStep(0);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  const d = 256; // Number of characters
+  const q = 101; // Prime number for modulo
+
+  useEffect(() => {
+    reset();
+  }, [text, pattern]);
+
+  const reset = () => {
+    setPatternHash(0);
+    setCurrentHash(0);
+    setCurrentPos(-1);
+    setMatches([]);
+    setSpurious([]);
+    setComparisons(0);
+    setIsRunning(false);
+    setIsPaused(false);
+    setLog(['Algorithm initialized', `Text length: ${text.length}`, `Pattern length: ${pattern.length}`, `Using d=${d}, q=${q}`]);
+  };
+
+  const calculateHash = (str, len) => {
+    let hash = 0;
+    for (let i = 0; i < len; i++) {
+      hash = (d * hash + str.charCodeAt(i)) % q;
     }
-    setLoading(false);
+    return hash;
   };
 
-  const playVisualization = () => {
-    setIsPlaying(true);
-    const interval = setInterval(() => {
-      setCurrentStep(prev => {
-        if (prev >= steps.length - 1) {
-          setIsPlaying(false);
-          clearInterval(interval);
-          return prev;
+  const runRabinKarp = async () => {
+    setIsRunning(true);
+    setIsPaused(false);
+    
+    const n = text.length;
+    const m = pattern.length;
+    const newLog = [...log];
+    let comp = 0;
+
+    // Calculate pattern hash
+    const pHash = calculateHash(pattern, m);
+    setPatternHash(pHash);
+    newLog.push(`Pattern hash: ${pHash}`);
+    setLog([...newLog]);
+    await new Promise(resolve => setTimeout(resolve, speed));
+
+    // Calculate first window hash
+    let tHash = calculateHash(text, m);
+    setCurrentHash(tHash);
+    setCurrentPos(0);
+    newLog.push(`Initial window hash: ${tHash}`);
+    setLog([...newLog]);
+    await new Promise(resolve => setTimeout(resolve, speed));
+
+    // Calculate h = d^(m-1) % q for rolling hash
+    let h = 1;
+    for (let i = 0; i < m - 1; i++) {
+      h = (h * d) % q;
+    }
+
+    const found = [];
+    const spuriousHits = [];
+
+    for (let i = 0; i <= n - m; i++) {
+      while (isPaused) await new Promise(resolve => setTimeout(resolve, 100));
+
+      setCurrentPos(i);
+      setCurrentHash(tHash);
+
+      if (pHash === tHash) {
+        newLog.push(`Hash match at position ${i}: ${tHash}`);
+        setLog([...newLog]);
+        await new Promise(resolve => setTimeout(resolve, speed));
+
+        // Verify character by character
+        let match = true;
+        for (let j = 0; j < m; j++) {
+          comp++;
+          setComparisons(comp);
+          if (text[i + j] !== pattern[j]) {
+            match = false;
+            spuriousHits.push(i);
+            setSpurious([...spuriousHits]);
+            newLog.push(`✗ Spurious hit at ${i} (hash collision)`);
+            setLog([...newLog]);
+            break;
+          }
         }
-        return prev + 1;
-      });
-    }, speed);
+
+        if (match) {
+          found.push(i);
+          setMatches([...found]);
+          newLog.push(`🎯 Pattern found at position ${i}`);
+          setLog([...newLog]);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, speed));
+      } else {
+        newLog.push(`Hash mismatch at ${i}: ${tHash} ≠ ${pHash}`);
+        setLog([...newLog]);
+        await new Promise(resolve => setTimeout(resolve, speed / 2));
+      }
+
+      // Calculate hash for next window
+      if (i < n - m) {
+        tHash = (d * (tHash - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % q;
+        if (tHash < 0) tHash += q;
+        newLog.push(`Rolling hash for position ${i + 1}: ${tHash}`);
+        setLog([...newLog]);
+      }
+    }
+
+    setCurrentPos(-1);
+    setIsRunning(false);
+    newLog.push(`Search completed! Found ${found.length} match(es)`);
+    newLog.push(`Spurious hits: ${spuriousHits.length}`);
+    newLog.push(`Character comparisons: ${comp}`);
+    setLog([...newLog]);
   };
 
-  const renderVisualization = () => {
-    if (!steps.length) return null;
-    
-    const step = steps[currentStep];
-    const textChars = text.split('');
-    
-    return (
-      <div style={{ margin: '30px 0', fontFamily: 'monospace', fontSize: '18px' }}>
-        {/* Hash Information */}
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '15px', 
-          backgroundColor: '#7c3aed15',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
-            🧮 Hash Parameters: Base = 256, Modulus = 101
-          </div>
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Pattern "{pattern}" hash = {patternHash} | Current window "{step.windowText}" hash = {step.windowHash}
-          </div>
-        </div>
+  const togglePause = () => setIsPaused(!isPaused);
 
-        {/* Text with indices */}
-        <div style={{ marginBottom: '15px' }}>
-          <div style={{ marginBottom: '5px', fontSize: '14px', color: '#64748b' }}>
-            <span style={{ marginRight: '45px' }}>Index:</span>
-            {textChars.map((_, i) => (
-              <span key={i} style={{ 
-                display: 'inline-block', 
-                width: '44px', 
-                textAlign: 'center',
-                fontWeight: i >= step.windowIndex && i < step.windowIndex + pattern.length ? '700' : '400',
-                color: i >= step.windowIndex && i < step.windowIndex + pattern.length ? '#3b82f6' : '#64748b'
-              }}>
-                {i}
-              </span>
-            ))}
-          </div>
-          
-          <div style={{ marginBottom: '15px' }}>
-            <span style={{ color: '#94a3b8', marginRight: '10px', fontSize: '16px' }}>Text:</span>
-            {textChars.map((char, i) => {
-              let bgColor = '#374151';
-              let textColor = '#9ca3af';
-              let borderColor = 'transparent';
-              
-              // Current window highlighting
-              if (i >= step.windowIndex && i < step.windowIndex + pattern.length) {
-                if (step.hashMatch) {
-                  if (step.actualMatch) {
-                    bgColor = '#22c55e'; // green for actual match
-                    textColor = 'white';
-                    borderColor = '#16a34a';
-                  } else if (step.isCollision) {
-                    bgColor = '#f59e0b'; // orange for collision
-                    textColor = 'white';
-                    borderColor = '#d97706';
-                  } else {
-                    bgColor = '#3b82f6'; // blue for hash match
-                    textColor = 'white';
-                    borderColor = '#2563eb';
-                  }
-                } else {
-                  bgColor = '#64748b'; // grey for current window
-                  textColor = 'white';
-                  borderColor = '#3b82f6';
-                }
-              }
-              
-              // Highlight all found matches
-              if (matches.some(match => i >= match && i < match + pattern.length)) {
-                bgColor = '#22c55e';
-                textColor = 'white';
-                borderColor = '#16a34a';
-              }
-              
-              return (
-                <span
-                  key={i}
-                  style={{
-                    backgroundColor: bgColor,
-                    color: textColor,
-                    padding: '8px 12px',
-                    margin: '2px',
-                    borderRadius: '6px',
-                    border: `2px solid ${borderColor}`,
-                    display: 'inline-block',
-                    width: '20px',
-                    textAlign: 'center',
-                    fontWeight: '600'
-                  }}
-                >
-                  {char}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-        
-        {/* Pattern Display */}
-        <div style={{ marginBottom: '15px' }}>
-          <span style={{ color: '#94a3b8', marginRight: '10px', fontSize: '16px' }}>Pattern:</span>
-          <span style={{ marginLeft: `${step.windowIndex * 44 + 4}px` }}>
-            {pattern.split('').map((char, i) => (
-              <span
-                key={i}
-                style={{
-                  backgroundColor: '#7c3aed',
-                  color: 'white',
-                  padding: '8px 12px',
-                  margin: '2px',
-                  borderRadius: '6px',
-                  border: '2px solid #7c3aed',
-                  display: 'inline-block',
-                  width: '20px',
-                  textAlign: 'center',
-                  fontWeight: '600'
-                }}
-              >
-                {char}
-              </span>
-            ))}
-          </span>
-        </div>
-        
-        {/* Hash Comparison */}
-        <div style={{ 
-          marginTop: '20px', 
-          padding: '20px', 
-          backgroundColor: step.actualMatch ? '#22c55e15' : step.isCollision ? '#f59e0b15' : step.hashMatch ? '#3b82f615' : '#ef444415',
-          borderRadius: '12px',
-          border: `2px solid ${step.actualMatch ? '#22c55e' : step.isCollision ? '#f59e0b' : step.hashMatch ? '#3b82f6' : '#ef4444'}`
-        }}>
-          <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '10px' }}>
-            Window {step.windowIndex}: "{step.windowText}"
-          </div>
-          
-          <div style={{ fontSize: '16px', color: '#e2e8f0', marginBottom: '8px' }}>
-            Hash Comparison: {step.windowHash} {step.hashMatch ? '==' : '!='} {step.patternHash}
-            <span style={{ 
-              marginLeft: '15px', 
-              padding: '4px 8px', 
-              borderRadius: '4px',
-              backgroundColor: step.hashMatch ? '#22c55e' : '#ef4444',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: '600'
-            }}>
-              {step.hashMatch ? '✓ HASH MATCH' : '✗ HASH MISMATCH'}
-            </span>
-          </div>
-          
-          {step.hashMatch && (
-            <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '8px' }}>
-              Character Verification: {step.actualMatch ? '✅ Confirmed Match' : '❌ False Positive (Collision)'}
-            </div>
-          )}
-          
-          <div style={{ fontSize: '14px', color: '#94a3b8' }}>
-            Action: {step.action} | Status: {step.status}
-          </div>
-        </div>
-        
-        {/* Rolling Hash Formula */}
-        <div style={{ 
-          marginTop: '15px', 
-          padding: '15px', 
-          backgroundColor: '#1e293b',
-          borderRadius: '8px',
-          border: '1px solid #374151'
-        }}>
-          <div style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '5px' }}>
-            🔄 Rolling Hash Formula: hash = (d × (old_hash - T[i] × h) + T[i+m]) % q
-          </div>
-          <div style={{ fontSize: '12px', color: '#64748b' }}>
-            Where d=256 (base), h=d^(m-1) mod q, q=101 (prime modulus)
-          </div>
-        </div>
-      </div>
-    );
+  const getCharColor = (idx) => {
+    if (matches.some(m => idx >= m && idx < m + pattern.length)) return 'bg-green-200 border-green-500';
+    if (spurious.some(s => idx >= s && idx < s + pattern.length)) return 'bg-red-200 border-red-500';
+    if (currentPos >= 0 && idx >= currentPos && idx < currentPos + pattern.length) return 'bg-yellow-200 border-yellow-500';
+    return 'bg-gray-100 border-gray-300';
   };
 
   return (
-    <div style={{
-      backgroundColor: '#0a0e1a',
-      color: 'white',
-      minHeight: '100vh',
-      padding: '40px',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <a href="/stringalgorithms" style={{
-        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-        color: 'white',
-        padding: '12px 24px',
-        borderRadius: '12px',
-        textDecoration: 'none',
-        fontWeight: '600'
-      }}>
-        ← Back to String Algorithms
-      </a>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-teal-800 mb-2">Rabin-Karp Algorithm</h1>
+          <p className="text-teal-600">Rolling hash pattern matching with efficient window sliding</p>
+        </motion.div>
 
-      <div style={{ textAlign: 'center', margin: '40px 0' }}>
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '1rem' }}>
-          🔍 Rabin-Karp Algorithm Visualizer
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#94a3b8' }}>
-          Hash-based pattern matching with rolling hash optimization
-        </p>
-        <div style={{ fontSize: '14px', color: '#64748b', marginTop: '10px' }}>
-          <span style={{ backgroundColor: '#22c55e', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🟢 Match</span>
-          <span style={{ backgroundColor: '#f59e0b', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🟠 Collision</span>
-          <span style={{ backgroundColor: '#3b82f6', padding: '2px 8px', borderRadius: '4px', marginRight: '10px' }}>🔵 Hash Match</span>
-          <span style={{ backgroundColor: '#64748b', padding: '2px 8px', borderRadius: '4px' }}>⚫ Current Window</span>
-        </div>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">String Visualization</h2>
+            
+            <div className="space-y-6 mb-6">
+              <div>
+                <div className="text-sm font-medium text-gray-700 mb-2">Text:</div>
+                <div className="flex flex-wrap gap-1">
+                  {text.split('').map((char, idx) => (
+                    <div
+                      key={idx}
+                      className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx)}`}
+                    >
+                      {char}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        background: 'rgba(255,255,255,0.1)',
-        borderRadius: '20px',
-        padding: '30px'
-      }}>
-        {/* Input Controls */}
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1', minWidth: '250px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Text:</label>
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value.toUpperCase())}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '2px solid #374151',
-                backgroundColor: '#1e293b',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-          </div>
-          <div style={{ flex: '1', minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Pattern:</label>
-            <input
-              type="text"
-              value={pattern}
-              onChange={(e) => setPattern(e.target.value.toUpperCase())}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '2px solid #374151',
-                backgroundColor: '#1e293b',
-                color: 'white',
-                fontSize: '16px'
-              }}
-            />
-          </div>
-          <div style={{ minWidth: '150px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Speed (ms):</label>
-            <input
-              type="range"
-              min="300"
-              max="2000"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              style={{ width: '100%' }}
-            />
-            <div style={{ textAlign: 'center', fontSize: '14px', color: '#94a3b8' }}>{speed}ms</div>
-          </div>
-        </div>
+              <div>
+                <div className="text-sm font-medium text-gray-700 mb-2">Pattern:</div>
+                <div className="flex gap-1">
+                  {pattern.split('').map((char, idx) => (
+                    <div
+                      key={idx}
+                      className="w-10 h-10 flex items-center justify-center font-bold border-2 rounded bg-teal-100 border-teal-400"
+                    >
+                      {char}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-        {/* Control Buttons */}
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <button
-            onClick={runVisualization}
-            disabled={loading}
-            style={{
-              background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {loading ? 'Generating...' : 'Generate Steps'}
-          </button>
-          
-          <button
-            onClick={playVisualization}
-            disabled={!steps.length || isPlaying}
-            style={{
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {isPlaying ? 'Playing...' : 'Play'}
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={!steps.length || currentStep === 0}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Previous
-          </button>
-          
-          <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-            disabled={!steps.length || currentStep >= steps.length - 1}
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            Next
-          </button>
-        </div>
-
-        {/* Progress */}
-        {steps.length > 0 && (
-          <div style={{ marginBottom: '30px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span>Step {currentStep + 1} of {steps.length}</span>
-              <span>Matches found: {matches.length} at positions [{matches.join(', ')}]</span>
+              {currentPos >= 0 && (
+                <div className="space-y-2">
+                  <div className="p-3 bg-teal-50 rounded">
+                    <div className="text-sm font-semibold">Pattern Hash: {patternHash}</div>
+                  </div>
+                  <div className="p-3 bg-yellow-50 rounded">
+                    <div className="text-sm font-semibold">Current Window Hash: {currentHash}</div>
+                    <div className="text-xs text-gray-600">Position: {currentPos}</div>
+                  </div>
+                  {patternHash === currentHash && (
+                    <div className="p-2 bg-orange-50 rounded text-sm text-orange-700">
+                      ⚠️ Hash match! Verifying characters...
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div style={{
-              width: '100%',
-              height: '8px',
-              backgroundColor: '#374151',
-              borderRadius: '4px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${((currentStep + 1) / steps.length) * 100}%`,
-                height: '100%',
-                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                transition: 'width 0.3s ease'
-              }} />
-            </div>
-          </div>
-        )}
 
-        {/* Visualization Area */}
-        <div style={{
-          background: '#1e293b',
-          borderRadius: '12px',
-          padding: '30px',
-          minHeight: '400px'
-        }}>
-          {steps.length > 0 ? renderVisualization() : (
-            <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '18px' }}>
-              Enter text and pattern, then click "Generate Steps" to start visualization
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Text:</label>
+                <input
+                  type="text"
+                  value={text}
+                  onChange={(e) => setText(e.target.value.toUpperCase())}
+                  disabled={isRunning}
+                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Pattern:</label>
+                <input
+                  type="text"
+                  value={pattern}
+                  onChange={(e) => setPattern(e.target.value.toUpperCase())}
+                  disabled={isRunning}
+                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                />
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Preset Examples */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          background: 'rgba(34, 197, 94, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #22c55e'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#22c55e' }}>Try These Examples:</h3>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => { setText('ABCCDDAEFG'); setPattern('CDD'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #22c55e',
-                backgroundColor: 'transparent',
-                color: '#22c55e',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Simple Match
-            </button>
-            <button
-              onClick={() => { setText('AABAACAADAABAABA'); setPattern('AABA'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #3b82f6',
-                backgroundColor: 'transparent',
-                color: '#3b82f6',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Multiple Matches
-            </button>
-            <button
-              onClick={() => { setText('ABCDEFGHIJK'); setPattern('XYZ'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #f59e0b',
-                backgroundColor: 'transparent',
-                color: '#f59e0b',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              No Match
-            </button>
-            <button
-              onClick={() => { setText('GEEKSFORGEEKS'); setPattern('GEEK'); }}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '2px solid #ef4444',
-                backgroundColor: 'transparent',
-                color: '#ef4444',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
-              Hash Collisions Demo
-            </button>
-          </div>
-        </div>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={runRabinKarp} disabled={isRunning || !pattern} className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 disabled:opacity-50">
+                {isRunning ? 'Running...' : 'Start Rabin-Karp'}
+              </button>
+              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
+              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Speed:</label>
+                <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              </div>
+              <a href="/stringalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
+            </div>
+          </motion.div>
 
-        {/* Algorithm Info */}
-        <div style={{
-          marginTop: '20px',
-          padding: '20px',
-          background: 'rgba(124, 58, 237, 0.1)',
-          borderRadius: '12px',
-          border: '2px solid #7c3aed'
-        }}>
-          <h3 style={{ marginBottom: '15px', color: '#7c3aed' }}>Rabin-Karp Algorithm Explanation:</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>How it works:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li>🧮 Compute hash of pattern and text windows</li>
-                <li>🔄 Use rolling hash for O(1) window updates</li>
-                <li>⚡ Compare hashes first (fast)</li>
-                <li>✅ Verify characters only on hash match</li>
-              </ul>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 bg-teal-50 rounded-lg">
+                  <div className="text-xs text-gray-600 mb-1">Matches:</div>
+                  <div className="text-2xl font-bold text-teal-600">{matches.length}</div>
+                </div>
+                <div className="p-3 bg-red-50 rounded-lg">
+                  <div className="text-xs text-gray-600 mb-1">Spurious:</div>
+                  <div className="text-2xl font-bold text-red-600">{spurious.length}</div>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="text-xs text-gray-600 mb-1">Comparisons:</div>
+                  <div className="text-2xl font-bold text-gray-800">{comparisons}</div>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 style={{ color: '#a78bfa', marginBottom: '10px' }}>Complexity:</h4>
-              <ul style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '14px' }}>
-                <li><strong>Average:</strong> O(n + m) linear</li>
-                <li><strong>Worst:</strong> O(n × m) with many collisions</li>
-                <li><strong>Space:</strong> O(1) constant</li>
-                <li><strong>Best for:</strong> Large alphabets, good hash function</li>
-              </ul>
+
+            {matches.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Match Positions</h3>
+                <div className="flex flex-wrap gap-2">
+                  {matches.map((pos, idx) => (
+                    <div key={idx} className="px-4 py-2 bg-green-100 border-2 border-green-500 rounded-lg font-semibold">
+                      Position {pos}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {spurious.length > 0 && (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Spurious Hits (Hash Collisions)</h3>
+                <div className="flex flex-wrap gap-2">
+                  {spurious.map((pos, idx) => (
+                    <div key={idx} className="px-4 py-2 bg-red-100 border-2 border-red-500 rounded-lg font-semibold">
+                      Position {pos}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Rolling Hash Formula</h3>
+              <div className="p-4 bg-gray-50 rounded font-mono text-xs space-y-2">
+                <div>hash(txt[i+1..i+m]) =</div>
+                <div className="ml-4 text-teal-600">d × (hash(txt[i..i+m-1]) - txt[i] × h)</div>
+                <div className="ml-4 text-teal-600">+ txt[i+m]</div>
+                <div className="mt-2 text-gray-600">where h = d^(m-1) mod q</div>
+              </div>
             </div>
-          </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
+              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+                {log.slice(-15).map((entry, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-2 rounded ${
+                      entry.includes('🎯') ? 'text-green-700 bg-green-50 font-semibold' :
+                      entry.includes('✗') ? 'text-red-700 bg-red-50' :
+                      entry.includes('Hash match') ? 'text-orange-700 bg-orange-50' :
+                      'text-gray-700'
+                    }`}
+                  >
+                    {entry}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p><strong>Time Complexity:</strong> O(n + m) average</p>
+                <p><strong>Space Complexity:</strong> O(1)</p>
+                <p><strong>Approach:</strong> Rolling hash with verification</p>
+                <p><strong>Use Case:</strong> Multiple pattern search, plagiarism detection</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
