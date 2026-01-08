@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 const NaiveStringVisualize = () => {
   const [text, setText] = useState('ABABCABABA');
@@ -15,7 +14,7 @@ const NaiveStringVisualize = () => {
 
   useEffect(() => {
     reset();
-  }, [text, pattern]);
+  }, []);
 
   const reset = () => {
     setCurrentPos(-1);
@@ -84,130 +83,277 @@ const NaiveStringVisualize = () => {
 
   const getCharColor = (idx, isPattern = false) => {
     if (isPattern) {
-      if (currentMatch === idx) return 'bg-yellow-300 border-yellow-500';
-      return 'bg-blue-100 border-blue-400';
+      if (currentMatch === idx) return { bg: '#fef3c7', border: '#f59e0b', color: '#92400e' };
+      return { bg: '#dbeafe', border: '#3b82f6', color: '#1e40af' };
     }
     
-    if (matches.some(m => idx >= m && idx < m + pattern.length)) return 'bg-green-200 border-green-500';
+    if (matches.some(m => idx >= m && idx < m + pattern.length)) 
+      return { bg: '#d1fae5', border: '#10b981', color: '#065f46' };
+    
     if (currentPos >= 0 && idx >= currentPos && idx < currentPos + pattern.length) {
-      if (idx - currentPos === currentMatch) return 'bg-yellow-300 border-yellow-500';
-      if (idx - currentPos < currentMatch) return 'bg-green-200 border-green-500';
-      return 'bg-blue-100 border-blue-400';
+      if (idx - currentPos === currentMatch) return { bg: '#fef3c7', border: '#f59e0b', color: '#92400e' };
+      if (idx - currentPos < currentMatch) return { bg: '#d1fae5', border: '#10b981', color: '#065f46' };
+      return { bg: '#dbeafe', border: '#3b82f6', color: '#1e40af' };
     }
-    return 'bg-gray-100 border-gray-300';
+    return { bg: '#f9fafb', border: '#e5e7eb', color: '#6b7280' };
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-orange-800 mb-2">Naive String Matching</h1>
-          <p className="text-orange-600">Brute force pattern matching with character comparison</p>
-        </motion.div>
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <a href="/stringalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to String Algorithms
+      </a>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">String Visualization</h2>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Naive String Matching Visualizer</h1>
+          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Brute force pattern matching with character-by-character comparison</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>String Visualization</h2>
             
-            <div className="space-y-6 mb-6">
-              <div>
-                <div className="text-sm font-medium text-gray-700 mb-2" style={{ fontWeight: '600', color: '#374151' }}>Text:</div>
-                <div className="flex flex-wrap gap-1">
-                  {text.split('').map((char, idx) => (
-                    <div
-                      key={idx}
-                      className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx)}`}
-                      style={{ fontSize: '1rem', color: '#000' }}
-                    >
-                      {char}
-                    </div>
-                  ))}
+            <div style={{ marginBottom: '2rem' }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Text:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {text.split('').map((char, idx) => {
+                    const colors = getCharColor(idx);
+                    return (
+                      <div key={idx} style={{
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
+                        background: colors.bg,
+                        border: `2px solid ${colors.border}`,
+                        color: colors.color,
+                        borderRadius: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        {char}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div>
-                <div className="text-sm font-medium text-gray-700 mb-2" style={{ fontWeight: '600', color: '#374151' }}>Pattern:</div>
-                <div className="flex gap-1">
-                  {pattern.split('').map((char, idx) => (
-                    <div
-                      key={idx}
-                      className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx, true)}`}
-                      style={{ fontSize: '1rem', color: '#000' }}
-                    >
-                      {char}
-                    </div>
-                  ))}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Pattern:</div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {pattern.split('').map((char, idx) => {
+                    const colors = getCharColor(idx, true);
+                    return (
+                      <div key={idx} style={{
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
+                        background: colors.bg,
+                        border: `2px solid ${colors.border}`,
+                        color: colors.color,
+                        borderRadius: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        {char}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {currentPos >= 0 && (
-                <div className="p-3 bg-yellow-50 rounded text-sm">
-                  <div className="font-semibold">Current Position: {currentPos}</div>
-                  <div className="text-gray-600">Comparing: {currentMatch >= 0 ? `Index ${currentMatch}` : 'Starting...'}</div>
+                <div style={{
+                  padding: '1rem',
+                  background: '#fef3c7',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid #f59e0b'
+                }}>
+                  <div style={{ fontWeight: '600', color: '#92400e' }}>Current Position: {currentPos}</div>
+                  <div style={{ color: '#78350f' }}>Comparing: {currentMatch >= 0 ? `Index ${currentMatch}` : 'Starting...'}</div>
                 </div>
               )}
             </div>
 
-            <div className="space-y-3 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Text:</label>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Text:
+                </label>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => setText(e.target.value.toUpperCase())}
                   disabled={isRunning}
-                  className="w-full px-4 py-2 border rounded-lg font-mono"
-                  style={{ color: '#000', fontWeight: '600' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    color: '#000',
+                    fontWeight: '600',
+                    background: '#fff'
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pattern:</label>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Pattern:
+                </label>
                 <input
                   type="text"
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value.toUpperCase())}
                   disabled={isRunning}
-                  className="w-full px-4 py-2 border rounded-lg font-mono"
-                  style={{ color: '#000', fontWeight: '600' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    color: '#000',
+                    fontWeight: '600',
+                    background: '#fff'
+                  }}
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <button onClick={runNaiveSearch} disabled={isRunning || !pattern} className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50">
-                {isRunning ? 'Running...' : 'Start Search'}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={runNaiveSearch}
+                disabled={isRunning || !pattern}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: isRunning || !pattern ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: isRunning || !pattern ? 'not-allowed' : 'pointer',
+                  opacity: isRunning || !pattern ? 0.5 : 1
+                }}
+              >
+                {isRunning ? 'Searching...' : 'Start Search'}
               </button>
-              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
-              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Speed:</label>
-                <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              {isRunning && (
+                <button
+                  onClick={togglePause}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPaused ? '▶ Resume' : '⏸ Pause'}
+                </button>
+              )}
+              <button
+                onClick={reset}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #6b7280, #4b5563)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Reset
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '600' }}>Speed:</label>
+                <input
+                  type="range"
+                  min="200"
+                  max="1500"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  style={{ width: '100px' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{speed}ms</span>
               </div>
-              <a href="/stringalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 bg-orange-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">Matches Found:</div>
-                  <div className="text-3xl font-bold text-orange-600">{matches.length}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Statistics</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ padding: '1rem', background: '#dbeafe', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#1e40af', marginBottom: '0.25rem' }}>Matches Found</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e40af' }}>{matches.length}</div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">Comparisons:</div>
-                  <div className="text-3xl font-bold text-gray-800">{comparisons}</div>
+                <div style={{ padding: '1rem', background: '#f3f4f6', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#374151', marginBottom: '0.25rem' }}>Comparisons</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937' }}>{comparisons}</div>
                 </div>
               </div>
             </div>
 
             {matches.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Match Positions</h3>
-                <div className="flex flex-wrap gap-2">
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Match Positions</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {matches.map((pos, idx) => (
-                    <div key={idx} className="px-4 py-2 bg-green-100 border-2 border-green-500 rounded-lg font-semibold">
+                    <div key={idx} style={{
+                      padding: '0.5rem 1rem',
+                      background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                      border: '2px solid #10b981',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      color: '#065f46'
+                    }}>
                       Position {pos}
                     </div>
                   ))}
@@ -215,29 +361,48 @@ const NaiveStringVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Steps</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="p-2 bg-gray-50 rounded">1. Start at position 0 in text</div>
-                <div className="p-2 bg-gray-50 rounded">2. Compare pattern with text character by character</div>
-                <div className="p-2 bg-gray-50 rounded">3. If mismatch, shift pattern by 1 position</div>
-                <div className="p-2 bg-gray-50 rounded">4. If full match, record position and continue</div>
-                <div className="p-2 bg-gray-50 rounded">5. Repeat until end of text</div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <style>{`
+                  div::-webkit-scrollbar {
+                    width: 6px;
+                  }
+                  div::-webkit-scrollbar-track {
+                    background: rgba(148, 163, 184, 0.1);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb {
+                    background: rgba(148, 163, 184, 0.4);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb:hover {
+                    background: rgba(148, 163, 184, 0.6);
+                  }
+                `}</style>
                 {log.slice(-15).map((entry, idx) => (
                   <div
                     key={idx}
-                    className={`p-2 rounded ${
-                      entry.includes('🎯') ? 'text-green-700 bg-green-50 font-semibold' :
-                      entry.includes('✓') ? 'text-green-700 bg-green-50' :
-                      entry.includes('✗') ? 'text-red-700 bg-red-50' :
-                      'text-gray-700'
-                    }`}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      background: entry.includes('🎯') ? '#d1fae5' :
+                                 entry.includes('✓') ? '#d1fae5' :
+                                 entry.includes('✗') ? '#fee2e2' :
+                                 '#f3f4f6',
+                      color: entry.includes('🎯') ? '#065f46' :
+                             entry.includes('✓') ? '#065f46' :
+                             entry.includes('✗') ? '#991b1b' :
+                             '#374151',
+                      borderLeft: '3px solid #3b82f6',
+                      fontWeight: entry.includes('🎯') ? '600' : 'normal'
+                    }}
                   >
                     {entry}
                   </div>
@@ -245,16 +410,33 @@ const NaiveStringVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n × m)</p>
-                <p><strong>Space Complexity:</strong> O(1)</p>
-                <p><strong>Approach:</strong> Brute force</p>
-                <p><strong>Use Case:</strong> Simple pattern matching</p>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n × m)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(1)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Approach:</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Brute Force</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Simple pattern matching, small texts, teaching purposes</p>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

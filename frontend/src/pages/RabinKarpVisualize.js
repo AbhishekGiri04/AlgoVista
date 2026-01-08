@@ -1,42 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 const RabinKarpVisualize = () => {
   const [text, setText] = useState('ABABCABABA');
   const [pattern, setPattern] = useState('ABABA');
-  const [patternHash, setPatternHash] = useState(0);
-  const [currentHash, setCurrentHash] = useState(0);
   const [currentPos, setCurrentPos] = useState(-1);
+  const [textHash, setTextHash] = useState(null);
+  const [patternHash, setPatternHash] = useState(null);
   const [matches, setMatches] = useState([]);
-  const [spurious, setSpurious] = useState([]);
   const [comparisons, setComparisons] = useState(0);
+  const [hashComparisons, setHashComparisons] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [speed, setSpeed] = useState(800);
   const [log, setLog] = useState([]);
+  const [phase, setPhase] = useState('idle');
 
-  const d = 256; // Number of characters
-  const q = 101; // Prime number for modulo
+  const d = 256; // Number of characters in alphabet
+  const q = 101; // A prime number for modulo
 
   useEffect(() => {
     reset();
-  }, [text, pattern]);
+  }, []);
 
   const reset = () => {
-    setPatternHash(0);
-    setCurrentHash(0);
     setCurrentPos(-1);
+    setTextHash(null);
+    setPatternHash(null);
     setMatches([]);
-    setSpurious([]);
     setComparisons(0);
+    setHashComparisons(0);
     setIsRunning(false);
     setIsPaused(false);
-    setLog(['Algorithm initialized', `Text length: ${text.length}`, `Pattern length: ${pattern.length}`, `Using d=${d}, q=${q}`]);
+    setPhase('idle');
+    setLog(['Algorithm initialized', `Text length: ${text.length}`, `Pattern length: ${pattern.length}`]);
   };
 
-  const calculateHash = (str, len) => {
+  const calculateHash = (str, m) => {
     let hash = 0;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < m; i++) {
       hash = (d * hash + str.charCodeAt(i)) % q;
     }
     return hash;
@@ -50,8 +51,14 @@ const RabinKarpVisualize = () => {
     const m = pattern.length;
     const newLog = [...log];
     let comp = 0;
+    let hashComp = 0;
 
     // Calculate pattern hash
+    setPhase('hash');
+    newLog.push('--- Computing Pattern Hash ---');
+    setLog([...newLog]);
+    await new Promise(resolve => setTimeout(resolve, speed));
+
     const pHash = calculateHash(pattern, m);
     setPatternHash(pHash);
     newLog.push(`Pattern hash: ${pHash}`);
@@ -59,10 +66,9 @@ const RabinKarpVisualize = () => {
     await new Promise(resolve => setTimeout(resolve, speed));
 
     // Calculate first window hash
-    let tHash = calculateHash(text, m);
-    setCurrentHash(tHash);
-    setCurrentPos(0);
-    newLog.push(`Initial window hash: ${tHash}`);
+    let tHash = calculateHash(text.substring(0, m), m);
+    setTextHash(tHash);
+    newLog.push(`Initial text window hash: ${tHash}`);
     setLog([...newLog]);
     await new Promise(resolve => setTimeout(resolve, speed));
 
@@ -72,17 +78,26 @@ const RabinKarpVisualize = () => {
       h = (h * d) % q;
     }
 
+    newLog.push('--- Starting Pattern Search ---');
+    setLog([...newLog]);
+    setPhase('search');
+    await new Promise(resolve => setTimeout(resolve, speed));
+
     const found = [];
-    const spuriousHits = [];
 
     for (let i = 0; i <= n - m; i++) {
       while (isPaused) await new Promise(resolve => setTimeout(resolve, 100));
 
       setCurrentPos(i);
-      setCurrentHash(tHash);
+      hashComp++;
+      setHashComparisons(hashComp);
+
+      newLog.push(`Position ${i}: Comparing hashes`);
+      setLog([...newLog]);
+      await new Promise(resolve => setTimeout(resolve, speed));
 
       if (pHash === tHash) {
-        newLog.push(`Hash match at position ${i}: ${tHash}`);
+        newLog.push(`✓ Hash match! Verifying characters...`);
         setLog([...newLog]);
         await new Promise(resolve => setTimeout(resolve, speed));
 
@@ -91,12 +106,12 @@ const RabinKarpVisualize = () => {
         for (let j = 0; j < m; j++) {
           comp++;
           setComparisons(comp);
+          
           if (text[i + j] !== pattern[j]) {
             match = false;
-            spuriousHits.push(i);
-            setSpurious([...spuriousHits]);
-            newLog.push(`✗ Spurious hit at ${i} (hash collision)`);
+            newLog.push(`✗ Character mismatch at index ${j}`);
             setLog([...newLog]);
+            await new Promise(resolve => setTimeout(resolve, speed));
             break;
           }
         }
@@ -106,162 +121,317 @@ const RabinKarpVisualize = () => {
           setMatches([...found]);
           newLog.push(`🎯 Pattern found at position ${i}`);
           setLog([...newLog]);
+          await new Promise(resolve => setTimeout(resolve, speed));
         }
-
-        await new Promise(resolve => setTimeout(resolve, speed));
       } else {
-        newLog.push(`Hash mismatch at ${i}: ${tHash} ≠ ${pHash}`);
+        newLog.push(`✗ Hash mismatch (${tHash} ≠ ${pHash})`);
         setLog([...newLog]);
-        await new Promise(resolve => setTimeout(resolve, speed / 2));
+        await new Promise(resolve => setTimeout(resolve, speed));
       }
 
       // Calculate hash for next window
       if (i < n - m) {
         tHash = (d * (tHash - text.charCodeAt(i) * h) + text.charCodeAt(i + m)) % q;
         if (tHash < 0) tHash += q;
-        newLog.push(`Rolling hash for position ${i + 1}: ${tHash}`);
+        setTextHash(tHash);
+        newLog.push(`Rolling hash for next window: ${tHash}`);
         setLog([...newLog]);
+        await new Promise(resolve => setTimeout(resolve, speed / 2));
       }
     }
 
     setCurrentPos(-1);
     setIsRunning(false);
+    setPhase('done');
     newLog.push(`Search completed! Found ${found.length} match(es)`);
-    newLog.push(`Spurious hits: ${spuriousHits.length}`);
-    newLog.push(`Character comparisons: ${comp}`);
+    newLog.push(`Hash comparisons: ${hashComp}, Character comparisons: ${comp}`);
     setLog([...newLog]);
   };
 
   const togglePause = () => setIsPaused(!isPaused);
 
-  const getCharColor = (idx) => {
-    if (matches.some(m => idx >= m && idx < m + pattern.length)) return 'bg-green-200 border-green-500';
-    if (spurious.some(s => idx >= s && idx < s + pattern.length)) return 'bg-red-200 border-red-500';
-    if (currentPos >= 0 && idx >= currentPos && idx < currentPos + pattern.length) return 'bg-yellow-200 border-yellow-500';
-    return 'bg-gray-100 border-gray-300';
+  const getCharColor = (idx, isPattern = false) => {
+    if (isPattern) {
+      return { bg: '#fef3c7', border: '#f59e0b', color: '#92400e' };
+    }
+    
+    if (matches.some(m => idx >= m && idx < m + pattern.length)) 
+      return { bg: '#d1fae5', border: '#10b981', color: '#065f46' };
+    
+    if (currentPos >= 0 && idx >= currentPos && idx < currentPos + pattern.length) {
+      return { bg: '#fef3c7', border: '#f59e0b', color: '#92400e' };
+    }
+    return { bg: '#f9fafb', border: '#e5e7eb', color: '#6b7280' };
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-teal-800 mb-2">Rabin-Karp Algorithm</h1>
-          <p className="text-teal-600">Rolling hash pattern matching with efficient window sliding</p>
-        </motion.div>
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <a href="/stringalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to String Algorithms
+      </a>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">String Visualization</h2>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Rabin-Karp Algorithm Visualizer</h1>
+          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Rolling hash string matching with efficient pattern search</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>String Visualization</h2>
             
-            <div className="space-y-6 mb-6">
-              <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Text:</div>
-                <div className="flex flex-wrap gap-1">
-                  {text.split('').map((char, idx) => (
-                    <div
-                      key={idx}
-                      className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx)}`}
-                    >
-                      {char}
-                    </div>
-                  ))}
+            <div style={{ marginBottom: '2rem' }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Text:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {text.split('').map((char, idx) => {
+                    const colors = getCharColor(idx);
+                    return (
+                      <div key={idx} style={{
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
+                        background: colors.bg,
+                        border: `2px solid ${colors.border}`,
+                        color: colors.color,
+                        borderRadius: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        {char}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Pattern:</div>
-                <div className="flex gap-1">
-                  {pattern.split('').map((char, idx) => (
-                    <div
-                      key={idx}
-                      className="w-10 h-10 flex items-center justify-center font-bold border-2 rounded bg-teal-100 border-teal-400"
-                    >
-                      {char}
-                    </div>
-                  ))}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Pattern:</div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {pattern.split('').map((char, idx) => {
+                    const colors = getCharColor(idx, true);
+                    return (
+                      <div key={idx} style={{
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
+                        background: colors.bg,
+                        border: `2px solid ${colors.border}`,
+                        color: colors.color,
+                        borderRadius: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        {char}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {currentPos >= 0 && (
-                <div className="space-y-2">
-                  <div className="p-3 bg-teal-50 rounded">
-                    <div className="text-sm font-semibold">Pattern Hash: {patternHash}</div>
-                  </div>
-                  <div className="p-3 bg-yellow-50 rounded">
-                    <div className="text-sm font-semibold">Current Window Hash: {currentHash}</div>
-                    <div className="text-xs text-gray-600">Position: {currentPos}</div>
-                  </div>
-                  {patternHash === currentHash && (
-                    <div className="p-2 bg-orange-50 rounded text-sm text-orange-700">
-                      ⚠️ Hash match! Verifying characters...
+              {(textHash !== null || patternHash !== null) && (
+                <div style={{
+                  padding: '1rem',
+                  background: '#fef3c7',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid #f59e0b'
+                }}>
+                  {patternHash !== null && (
+                    <div style={{ fontWeight: '600', color: '#92400e', marginBottom: '0.25rem' }}>
+                      Pattern Hash: {patternHash}
+                    </div>
+                  )}
+                  {textHash !== null && currentPos >= 0 && (
+                    <div style={{ color: '#78350f' }}>
+                      Current Window Hash: {textHash} (Position: {currentPos})
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            <div className="space-y-3 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Text:</label>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Text:
+                </label>
                 <input
                   type="text"
                   value={text}
                   onChange={(e) => setText(e.target.value.toUpperCase())}
                   disabled={isRunning}
-                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    color: '#000',
+                    fontWeight: '600',
+                    background: '#fff'
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pattern:</label>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Pattern:
+                </label>
                 <input
                   type="text"
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value.toUpperCase())}
                   disabled={isRunning}
-                  className="w-full px-4 py-2 border rounded-lg font-mono"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    color: '#000',
+                    fontWeight: '600',
+                    background: '#fff'
+                  }}
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <button onClick={runRabinKarp} disabled={isRunning || !pattern} className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 disabled:opacity-50">
-                {isRunning ? 'Running...' : 'Start Rabin-Karp'}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={runRabinKarp}
+                disabled={isRunning || !pattern}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: isRunning || !pattern ? '#9ca3af' : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: isRunning || !pattern ? 'not-allowed' : 'pointer',
+                  opacity: isRunning || !pattern ? 0.5 : 1
+                }}
+              >
+                {isRunning ? 'Running...' : 'Start Search'}
               </button>
-              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
-              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Speed:</label>
-                <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              {isRunning && (
+                <button
+                  onClick={togglePause}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPaused ? '▶ Resume' : '⏸ Pause'}
+                </button>
+              )}
+              <button
+                onClick={reset}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #6b7280, #4b5563)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Reset
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '600' }}>Speed:</label>
+                <input
+                  type="range"
+                  min="200"
+                  max="1500"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  style={{ width: '100px' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{speed}ms</span>
               </div>
-              <a href="/stringalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 bg-teal-50 rounded-lg">
-                  <div className="text-xs text-gray-600 mb-1">Matches:</div>
-                  <div className="text-2xl font-bold text-teal-600">{matches.length}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Statistics</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+                <div style={{ padding: '1rem', background: '#fef3c7', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#92400e', marginBottom: '0.25rem' }}>Matches Found</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#92400e' }}>{matches.length}</div>
                 </div>
-                <div className="p-3 bg-red-50 rounded-lg">
-                  <div className="text-xs text-gray-600 mb-1">Spurious:</div>
-                  <div className="text-2xl font-bold text-red-600">{spurious.length}</div>
+                <div style={{ padding: '0.75rem', background: '#dbeafe', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#1e40af', marginBottom: '0.25rem' }}>Hash Comparisons</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e40af' }}>{hashComparisons}</div>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-600 mb-1">Comparisons:</div>
-                  <div className="text-2xl font-bold text-gray-800">{comparisons}</div>
+                <div style={{ padding: '0.75rem', background: '#f3f4f6', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#374151', marginBottom: '0.25rem' }}>Character Comparisons</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937' }}>{comparisons}</div>
                 </div>
               </div>
             </div>
 
             {matches.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Match Positions</h3>
-                <div className="flex flex-wrap gap-2">
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Match Positions</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {matches.map((pos, idx) => (
-                    <div key={idx} className="px-4 py-2 bg-green-100 border-2 border-green-500 rounded-lg font-semibold">
+                    <div key={idx} style={{
+                      padding: '0.5rem 1rem',
+                      background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                      border: '2px solid #10b981',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      color: '#065f46'
+                    }}>
                       Position {pos}
                     </div>
                   ))}
@@ -269,41 +439,94 @@ const RabinKarpVisualize = () => {
               </div>
             )}
 
-            {spurious.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Spurious Hits (Hash Collisions)</h3>
-                <div className="flex flex-wrap gap-2">
-                  {spurious.map((pos, idx) => (
-                    <div key={idx} className="px-4 py-2 bg-red-100 border-2 border-red-500 rounded-lg font-semibold">
-                      Position {pos}
-                    </div>
-                  ))}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Phases</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{
+                  padding: '0.75rem',
+                  borderRadius: '0.5rem',
+                  background: phase === 'hash' || phase === 'search' || phase === 'done' ? '#d1fae5' : '#f3f4f6',
+                  color: phase === 'hash' || phase === 'search' || phase === 'done' ? '#065f46' : '#6b7280',
+                  fontWeight: '600'
+                }}>
+                  ✓ Phase 1: Compute Hashes
                 </div>
-              </div>
-            )}
-
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Rolling Hash Formula</h3>
-              <div className="p-4 bg-gray-50 rounded font-mono text-xs space-y-2">
-                <div>hash(txt[i+1..i+m]) =</div>
-                <div className="ml-4 text-teal-600">d × (hash(txt[i..i+m-1]) - txt[i] × h)</div>
-                <div className="ml-4 text-teal-600">+ txt[i+m]</div>
-                <div className="mt-2 text-gray-600">where h = d^(m-1) mod q</div>
+                <div style={{
+                  padding: '0.75rem',
+                  borderRadius: '0.5rem',
+                  background: phase === 'search' || phase === 'done' ? '#d1fae5' : '#f3f4f6',
+                  color: phase === 'search' || phase === 'done' ? '#065f46' : '#6b7280',
+                  fontWeight: '600'
+                }}>
+                  {phase === 'search' ? '⏳' : phase === 'done' ? '✓' : '○'} Phase 2: Rolling Hash Search
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Rolling Hash Concept</h3>
+              <div style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: '1.6' }}>
+                <p style={{ marginBottom: '0.5rem', fontWeight: '600', color: '#374151' }}>Efficient hash computation using sliding window</p>
+                <p style={{ padding: '0.75rem', background: '#fef3c7', borderRadius: '0.5rem', color: '#92400e' }}>
+                  Removes first character and adds next character in O(1) time
+                </p>
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <style>{`
+                  div::-webkit-scrollbar {
+                    width: 6px;
+                  }
+                  div::-webkit-scrollbar-track {
+                    background: rgba(148, 163, 184, 0.1);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb {
+                    background: rgba(148, 163, 184, 0.4);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb:hover {
+                    background: rgba(148, 163, 184, 0.6);
+                  }
+                `}</style>
                 {log.slice(-15).map((entry, idx) => (
                   <div
                     key={idx}
-                    className={`p-2 rounded ${
-                      entry.includes('🎯') ? 'text-green-700 bg-green-50 font-semibold' :
-                      entry.includes('✗') ? 'text-red-700 bg-red-50' :
-                      entry.includes('Hash match') ? 'text-orange-700 bg-orange-50' :
-                      'text-gray-700'
-                    }`}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      background: entry.includes('🎯') ? '#d1fae5' :
+                                 entry.includes('✓') ? '#d1fae5' :
+                                 entry.includes('✗') ? '#fee2e2' :
+                                 entry.includes('---') ? '#fef3c7' :
+                                 '#f3f4f6',
+                      color: entry.includes('🎯') ? '#065f46' :
+                             entry.includes('✓') ? '#065f46' :
+                             entry.includes('✗') ? '#991b1b' :
+                             entry.includes('---') ? '#92400e' :
+                             '#374151',
+                      borderLeft: '3px solid #f59e0b',
+                      fontWeight: entry.includes('🎯') || entry.includes('---') ? '600' : 'normal'
+                    }}
                   >
                     {entry}
                   </div>
@@ -311,16 +534,33 @@ const RabinKarpVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n + m) average</p>
-                <p><strong>Space Complexity:</strong> O(1)</p>
-                <p><strong>Approach:</strong> Rolling hash with verification</p>
-                <p><strong>Use Case:</strong> Multiple pattern search, plagiarism detection</p>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#f59e0b' }}>O(n + m)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#f59e0b' }}>O(1)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Approach:</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Rolling Hash</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Plagiarism detection, DNA sequencing, multiple pattern search</p>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
