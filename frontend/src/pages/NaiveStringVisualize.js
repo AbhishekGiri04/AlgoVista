@@ -111,12 +111,13 @@ const NaiveStringVisualize = () => {
             
             <div className="space-y-6 mb-6">
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Text:</div>
+                <div className="text-sm font-medium text-gray-700 mb-2" style={{ fontWeight: '600', color: '#374151' }}>Text:</div>
                 <div className="flex flex-wrap gap-1">
                   {text.split('').map((char, idx) => (
                     <div
                       key={idx}
                       className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx)}`}
+                      style={{ fontSize: '1rem', color: '#000' }}
                     >
                       {char}
                     </div>
@@ -125,12 +126,13 @@ const NaiveStringVisualize = () => {
               </div>
 
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Pattern:</div>
+                <div className="text-sm font-medium text-gray-700 mb-2" style={{ fontWeight: '600', color: '#374151' }}>Pattern:</div>
                 <div className="flex gap-1">
                   {pattern.split('').map((char, idx) => (
                     <div
                       key={idx}
                       className={`w-10 h-10 flex items-center justify-center font-bold border-2 rounded transition-all ${getCharColor(idx, true)}`}
+                      style={{ fontSize: '1rem', color: '#000' }}
                     >
                       {char}
                     </div>
@@ -155,6 +157,7 @@ const NaiveStringVisualize = () => {
                   onChange={(e) => setText(e.target.value.toUpperCase())}
                   disabled={isRunning}
                   className="w-full px-4 py-2 border rounded-lg font-mono"
+                  style={{ color: '#000', fontWeight: '600' }}
                 />
               </div>
               <div>
@@ -165,6 +168,7 @@ const NaiveStringVisualize = () => {
                   onChange={(e) => setPattern(e.target.value.toUpperCase())}
                   disabled={isRunning}
                   className="w-full px-4 py-2 border rounded-lg font-mono"
+                  style={{ color: '#000', fontWeight: '600' }}
                 />
               </div>
             </div>
