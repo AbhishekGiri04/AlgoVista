@@ -10,22 +10,36 @@ const SelectionSortVisualize = () => {
   const [loading, setLoading] = useState(false);
   const intervalRef = useRef(null);
 
-  const runSelectionSort = async () => {
+  const runSelectionSort = () => {
     setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/selectionsort/visualize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ array })
-      });
-      const data = await response.json();
-      if (data.steps) {
-        setSteps(data.steps);
-        setCurrentStep(0);
+    const arr = [...array];
+    const steps = [];
+    
+    steps.push({ arr: [...arr], type: 'start', i: -1, j: -1, minIdx: -1 });
+    
+    for (let i = 0; i < arr.length - 1; i++) {
+      let minIdx = i;
+      
+      for (let j = i + 1; j < arr.length; j++) {
+        steps.push({ arr: [...arr], type: 'compare', i, j, minIdx });
+        
+        if (arr[j] < arr[minIdx]) {
+          minIdx = j;
+          steps.push({ arr: [...arr], type: 'min_update', i, j, minIdx });
+        }
       }
-    } catch (error) {
-      console.error('Error:', error);
+      
+      if (minIdx !== i) {
+        steps.push({ arr: [...arr], type: 'swap', i, j: arr.length, minIdx });
+        [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+        steps.push({ arr: [...arr], type: 'swap', i, j: arr.length, minIdx: i });
+      }
     }
+    
+    steps.push({ arr: [...arr], type: 'done', i: arr.length, j: -1, minIdx: -1 });
+    
+    setSteps(steps);
+    setCurrentStep(0);
     setLoading(false);
   };
 

@@ -567,7 +567,8 @@ const BinarySearchVisualize = () => {
                       transform: 'translateX(-50%)',
                       fontSize: '12px',
                       fontWeight: '600',
-                      color: '#3b82f6'
+                      color: '#3b82f6',
+                      whiteSpace: 'nowrap'
                     }}>
                       O(log n)
                     </div>

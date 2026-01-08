@@ -745,7 +745,7 @@ const Home = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 3.2 }}
             >
-              © 2025 Algovista. All rights reserved.
+              © 2026 Algovista. All rights reserved.
             </motion.p>
             
 

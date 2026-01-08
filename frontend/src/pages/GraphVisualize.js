@@ -178,11 +178,11 @@ const GraphVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -201,53 +201,61 @@ const GraphVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '40px',
-          marginBottom: '30px',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: '800',
+          color: '#1e293b',
+          marginBottom: '1rem',
           textAlign: 'center'
         }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: '0 0 12px'
-          }}>
-            🌐 3D Graph Visualizer
-          </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
-            🌐 Graph Structure (V={vertices.length}, E={edges.length})
-          </p>
-          <div style={{ marginTop: '10px', fontSize: '14px', color: '#64748b' }}>
-            Vertices: {vertices.length} | Edges: {edges.length} | Type: Undirected
-          </div>
+          3D Graph Visualizer
+        </h1>
+        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '0.5rem' }}>
+          Graph Structure (V={vertices.length}, E={edges.length})
+        </p>
+        <div style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
+          Vertices: {vertices.length} | Edges: {edges.length} | Type: Undirected
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
           }}>
+            <style>{`
+              div::-webkit-scrollbar {
+                width: 6px;
+              }
+              div::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.1);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.4);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: rgba(148, 163, 184, 0.6);
+              }
+            `}</style>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1e293b'
             }}>
-              🌐 Graph Structure (V={vertices.length}, E={edges.length})
+              Graph Structure (V={vertices.length}, E={edges.length})
             </h2>
 
             {/* Graph Visualization */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: 'rgba(255, 255, 255, 0.6)',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
@@ -255,7 +263,8 @@ const GraphVisualize = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               {vertices.length > 0 ? (
                 <>
@@ -274,11 +283,12 @@ const GraphVisualize = () => {
                   </div>
                   
                   <div style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(255, 255, 255, 0.8)',
                     padding: '15px',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    color: '#cbd5e1'
+                    color: '#475569',
+                    border: '1px solid rgba(148, 163, 184, 0.2)'
                   }}>
                     <div><strong>Edges:</strong></div>
                     {edges.length > 0 ? edges.map((edge, idx) => (
@@ -303,17 +313,18 @@ const GraphVisualize = () => {
 
             {/* Graph Operations */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1e293b'
               }}>
-                🌐 Graph Operations
+                Graph Operations
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
@@ -325,10 +336,11 @@ const GraphVisualize = () => {
                   style={{
                     padding: '12px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    fontSize: '14px'
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
+                    fontSize: '14px',
+                    outline: 'none'
                   }}
                 />
                 <input
@@ -339,10 +351,11 @@ const GraphVisualize = () => {
                   style={{
                     padding: '12px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    fontSize: '14px'
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
+                    fontSize: '14px',
+                    outline: 'none'
                   }}
                 />
               </div>
@@ -356,16 +369,17 @@ const GraphVisualize = () => {
                   width: '100%',
                   padding: '12px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  color: 'white',
+                  border: '2px solid #e5e7eb',
+                  background: '#fff',
+                  color: '#1e293b',
                   fontSize: '14px',
-                  marginBottom: '20px'
+                  marginBottom: '20px',
+                  outline: 'none'
                 }}
               />
 
               <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ color: '#10b981', marginBottom: '12px', fontSize: '16px' }}>⭕ Vertex Operations</h4>
+                <h4 style={{ color: '#10b981', marginBottom: '12px', fontSize: '16px' }}>Vertex Operations</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button
                     onClick={addVertex}
@@ -382,7 +396,7 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    ➕ Add Vertex
+                    Add Vertex
                   </button>
                   <button
                     onClick={removeVertex}
@@ -399,13 +413,13 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    ❌ Remove Vertex
+                    Remove Vertex
                   </button>
                 </div>
               </div>
 
               <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ color: '#06b6d4', marginBottom: '12px', fontSize: '16px' }}>➡️ Edge Operations</h4>
+                <h4 style={{ color: '#06b6d4', marginBottom: '12px', fontSize: '16px' }}>Edge Operations</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button
                     onClick={addEdge}
@@ -422,7 +436,7 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    ➕ Add Edge
+                    Add Edge
                   </button>
                   <button
                     onClick={removeEdge}
@@ -439,13 +453,13 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    ❌ Remove Edge
+                    Remove Edge
                   </button>
                 </div>
               </div>
 
               <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ color: '#8b5cf6', marginBottom: '12px', fontSize: '16px' }}>🔄 Traversals</h4>
+                <h4 style={{ color: '#8b5cf6', marginBottom: '12px', fontSize: '16px' }}>Traversals</h4>
                 <input
                   type="text"
                   value={startVertex}
@@ -456,10 +470,11 @@ const GraphVisualize = () => {
                     padding: '10px',
                     marginBottom: '8px',
                     borderRadius: '8px',
-                    border: '2px solid rgba(139, 92, 246, 0.2)',
-                    background: 'rgba(30, 41, 59, 0.8)',
-                    color: 'white',
-                    fontSize: '14px'
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
+                    fontSize: '14px',
+                    outline: 'none'
                   }}
                 />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -478,7 +493,7 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    BFS (Queue)
+                    BFS
                   </button>
                   <button
                     onClick={dfsTraversal}
@@ -495,7 +510,7 @@ const GraphVisualize = () => {
                       fontSize: '12px'
                     }}
                   >
-                    DFS (Stack)
+                    DFS
                   </button>
                 </div>
               </div>
@@ -515,7 +530,7 @@ const GraphVisualize = () => {
                   opacity: isAnimating ? 0.6 : 1
                 }}
               >
-                🧹 Clear Graph
+                Clear Graph
               </button>
             </div>
           </div>
@@ -523,14 +538,15 @@ const GraphVisualize = () => {
           {/* Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                ⚡ Performance
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
+                Performance
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
                 {[
@@ -540,32 +556,36 @@ const GraphVisualize = () => {
                   { op: 'Space', complexity: 'O(V+E)' }
                 ].map(({ op, complexity }) => (
                   <div key={op} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#94a3b8' }}>{op}:</span>
-                    <span style={{ fontWeight: '600', color: '#60a5fa' }}>{complexity}</span>
+                    <span style={{ color: '#64748b' }}>{op}:</span>
+                    <span style={{ fontWeight: '600', color: '#3b82f6' }}>{complexity}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              flex: 1
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              maxHeight: '500px',
+              overflow: 'hidden'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                📝 Operation Log
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
+                Operation Log
               </h3>
-              <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'hidden' }}>
                 {operationLog.length > 0 ? operationLog.map((log) => (
                   <div key={log.id} style={{
                     padding: '12px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(59, 130, 246, 0.1)',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    wordBreak: 'break-word'
                   }}>
                     <div style={{ 
                       fontWeight: '600', 
@@ -576,7 +596,7 @@ const GraphVisualize = () => {
                     }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

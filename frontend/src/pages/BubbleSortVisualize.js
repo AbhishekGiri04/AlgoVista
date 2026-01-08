@@ -12,20 +12,31 @@ const BubbleSortVisualize = () => {
 
   const runBubbleSort = async () => {
     setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/bubblesort/visualize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ array })
-      });
-      const data = await response.json();
-      if (data.steps) {
-        setSteps(data.steps);
-        setCurrentStep(0);
+    
+    // Client-side bubble sort implementation
+    const arr = [...array];
+    const sortSteps = [];
+    const n = arr.length;
+    
+    sortSteps.push({ arr: [...arr], type: 'start', i: -1, j: -1 });
+    
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        // Compare step
+        sortSteps.push({ arr: [...arr], type: 'compare', i: j, j: j + 1 });
+        
+        if (arr[j] > arr[j + 1]) {
+          // Swap step
+          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          sortSteps.push({ arr: [...arr], type: 'swap', i: j, j: j + 1 });
+        }
       }
-    } catch (error) {
-      console.error('Error:', error);
     }
+    
+    sortSteps.push({ arr: [...arr], type: 'done', i: -1, j: -1 });
+    
+    setSteps(sortSteps);
+    setCurrentStep(0);
     setLoading(false);
   };
 

@@ -138,11 +138,11 @@ const StackVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -162,44 +162,52 @@ const StackVisualize = () => {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '40px',
-          marginBottom: '30px',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: '800',
+          color: '#1e293b',
+          marginBottom: '1rem',
           textAlign: 'center'
         }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: '0 0 12px'
-          }}>
-            Stack Operations Visualizer
-          </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
-            Interactive visualization of LIFO (Last-In-First-Out) stack operations
-          </p>
-        </div>
+          Stack Operations Visualizer
+        </h1>
+        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
+          Interactive visualization of LIFO (Last-In-First-Out) stack operations
+        </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           {/* Main Visualization */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
           }}>
+            <style>{`
+              div::-webkit-scrollbar {
+                width: 6px;
+              }
+              div::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.1);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.4);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: rgba(148, 163, 184, 0.6);
+              }
+            `}</style>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1e293b'
             }}>
               LIFO Stack Structure
             </h2>
@@ -210,16 +218,17 @@ const StackVisualize = () => {
               justifyContent: 'space-between',
               marginBottom: '30px',
               padding: '20px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '12px'
+              background: 'rgba(255, 255, 255, 0.6)',
+              borderRadius: '12px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <div>
-                <span style={{ color: '#94a3b8' }}>Stack Size: </span>
-                <span style={{ fontWeight: '700', color: '#60a5fa' }}>{stack.length}/{maxSize}</span>
+                <span style={{ color: '#64748b' }}>Stack Size: </span>
+                <span style={{ fontWeight: '700', color: '#3b82f6' }}>{stack.length}/{maxSize}</span>
               </div>
               <div>
-                <span style={{ color: '#94a3b8' }}>Top Element: </span>
-                <span style={{ fontWeight: '700', color: '#fbbf24' }}>
+                <span style={{ color: '#64748b' }}>Top Element: </span>
+                <span style={{ fontWeight: '700', color: '#f59e0b' }}>
                   {stack.length > 0 ? stack[stack.length - 1] : 'None'}
                 </span>
               </div>
@@ -227,7 +236,7 @@ const StackVisualize = () => {
 
             {/* Stack Visualization */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: 'rgba(255, 255, 255, 0.6)',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
@@ -235,7 +244,8 @@ const StackVisualize = () => {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
-              alignItems: 'center'
+              alignItems: 'center',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               {stack.length > 0 ? (
                 <div style={{
@@ -314,21 +324,22 @@ const StackVisualize = () => {
 
             {/* Controls */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1e293b'
               }}>
                 Stack Operations
               </h3>
               
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#475569', fontWeight: '600' }}>
                   Push Value
                 </label>
                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -341,10 +352,11 @@ const StackVisualize = () => {
                       flex: 1,
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px'
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
+                      fontSize: '14px',
+                      outline: 'none'
                     }}
                   />
                   <button
@@ -370,9 +382,11 @@ const StackVisualize = () => {
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 {[
                   { label: 'Pop', action: popElement, color: '#ef4444', disabled: stack.length === 0 },
-                  { label: 'Peek', action: peekElement, color: '#06b6d4', disabled: false },
-                  { label: 'Traverse', action: traverseStack, color: '#8b5cf6', disabled: stack.length === 0 },
-                  { label: 'Clear', action: clearStack, color: '#64748b', disabled: stack.length === 0 }
+                  { label: 'Peek', action: peekElement, color: '#f59e0b', disabled: false },
+                  { label: 'Traverse', action: traverseStack, color: '#10b981', disabled: stack.length === 0 },
+                  { label: 'Clear', action: clearStack, color: '#06b6d4', disabled: stack.length === 0 },
+                  { label: 'isEmpty', action: checkEmpty, color: '#8b5cf6', disabled: false },
+                  { label: 'isFull', action: checkFull, color: '#ec4899', disabled: false }
                 ].map(({ label, action, color, disabled }) => (
                   <button
                     key={label}
@@ -395,44 +409,6 @@ const StackVisualize = () => {
                   </button>
                 ))}
               </div>
-
-              <div style={{ 
-                display: 'flex', 
-                gap: '12px', 
-                marginTop: '15px',
-                justifyContent: 'center'
-              }}>
-                <button
-                  onClick={checkEmpty}
-                  style={{
-                    background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  isEmpty?
-                </button>
-                <button
-                  onClick={checkFull}
-                  style={{
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  isFull?
-                </button>
-              </div>
             </div>
           </div>
 
@@ -440,13 +416,14 @@ const StackVisualize = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Performance */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Performance
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
@@ -457,8 +434,8 @@ const StackVisualize = () => {
                   { op: 'Space', complexity: 'O(n)' }
                 ].map(({ op, complexity }) => (
                   <div key={op} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#94a3b8' }}>{op}:</span>
-                    <span style={{ fontWeight: '600', color: '#60a5fa' }}>{complexity}</span>
+                    <span style={{ color: '#64748b' }}>{op}:</span>
+                    <span style={{ fontWeight: '600', color: '#3b82f6' }}>{complexity}</span>
                   </div>
                 ))}
               </div>
@@ -466,14 +443,16 @@ const StackVisualize = () => {
 
             {/* Operation Log */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              flex: 1
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              maxHeight: '500px',
+              overflow: 'hidden'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Operation Log
               </h3>
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
@@ -481,9 +460,10 @@ const StackVisualize = () => {
                   <div key={log.id} style={{
                     padding: '12px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(59, 130, 246, 0.1)',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)'
                   }}>
                     <div style={{ 
                       fontWeight: '600', 
@@ -494,7 +474,7 @@ const StackVisualize = () => {
                     }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

@@ -109,26 +109,26 @@ const HuffmanCodingVisualize = () => {
 
   const togglePause = () => setIsPaused(!isPaused);
 
-  const renderTree = (node, x = 250, y = 50, offset = 80) => {
+  const renderTree = (node, x = 400, y = 50, offset = 120) => {
     if (!node) return null;
     
     return (
       <g key={`${x}-${y}`}>
         {node.left && (
           <>
-            <line x1={x} y1={y} x2={x - offset} y2={y + 60} stroke="#6B7280" strokeWidth="2" />
-            <text x={x - offset / 2 - 10} y={y + 35} className="text-xs fill-blue-600 font-bold">0</text>
-            {renderTree(node.left, x - offset, y + 60, offset / 2)}
+            <line x1={x} y1={y} x2={x - offset} y2={y + 80} stroke="#6B7280" strokeWidth="2" />
+            <text x={x - offset / 2 - 10} y={y + 45} className="text-xs fill-blue-600 font-bold">0</text>
+            {renderTree(node.left, x - offset, y + 80, offset * 0.6)}
           </>
         )}
         {node.right && (
           <>
-            <line x1={x} y1={y} x2={x + offset} y2={y + 60} stroke="#6B7280" strokeWidth="2" />
-            <text x={x + offset / 2 + 5} y={y + 35} className="text-xs fill-red-600 font-bold">1</text>
-            {renderTree(node.right, x + offset, y + 60, offset / 2)}
+            <line x1={x} y1={y} x2={x + offset} y2={y + 80} stroke="#6B7280" strokeWidth="2" />
+            <text x={x + offset / 2 + 5} y={y + 45} className="text-xs fill-red-600 font-bold">1</text>
+            {renderTree(node.right, x + offset, y + 80, offset * 0.6)}
           </>
         )}
-        <circle cx={x} cy={y} r="20" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
+        <circle cx={x} cy={y} r="25" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
         <text x={x} y={y - 5} textAnchor="middle" className="text-xs font-bold fill-white">
           {node.char || 'N'}
         </text>
@@ -140,125 +140,316 @@ const HuffmanCodingVisualize = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-green-800 mb-2">Huffman Coding</h1>
-          <p className="text-green-600">Data compression using binary trees</p>
-        </motion.div>
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <a href="/greedyalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Greedy Algorithms
+      </a>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Huffman Tree</h2>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Huffman Coding Visualizer</h1>
+          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Data Compression using Binary Trees</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+          {/* Left Panel */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Huffman Tree Visualization</h2>
             
-            <div className="relative bg-gray-50 rounded-lg p-4 h-96 overflow-auto">
+            <div style={{
+              background: '#fff',
+              borderRadius: '0.75rem',
+              padding: '1.5rem',
+              minHeight: '400px',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px solid #e5e7eb'
+            }}>
               {tree ? (
-                <svg width="500" height="350">
+                <svg width="800" height="500" style={{ overflow: 'visible' }}>
                   {renderTree(tree)}
                 </svg>
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div style={{ color: '#9ca3af', fontSize: '1.1rem', fontStyle: 'italic' }}>
                   Build tree to visualize
                 </div>
               )}
             </div>
 
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Input Text:</label>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                Input Text:
+              </label>
               <input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value.toUpperCase())}
                 disabled={isRunning}
-                className="w-full px-4 py-2 border rounded-lg"
-                placeholder="Enter text"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  color: '#000',
+                  fontWeight: '600'
+                }}
+                placeholder="Enter text to compress"
               />
             </div>
 
-            <div className="flex flex-wrap gap-2 mt-4">
-              <button onClick={reset} disabled={isRunning} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={reset}
+                disabled={isRunning}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #6b7280, #4b5563)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: isRunning ? 'not-allowed' : 'pointer',
+                  opacity: isRunning ? 0.5 : 1
+                }}
+              >
                 Calculate Frequencies
               </button>
-              <button onClick={buildHuffmanTree} disabled={isRunning || Object.keys(frequencies).length === 0} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50">
+              <button
+                onClick={buildHuffmanTree}
+                disabled={isRunning || Object.keys(frequencies).length === 0}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: (isRunning || Object.keys(frequencies).length === 0) ? 'not-allowed' : 'pointer',
+                  opacity: (isRunning || Object.keys(frequencies).length === 0) ? 0.5 : 1
+                }}
+              >
                 {isRunning ? 'Building...' : 'Build Huffman Tree'}
               </button>
-              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Speed:</label>
-                <input type="range" min="200" max="2000" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              {isRunning && (
+                <button
+                  onClick={togglePause}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPaused ? '▶ Resume' : '⏸ Pause'}
+                </button>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '600' }}>Speed:</label>
+                <input
+                  type="range"
+                  min="200"
+                  max="2000"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  style={{ width: '100px' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{speed}ms</span>
               </div>
-              <a href="/greedyalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
-          </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Character Frequencies</h3>
-              <div className="space-y-2">
+            {encodedText && (
+              <div style={{
+                marginTop: '1.5rem',
+                padding: '1rem',
+                background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
+                borderRadius: '0.75rem',
+                border: '2px solid #3b82f6'
+              }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1e40af' }}>Compression Result</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '0.75rem' }}>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>Original</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>{inputText.length * 8} bits</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>Compressed</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>{encodedText.length} bits</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>Saved</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#10b981' }}>{compressionRatio}%</p>
+                  </div>
+                </div>
+                <div style={{ padding: '0.75rem', background: 'white', borderRadius: '0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Encoded Text:</p>
+                  <p style={{ fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all', color: '#1f2937' }}>{encodedText}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Panel */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Character Frequencies */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Character Frequencies</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {Object.entries(frequencies).map(([char, freq]) => (
-                  <div key={char} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                    <span className="font-bold text-lg">{char}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-500 h-2 rounded-full" style={{ width: `${(freq / inputText.length) * 100}%` }} />
+                  <div key={char} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem',
+                    background: '#f9fafb',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>{char}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, marginLeft: '1rem' }}>
+                      <div style={{ flex: 1, background: '#e5e7eb', borderRadius: '9999px', height: '8px', overflow: 'hidden' }}>
+                        <div style={{
+                          width: `${(freq / inputText.length) * 100}%`,
+                          background: 'linear-gradient(90deg, #10b981, #059669)',
+                          height: '100%',
+                          borderRadius: '9999px'
+                        }} />
                       </div>
-                      <span className="text-sm text-gray-600">{freq}</span>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', minWidth: '30px', textAlign: 'right' }}>{freq}</span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Huffman Codes */}
             {Object.keys(huffmanCodes).length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Huffman Codes</h3>
-                <div className="space-y-2">
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Huffman Codes</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {Object.entries(huffmanCodes).map(([char, code]) => (
-                    <div key={char} className="flex justify-between p-2 bg-green-50 rounded">
-                      <span className="font-bold">{char}</span>
-                      <span className="font-mono text-green-700">{code}</span>
+                    <div key={char} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '0.75rem',
+                      background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                      borderRadius: '0.5rem',
+                      border: '1px solid #10b981'
+                    }}>
+                      <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#065f46' }}>{char}</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '1rem', fontWeight: '600', color: '#047857' }}>{code}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {encodedText && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Compression Result</h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-gray-600">Original: {inputText.length * 8} bits</p>
-                    <p className="text-sm text-gray-600">Compressed: {encodedText.length} bits</p>
-                    <p className="text-lg font-bold text-green-600">Saved: {compressionRatio}%</p>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded">
-                    <p className="text-xs text-gray-500 mb-1">Encoded:</p>
-                    <p className="font-mono text-xs break-all">{encodedText}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-48 overflow-y-auto text-sm">
+            {/* Algorithm Log */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <style>{`
+                  div::-webkit-scrollbar {
+                    width: 6px;
+                  }
+                  div::-webkit-scrollbar-track {
+                    background: rgba(148, 163, 184, 0.1);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb {
+                    background: rgba(148, 163, 184, 0.4);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb:hover {
+                    background: rgba(148, 163, 184, 0.6);
+                  }
+                `}</style>
                 {log.map((entry, idx) => (
-                  <div key={idx} className="p-2 rounded text-gray-700">{entry}</div>
+                  <div key={idx} style={{
+                    padding: '0.5rem 0.75rem',
+                    background: '#f3f4f6',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem',
+                    color: '#374151',
+                    borderLeft: '3px solid #3b82f6'
+                  }}>
+                    {entry}
+                  </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n log n)</p>
-                <p><strong>Space Complexity:</strong> O(n)</p>
-                <p><strong>Approach:</strong> Greedy with Priority Queue</p>
-                <p><strong>Use Case:</strong> Data compression, encoding</p>
+            {/* Algorithm Info */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n log n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Approach:</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy + Priority Queue</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Data compression, file encoding, network transmission</p>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

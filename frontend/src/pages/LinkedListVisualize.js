@@ -104,7 +104,7 @@ const LinkedListVisualize = () => {
     const isHighlighted = highlightIndex === index;
     
     return {
-      width: '80px',
+      minWidth: '80px',
       height: '60px',
       background: isHighlighted
         ? 'linear-gradient(135deg, #10b981, #34d399)'
@@ -130,7 +130,8 @@ const LinkedListVisualize = () => {
       transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
       position: 'relative',
       transformStyle: 'preserve-3d',
-      perspective: '1000px'
+      perspective: '1000px',
+      flexShrink: 0
     };
   };
 
@@ -159,11 +160,11 @@ const LinkedListVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -182,43 +183,51 @@ const LinkedListVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '40px',
-          marginBottom: '30px',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: '800',
+          color: '#1e293b',
+          marginBottom: '1rem',
           textAlign: 'center'
         }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #ef4444, #8b5cf6)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: '0 0 12px'
-          }}>
-            3D Linked List Visualizer
-          </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
-            Interactive 3D visualization of dynamic node-based data structure
-          </p>
-        </div>
+          3D Linked List Visualizer
+        </h1>
+        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
+          Interactive 3D visualization of dynamic node-based data structure
+        </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px', alignItems: 'start' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
           }}>
+            <style>{`
+              div::-webkit-scrollbar {
+                width: 6px;
+              }
+              div::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.1);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.4);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: rgba(148, 163, 184, 0.6);
+              }
+            `}</style>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1e293b'
             }}>
               3D Linked List Structure
             </h2>
@@ -228,21 +237,22 @@ const LinkedListVisualize = () => {
               justifyContent: 'space-between',
               marginBottom: '30px',
               padding: '20px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '12px'
+              background: 'rgba(255, 255, 255, 0.6)',
+              borderRadius: '12px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <div>
-                <span style={{ color: '#94a3b8' }}>List Size: </span>
-                <span style={{ fontWeight: '700', color: '#60a5fa' }}>{linkedList.length}</span>
+                <span style={{ color: '#64748b' }}>List Size: </span>
+                <span style={{ fontWeight: '700', color: '#3b82f6' }}>{linkedList.length}</span>
               </div>
               <div>
-                <span style={{ color: '#94a3b8' }}>Head: </span>
+                <span style={{ color: '#64748b' }}>Head: </span>
                 <span style={{ fontWeight: '700', color: '#ef4444' }}>
                   {linkedList.length > 0 ? linkedList[0] : 'NULL'}
                 </span>
               </div>
               <div>
-                <span style={{ color: '#94a3b8' }}>Tail: </span>
+                <span style={{ color: '#64748b' }}>Tail: </span>
                 <span style={{ fontWeight: '700', color: '#8b5cf6' }}>
                   {linkedList.length > 0 ? linkedList[linkedList.length - 1] : 'NULL'}
                 </span>
@@ -250,16 +260,20 @@ const LinkedListVisualize = () => {
             </div>
 
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: 'rgba(255, 255, 255, 0.6)',
               borderRadius: '16px',
-              padding: '50px',
+              padding: '50px 30px',
               marginBottom: '30px',
-              minHeight: '200px',
+              height: '200px',
+              maxHeight: '200px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               perspective: '1200px',
-              transformStyle: 'preserve-3d'
+              transformStyle: 'preserve-3d',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              overflowX: 'auto',
+              overflowY: 'hidden'
             }}>
               {linkedList.length > 0 ? (
                 <div style={{
@@ -267,7 +281,8 @@ const LinkedListVisualize = () => {
                   alignItems: 'center',
                   gap: '0px',
                   transformStyle: 'preserve-3d',
-                  transform: 'rotateX(10deg) rotateY(5deg)'
+                  transform: 'rotateX(10deg) rotateY(5deg)',
+                  minWidth: 'max-content'
                 }}>
                   <div style={{
                     fontSize: '12px',
@@ -348,22 +363,23 @@ const LinkedListVisualize = () => {
             </div>
 
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1e293b'
               }}>
                 Linked List Operations
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#475569', fontWeight: '600' }}>
                     Value
                   </label>
                   <input
@@ -375,15 +391,16 @@ const LinkedListVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px'
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
+                      fontSize: '14px',
+                      outline: 'none'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#475569', fontWeight: '600' }}>
                     Position (for insert at)
                   </label>
                   <input
@@ -395,47 +412,24 @@ const LinkedListVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px'
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
+                      fontSize: '14px',
+                      outline: 'none'
                     }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 {[
                   { label: 'Insert First', action: insertFirst, color: '#ef4444' },
                   { label: 'Insert Last', action: insertLast, color: '#8b5cf6' },
-                  { label: 'Insert At', action: insertAt, color: '#10b981' }
-                ].map(({ label, action, color }) => (
-                  <button
-                    key={label}
-                    onClick={action}
-                    disabled={isAnimating}
-                    style={{
-                      background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-                      color: 'white',
-                      border: 'none',
-                      padding: '10px 16px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: isAnimating ? 'not-allowed' : 'pointer',
-                      opacity: isAnimating ? 0.6 : 1
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                {[
-                  { label: 'Remove First', action: removeFirst, color: '#ef4444', disabled: linkedList.length === 0 },
-                  { label: 'Remove Last', action: removeLast, color: '#8b5cf6', disabled: linkedList.length === 0 },
-                  { label: 'Traverse', action: traverseList, color: '#06b6d4', disabled: linkedList.length === 0 }
+                  { label: 'Insert At', action: insertAt, color: '#10b981' },
+                  { label: 'Remove First', action: removeFirst, color: '#f59e0b', disabled: linkedList.length === 0 },
+                  { label: 'Remove Last', action: removeLast, color: '#06b6d4', disabled: linkedList.length === 0 },
+                  { label: 'Traverse', action: traverseList, color: '#ec4899', disabled: linkedList.length === 0 }
                 ].map(({ label, action, color, disabled }) => (
                   <button
                     key={label}
@@ -462,13 +456,14 @@ const LinkedListVisualize = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Performance
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
@@ -481,22 +476,24 @@ const LinkedListVisualize = () => {
                   { op: 'Space', complexity: 'O(n)' }
                 ].map(({ op, complexity }) => (
                   <div key={op} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#94a3b8', fontSize: '13px' }}>{op}:</span>
-                    <span style={{ fontWeight: '600', color: '#60a5fa', fontSize: '13px' }}>{complexity}</span>
+                    <span style={{ color: '#64748b', fontSize: '13px' }}>{op}:</span>
+                    <span style={{ fontWeight: '600', color: '#3b82f6', fontSize: '13px' }}>{complexity}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              flex: 1
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              maxHeight: '500px',
+              overflow: 'hidden'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Operation Log
               </h3>
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
@@ -504,9 +501,10 @@ const LinkedListVisualize = () => {
                   <div key={log.id} style={{
                     padding: '12px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(59, 130, 246, 0.1)',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)'
                   }}>
                     <div style={{ 
                       fontWeight: '600', 
@@ -516,7 +514,7 @@ const LinkedListVisualize = () => {
                     }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

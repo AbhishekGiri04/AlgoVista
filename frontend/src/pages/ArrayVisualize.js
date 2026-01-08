@@ -154,11 +154,11 @@ const ArrayVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -178,58 +178,67 @@ const ArrayVisualize = () => {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '40px',
-          marginBottom: '30px',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: '800',
+          color: '#1e293b',
+          marginBottom: '1rem',
           textAlign: 'center'
         }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #60a5fa, #34d399)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: '0 0 12px'
-          }}>
-            Array Operations Visualizer
-          </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
-            Interactive visualization of array data structure operations
-          </p>
-        </div>
+          Array Operations Visualizer
+        </h1>
+        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
+          Interactive visualization of array data structure operations
+        </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           {/* Main Visualization */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
           }}>
+            <style>{`
+              div::-webkit-scrollbar {
+                width: 6px;
+              }
+              div::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.1);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.4);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: rgba(148, 163, 184, 0.6);
+              }
+            `}</style>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1e293b'
             }}>
               Array Visualization
             </h2>
 
             {/* Array Display */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: 'rgba(255, 255, 255, 0.6)',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
               minHeight: '120px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <div style={{
                 display: 'flex',
@@ -241,19 +250,23 @@ const ArrayVisualize = () => {
                 transformStyle: 'preserve-3d'
               }}>
                 {array.length > 0 ? array.map((val, idx) => (
-                  <div key={idx} style={getElementStyle(idx)}>
-                    <div style={{ textAlign: 'center' }}>
-                      <div>{val}</div>
-                      <div style={{ 
-                        fontSize: '10px', 
-                        opacity: 0.7, 
-                        position: 'absolute',
-                        bottom: '-20px',
-                        left: '50%',
-                        transform: 'translateX(-50%)'
-                      }}>
-                        [{idx}]
+                  <div key={idx} style={{ position: 'relative', marginBottom: '30px' }}>
+                    <div style={getElementStyle(idx)}>
+                      <div style={{ textAlign: 'center' }}>
+                        <div>{val}</div>
                       </div>
+                    </div>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      color: '#64748b',
+                      fontWeight: '600',
+                      position: 'absolute',
+                      bottom: '-24px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      [{idx}]
                     </div>
                   </div>
                 )) : (
@@ -270,23 +283,24 @@ const ArrayVisualize = () => {
 
             {/* Controls */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
-              marginBottom: '20px'
+              marginBottom: '20px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1e293b'
               }}>
                 Array Operations
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#475569', fontWeight: '600' }}>
                     Value
                   </label>
                   <input
@@ -298,15 +312,16 @@ const ArrayVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px'
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
+                      fontSize: '14px',
+                      outline: 'none'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#475569', fontWeight: '600' }}>
                     Index (optional)
                   </label>
                   <input
@@ -318,10 +333,11 @@ const ArrayVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      fontSize: '14px'
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
+                      fontSize: '14px',
+                      outline: 'none'
                     }}
                   />
                 </div>
@@ -359,15 +375,16 @@ const ArrayVisualize = () => {
 
             {/* Search */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '15px',
-                color: '#e2e8f0'
+                color: '#1e293b'
               }}>
                 Search Element
               </h3>
@@ -381,10 +398,11 @@ const ArrayVisualize = () => {
                     flex: 1,
                     padding: '12px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    fontSize: '14px'
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
+                    fontSize: '14px',
+                    outline: 'none'
                   }}
                 />
                 <button
@@ -410,13 +428,14 @@ const ArrayVisualize = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Array Stats */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Array Size: {array.length}
               </h3>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '15px' }}>
@@ -430,10 +449,11 @@ const ArrayVisualize = () => {
                     width: '80px',
                     padding: '8px',
                     borderRadius: '6px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    fontSize: '14px'
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
+                    fontSize: '14px',
+                    outline: 'none'
                   }}
                 />
                 <button
@@ -456,41 +476,43 @@ const ArrayVisualize = () => {
 
             {/* Statistics */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Array Statistics
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#94a3b8' }}>Size</span>
-                  <span style={{ fontWeight: '600' }}>{array.length}</span>
+                  <span style={{ color: '#64748b' }}>Size</span>
+                  <span style={{ fontWeight: '600', color: '#1e293b' }}>{array.length}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#94a3b8' }}>Memory</span>
-                  <span style={{ fontWeight: '600' }}>{array.length * 4}B</span>
+                  <span style={{ color: '#64748b' }}>Memory</span>
+                  <span style={{ fontWeight: '600', color: '#1e293b' }}>{array.length * 4}B</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#94a3b8' }}>Access Time</span>
-                  <span style={{ fontWeight: '600' }}>O(1)</span>
+                  <span style={{ color: '#64748b' }}>Access Time</span>
+                  <span style={{ fontWeight: '600', color: '#1e293b' }}>O(1)</span>
                 </div>
               </div>
             </div>
 
             {/* Operation Log */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
               flex: 1
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Operation Log
               </h3>
               <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
@@ -498,14 +520,15 @@ const ArrayVisualize = () => {
                   <div key={log.id} style={{
                     padding: '10px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(59, 130, 246, 0.1)',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)'
                   }}>
-                    <div style={{ fontWeight: '600', color: '#60a5fa' }}>
+                    <div style={{ fontWeight: '600', color: '#3b82f6' }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

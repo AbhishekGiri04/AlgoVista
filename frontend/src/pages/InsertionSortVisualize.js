@@ -10,22 +10,33 @@ const InsertionSortVisualize = () => {
   const [loading, setLoading] = useState(false);
   const intervalRef = useRef(null);
 
-  const runInsertionSort = async () => {
+  const runInsertionSort = () => {
     setLoading(true);
-    try {
-      const response = await fetch('https://algovista-flux.onrender.com/api/insertionsort/visualize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ array })
-      });
-      const data = await response.json();
-      if (data.steps) {
-        setSteps(data.steps);
-        setCurrentStep(0);
+    const arr = [...array];
+    const steps = [];
+    
+    steps.push({ arr: [...arr], type: 'start', i: 0, j: -1, keyIdx: -1 });
+    
+    for (let i = 1; i < arr.length; i++) {
+      const key = arr[i];
+      steps.push({ arr: [...arr], type: 'key_selected', i, j: i, keyIdx: i });
+      
+      let j = i - 1;
+      while (j >= 0 && arr[j] > key) {
+        steps.push({ arr: [...arr], type: 'compare', i, j, keyIdx: i });
+        arr[j + 1] = arr[j];
+        steps.push({ arr: [...arr], type: 'shift', i, j, keyIdx: i });
+        j--;
       }
-    } catch (error) {
-      console.error('Error:', error);
+      
+      arr[j + 1] = key;
+      steps.push({ arr: [...arr], type: 'insert', i, j: j + 1, keyIdx: j + 1 });
     }
+    
+    steps.push({ arr: [...arr], type: 'done', i: arr.length, j: -1, keyIdx: -1 });
+    
+    setSteps(steps);
+    setCurrentStep(0);
     setLoading(false);
   };
 
@@ -85,13 +96,8 @@ const InsertionSortVisualize = () => {
   const getBarColor = (index, value) => {
     const { i, j, keyIdx, type } = currentStepData;
     
-    // Sorted portion (green)
-    if (index < i) {
-      return 'linear-gradient(135deg, #10b981, #059669)';
-    }
-    
-    // Key element being inserted (blue)
-    if (index === keyIdx) {
+    // Key element being inserted (blue) - highest priority
+    if (index === keyIdx && keyIdx !== -1) {
       return 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
     }
     
@@ -108,6 +114,11 @@ const InsertionSortVisualize = () => {
     // Element being inserted into position (cyan)
     if (index === j && type === 'insert') {
       return 'linear-gradient(135deg, #06b6d4, #0891b2)';
+    }
+    
+    // Sorted portion (green) - check last to avoid conflicts
+    if (index <= i && type !== 'key_selected' && index !== keyIdx) {
+      return 'linear-gradient(135deg, #10b981, #059669)';
     }
     
     // Default unsorted (purple/indigo gradient based on height)
@@ -527,9 +538,11 @@ const InsertionSortVisualize = () => {
                 }}
               >
                 <span style={{ 
-                  textShadow: '2px 2px 4px rgba(255,255,255,0.8)',
+                  textShadow: '0 0 8px rgba(0,0,0,0.8), 2px 2px 4px rgba(255,255,255,0.9)',
                   zIndex: 2,
-                  position: 'relative'
+                  position: 'relative',
+                  color: 'white',
+                  fontWeight: '800'
                 }}>
                   {value}
                 </span>

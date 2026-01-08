@@ -317,11 +317,11 @@ const TreeVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -340,46 +340,55 @@ const TreeVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '40px',
-          marginBottom: '30px',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+        <h1 style={{
+          fontSize: '3rem',
+          fontWeight: '800',
+          color: '#1e293b',
+          marginBottom: '1rem',
           textAlign: 'center'
         }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: '0 0 12px'
-          }}>
-            Enhanced Binary Search Tree Visualizer
-          </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
-            Interactive BST with step-by-step animations and real-time C++ execution
-          </p>
-        </div>
+          Enhanced Binary Search Tree Visualizer
+        </h1>
+        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
+          Interactive BST with step-by-step animations and real-time C++ execution
+        </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
           }}>
+            <style>{`
+              div::-webkit-scrollbar {
+                width: 6px;
+              }
+              div::-webkit-scrollbar-track {
+                background: rgba(148, 163, 184, 0.1);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.4);
+                border-radius: 10px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: rgba(148, 163, 184, 0.6);
+              }
+            `}</style>
             {/* Tree Visualization */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: 'rgba(255, 255, 255, 0.6)',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
               minHeight: '400px',
-              position: 'relative'
+              position: 'relative',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               {root ? (
                 <svg
@@ -455,11 +464,12 @@ const TreeVisualize = () => {
             }}>
               {/* Insert Operations */}
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '16px',
-                padding: '20px'
+                padding: '20px',
+                border: '1px solid rgba(148, 163, 184, 0.2)'
               }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                   Insert Operations
                 </h3>
                 
@@ -473,11 +483,12 @@ const TreeVisualize = () => {
                       width: '100%',
                       padding: '10px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      color: '#1e293b',
                       fontSize: '14px',
-                      marginBottom: '10px'
+                      marginBottom: '10px',
+                      outline: 'none'
                     }}
                   />
                   <div style={{ display: 'flex', gap: '10px' }}>
@@ -528,13 +539,14 @@ const TreeVisualize = () => {
                     width: '100%',
                     padding: '10px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    color: '#1e293b',
                     fontSize: '12px',
                     resize: 'none',
                     rows: 2,
-                    marginBottom: '10px'
+                    marginBottom: '10px',
+                    outline: 'none'
                   }}
                 />
                 <button
@@ -559,11 +571,12 @@ const TreeVisualize = () => {
 
               {/* Traversal Operations */}
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '16px',
-                padding: '20px'
+                padding: '20px',
+                border: '1px solid rgba(148, 163, 184, 0.2)'
               }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                   Tree Traversals
                 </h3>
                 
@@ -596,7 +609,7 @@ const TreeVisualize = () => {
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}>
                     <input
                       type="checkbox"
                       checked={stepMode}
@@ -608,7 +621,7 @@ const TreeVisualize = () => {
 
                 {!stepMode && (
                   <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', fontSize: '12px', color: '#cbd5e1', marginBottom: '5px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#475569', marginBottom: '5px' }}>
                       Animation Speed: {animationSpeed}ms
                     </label>
                     <input
@@ -669,11 +682,12 @@ const TreeVisualize = () => {
             {/* Traversal Results */}
             {traversalOrder.length > 0 && (
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '16px',
-                padding: '20px'
+                padding: '20px',
+                border: '1px solid rgba(148, 163, 184, 0.2)'
               }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                   {traversalType.charAt(0).toUpperCase() + traversalType.slice(1)} Traversal Result
                 </h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -703,13 +717,14 @@ const TreeVisualize = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Legend */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '20px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
             }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Legend
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -727,7 +742,7 @@ const TreeVisualize = () => {
                       background: color,
                       border: '2px solid rgba(255,255,255,0.3)'
                     }} />
-                    <span style={{ fontSize: '12px', color: '#cbd5e1' }}>{label}</span>
+                    <span style={{ fontSize: '12px', color: '#475569' }}>{label}</span>
                   </div>
                 ))}
               </div>
@@ -735,24 +750,28 @@ const TreeVisualize = () => {
 
             {/* Operation Log */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '16px',
               padding: '20px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              flex: 1
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              maxHeight: '500px',
+              overflow: 'hidden'
             }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px', color: '#1e293b' }}>
                 Operation Log
               </h3>
-              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <div style={{ maxHeight: '300px', overflowY: 'auto', overflowX: 'hidden' }}>
                 {operationLog.length > 0 ? operationLog.map((log) => (
                   <div key={log.id} style={{
                     padding: '10px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'rgba(59, 130, 246, 0.1)',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    wordBreak: 'break-word'
                   }}>
                     <div style={{ 
                       fontWeight: '600', 
@@ -763,7 +782,7 @@ const TreeVisualize = () => {
                     }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>
