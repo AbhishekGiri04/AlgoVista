@@ -201,20 +201,34 @@ const GraphVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <h1 style={{
-          fontSize: '3rem',
-          fontWeight: '800',
-          color: '#1e293b',
-          marginBottom: '1rem',
-          textAlign: 'center'
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
-          3D Graph Visualizer
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '0.5rem' }}>
-          Graph Structure (V={vertices.length}, E={edges.length})
-        </p>
-        <div style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
-          Vertices: {vertices.length} | Edges: {edges.length} | Type: Undirected
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #4834d4, #686de0)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px',
+            textAlign: 'center'
+          }}>
+            Graph Visualizer
+          </h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#1e293b',
+            textAlign: 'center',
+            margin: '0'
+          }}>
+            Interactive visualization of graph data structure
+          </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>

@@ -286,14 +286,24 @@ const SortingAlgorithms = () => {
             
             <div style={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
+              gap: '8px',
               margin: '12px 0',
               fontSize: '0.85rem',
-              fontWeight: '600',
-              color: '#2d3748'
+              fontWeight: '600'
             }}>
-              <span>Time: {algorithm.timeComplexity}</span>
-              <span>Space: {algorithm.spaceComplexity}</span>
+              <span style={{
+                background: 'rgba(239, 68, 68, 0.2)',
+                color: '#991b1b',
+                padding: '4px 10px',
+                borderRadius: '12px'
+              }}>{algorithm.timeComplexity}</span>
+              <span style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                color: '#1e40af',
+                padding: '4px 10px',
+                borderRadius: '12px'
+              }}>{algorithm.spaceComplexity}</span>
             </div>
             
             <div style={{

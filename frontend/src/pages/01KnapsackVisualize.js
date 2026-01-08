@@ -101,12 +101,59 @@ const ZeroOneKnapsackVisualize = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-green-800 mb-2">0/1 Knapsack Problem</h1>
-          <p className="text-green-600">Maximum value without exceeding weight using dynamic programming</p>
-        </motion.div>
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '40px',
+      fontFamily: 'Inter, sans-serif',
+      color: '#1e293b'
+    }}>
+      <a href="/dynamicprogramming" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Dynamic Programming
+      </a>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px',
+            textAlign: 'center'
+          }}>
+            0/1 Knapsack Visualizer
+          </h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#1e293b',
+            textAlign: 'center',
+            margin: '0'
+          }}>
+            Maximum value without exceeding weight using dynamic programming
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">

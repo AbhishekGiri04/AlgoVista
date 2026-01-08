@@ -2,12 +2,12 @@ import React from 'react';
 
 const DataStructures = () => {
   const dataStructures = [
-    { name: 'Array', path: '/array', icon: '📊', gradient: 'linear-gradient(135deg, #a8edea, #fed6e3)', shadow: 'rgba(168, 237, 234, 0.3)', desc: 'Contiguous memory storage' },
-    { name: 'Stack', path: '/stack', icon: '📚', gradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)', shadow: 'rgba(255, 236, 210, 0.3)', desc: 'Last-In-First-Out structure' },
-    { name: 'Queue', path: '/queue', icon: '🚶', gradient: 'linear-gradient(135deg, #ff9a9e, #fecfef)', shadow: 'rgba(255, 154, 158, 0.3)', desc: 'First-In-First-Out structure' },
-    { name: 'Linked List', path: '/linkedlist', icon: '🔗', gradient: 'linear-gradient(135deg, #e8d5c4, #f4e4bc)', shadow: 'rgba(232, 213, 196, 0.3)', desc: 'Dynamic node-based storage' },
-    { name: 'Tree', path: '/tree', icon: '🌳', gradient: 'linear-gradient(135deg, #c7a2d9, #e8b4cb)', shadow: 'rgba(199, 162, 217, 0.3)', desc: 'Hierarchical data organization' },
-    { name: 'Graph', path: '/graph', icon: '🕸️', gradient: 'linear-gradient(135deg, #b3d9ff, #c2e9fb)', shadow: 'rgba(179, 217, 255, 0.3)', desc: 'Network of connected nodes' }
+    { name: 'Array', path: '/array', gradient: 'linear-gradient(135deg, #ff9f43, #ff6348)', shadow: 'rgba(255, 159, 67, 0.4)', desc: 'Contiguous memory storage' },
+    { name: 'Stack', path: '/stack', gradient: 'linear-gradient(135deg, #a8edea, #fed6e3)', shadow: 'rgba(168, 237, 234, 0.4)', desc: 'Last-In-First-Out structure' },
+    { name: 'Queue', path: '/queue', gradient: 'linear-gradient(135deg, #feca57, #ff9ff3)', shadow: 'rgba(254, 202, 87, 0.4)', desc: 'First-In-First-Out structure' },
+    { name: 'Linked List', path: '/linkedlist', gradient: 'linear-gradient(135deg, #e8d5c4, #f4e4bc)', shadow: 'rgba(232, 213, 196, 0.4)', desc: 'Dynamic node-based storage' },
+    { name: 'Tree', path: '/tree', gradient: 'linear-gradient(135deg, #ff9ff3, #f368e0)', shadow: 'rgba(255, 159, 243, 0.4)', desc: 'Hierarchical data organization' },
+    { name: 'Graph', path: '/graph', gradient: 'linear-gradient(135deg, #4834d4, #686de0)', shadow: 'rgba(72, 52, 212, 0.4)', desc: 'Network of connected nodes' }
   ];
 
   return (

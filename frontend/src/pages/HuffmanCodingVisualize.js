@@ -163,9 +163,25 @@ const HuffmanCodingVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Huffman Coding Visualizer</h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Data Compression using Binary Trees</p>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '2rem',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '12px'
+          }}>
+            Huffman Coding Visualizer
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b' }}>Data Compression using Binary Trees</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>

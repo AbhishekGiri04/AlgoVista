@@ -183,18 +183,35 @@ const LinkedListVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <h1 style={{
-          fontSize: '3rem',
-          fontWeight: '800',
-          color: '#1e293b',
-          marginBottom: '1rem',
-          textAlign: 'center'
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
-          3D Linked List Visualizer
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#64748b', textAlign: 'center', marginBottom: '40px' }}>
-          Interactive 3D visualization of dynamic node-based data structure
-        </p>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #e8d5c4, #f4e4bc)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px',
+            textAlign: 'center'
+          }}>
+            Linked List Visualizer
+          </h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#1e293b',
+            textAlign: 'center',
+            margin: '0'
+          }}>
+            Interactive 3D visualization of dynamic node-based data structure
+          </p>
+        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px', alignItems: 'start' }}>
           <div style={{

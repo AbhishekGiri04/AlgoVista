@@ -153,18 +153,6 @@ const Visualizer = () => {
       </div>
       
       <div className="relative z-10 container mx-auto px-6 py-12 flex flex-col items-center justify-center min-h-screen">
-        <motion.a 
-          href="/" 
-          className="absolute top-8 left-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg backdrop-blur-md border border-cyan-400/30"
-          whileHover={{ scale: 1.05, y: -2, boxShadow: '0 20px 40px rgba(0, 255, 255, 0.3)' }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          ← Home
-        </motion.a>
-      
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}

@@ -5,21 +5,29 @@ const BranchAndBound = () => {
     {
       name: 'Travelling Salesman Problem (TSP)',
       description: 'Shortest route visiting all cities',
-      gradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)',
-      shadowColor: 'rgba(255, 236, 210, 0.4)'
+      gradient: 'linear-gradient(135deg, #ff9f43, #ff6348)',
+      shadowColor: 'rgba(255, 159, 67, 0.4)',
+      timeComplexity: 'O(n!)',
+      spaceComplexity: 'O(n)',
+      stable: false,
+      inPlace: false
     },
     {
       name: 'Job Scheduling',
       description: 'Optimal task allocation and timing',
-      gradient: 'linear-gradient(135deg, #ff6b6b, #ff5252)',
-      shadowColor: 'rgba(255, 107, 107, 0.4)'
+      gradient: 'linear-gradient(135deg, #a8edea, #fed6e3)',
+      shadowColor: 'rgba(168, 237, 234, 0.4)',
+      timeComplexity: 'O(2^n)',
+      spaceComplexity: 'O(n)',
+      stable: false,
+      inPlace: false
     }
   ];
 
   return (
     <div style={{
       backgroundColor: '#0a0e1a',
-      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://www.boardinfinity.com/blog/content/images/2023/02/Branch-and-Bound-Algo-1.png)',
+      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://algocademy.com/blog/wp-content/uploads/2024/10/compressed_image-279-1024x585.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -130,13 +138,35 @@ const BranchAndBound = () => {
             <p style={{ 
               fontSize: '1rem', 
               opacity: 0.95, 
-              margin: '0 0 20px',
+              margin: '0 0 12px',
               fontWeight: '500',
               textShadow: '0 1px 2px rgba(0,0,0,0.1)',
               color: 'black'
             }}>
               {algorithm.description}
             </p>
+            
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '8px',
+              margin: '12px 0',
+              fontSize: '0.85rem',
+              fontWeight: '600'
+            }}>
+              <span style={{
+                background: 'rgba(239, 68, 68, 0.2)',
+                color: '#991b1b',
+                padding: '4px 10px',
+                borderRadius: '12px'
+              }}>{algorithm.timeComplexity}</span>
+              <span style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                color: '#1e40af',
+                padding: '4px 10px',
+                borderRadius: '12px'
+              }}>{algorithm.spaceComplexity}</span>
+            </div>
             
             <div style={{
               display: 'flex',

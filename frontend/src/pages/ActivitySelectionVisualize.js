@@ -110,9 +110,25 @@ const ActivitySelectionVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Activity Selection Visualizer</h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Maximum non-overlapping activities using greedy approach</p>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '2rem',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '12px'
+          }}>
+            Activity Selection Visualizer
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b' }}>Maximum non-overlapping activities using greedy approach</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>

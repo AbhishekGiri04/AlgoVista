@@ -607,7 +607,8 @@ const ExponentialSearchVisualize = () => {
                       transform: 'translateX(-50%)',
                       fontSize: '12px',
                       fontWeight: '600',
-                      color: '#10b981'
+                      color: '#10b981',
+                      whiteSpace: 'nowrap'
                     }}>
                       O(log n)
                     </div>

@@ -122,9 +122,34 @@ const NaiveStringVisualize = () => {
       </a>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem', color: '#1e293b' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Naive String Matching Visualizer</h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9 }}>Brute force pattern matching with character-by-character comparison</p>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px',
+            textAlign: 'center'
+          }}>
+            Naive String Matching Visualizer
+          </h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#1e293b',
+            textAlign: 'center',
+            margin: '0'
+          }}>
+            Brute force pattern matching with character-by-character comparison
+          </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>

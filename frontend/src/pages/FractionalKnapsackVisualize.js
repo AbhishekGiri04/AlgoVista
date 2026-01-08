@@ -98,32 +98,92 @@ const FractionalKnapsackVisualize = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-amber-800 mb-2">Fractional Knapsack</h1>
-          <p className="text-amber-600">Maximize value with weight constraint using greedy approach</p>
-        </motion.div>
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '2rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <a href="/greedyalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Greedy Algorithms
+      </a>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Knapsack Visualization</h2>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '2rem',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '12px'
+          }}>
+            Fractional Knapsack Visualizer
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b' }}>Maximize value with weight constraint using greedy approach</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Knapsack Visualization</h2>
             
-            <div className="relative bg-gray-50 rounded-lg p-6 h-96">
-              <div className="mb-6">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-semibold">Capacity Used</span>
-                  <span className="text-sm font-semibold">{capacity - remainingCapacity}/{capacity}</span>
+            <div style={{
+              background: '#fff',
+              borderRadius: '0.75rem',
+              padding: '1.5rem',
+              minHeight: '400px',
+              marginBottom: '1.5rem',
+              border: '2px solid #e5e7eb'
+            }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151' }}>Capacity Used</span>
+                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151' }}>{capacity - remainingCapacity}/{capacity}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                <div style={{ width: '100%', background: '#e5e7eb', borderRadius: '9999px', height: '32px', position: 'relative', overflow: 'hidden' }}>
                   {knapsack.map((item, idx) => {
                     const prevWidth = knapsack.slice(0, idx).reduce((sum, k) => sum + (k.takenWeight / capacity) * 100, 0);
                     const width = (item.takenWeight / capacity) * 100;
                     return (
                       <div
                         key={item.id}
-                        className="absolute h-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center text-white text-xs font-bold"
-                        style={{ left: `${prevWidth}%`, width: `${width}%` }}
+                        style={{
+                          position: 'absolute',
+                          height: '100%',
+                          background: 'linear-gradient(90deg, #10b981, #059669)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold',
+                          left: `${prevWidth}%`,
+                          width: `${width}%`
+                        }}
                       >
                         {item.name}
                       </div>
@@ -132,29 +192,31 @@ const FractionalKnapsackVisualize = () => {
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {items.map((item) => {
                   const ratio = item.value / item.weight;
                   const inKnapsack = knapsack.find(k => k.id === item.id);
                   return (
                     <div
                       key={item.id}
-                      className={`p-4 rounded-lg border-2 ${
-                        currentItem?.id === item.id ? 'border-yellow-500 bg-yellow-50' :
-                        inKnapsack ? 'border-green-500 bg-green-50' :
-                        'border-gray-300 bg-white'
-                      }`}
+                      style={{
+                        padding: '1rem',
+                        borderRadius: '0.5rem',
+                        border: '2px solid',
+                        borderColor: currentItem?.id === item.id ? '#f59e0b' : inKnapsack ? '#10b981' : '#e5e7eb',
+                        background: currentItem?.id === item.id ? '#fef3c7' : inKnapsack ? '#d1fae5' : 'white'
+                      }}
                     >
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-lg">{item.name}</span>
-                        <span className="text-sm bg-amber-100 px-2 py-1 rounded">Ratio: {ratio.toFixed(2)}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#1f2937' }}>{item.name}</span>
+                        <span style={{ fontSize: '0.875rem', background: '#fef3c7', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', color: '#92400e' }}>Ratio: {ratio.toFixed(2)}</span>
                       </div>
-                      <div className="flex justify-between text-sm text-gray-600">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#6b7280' }}>
                         <span>Weight: {item.weight}</span>
                         <span>Value: {item.value}</span>
                       </div>
                       {inKnapsack && (
-                        <div className="mt-2 text-sm font-semibold text-green-600">
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', fontWeight: '600', color: '#059669' }}>
                           ✓ {(inKnapsack.fraction * 100).toFixed(1)}% taken (Value: {inKnapsack.takenValue.toFixed(2)})
                         </div>
                       )}
@@ -164,64 +226,136 @@ const FractionalKnapsackVisualize = () => {
               </div>
             </div>
 
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Knapsack Capacity:</label>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>Knapsack Capacity:</label>
               <input
                 type="number"
                 value={capacity}
                 onChange={(e) => setCapacity(Number(e.target.value))}
                 disabled={isRunning}
-                className="w-full px-4 py-2 border rounded-lg"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  color: '#000',
+                  fontWeight: '600'
+                }}
                 min="1"
               />
             </div>
 
-            <div className="flex flex-wrap gap-2 mt-4">
-              <button onClick={runFractionalKnapsack} disabled={isRunning} className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={runFractionalKnapsack}
+                disabled={isRunning}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: isRunning ? 'not-allowed' : 'pointer',
+                  opacity: isRunning ? 0.5 : 1
+                }}
+              >
                 {isRunning ? 'Running...' : 'Start Algorithm'}
               </button>
-              {isRunning && <button onClick={togglePause} className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">{isPaused ? 'Resume' : 'Pause'}</button>}
-              <button onClick={reset} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Reset</button>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Speed:</label>
-                <input type="range" min="200" max="2000" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
+              {isRunning && (
+                <button
+                  onClick={togglePause}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPaused ? '▶ Resume' : '⏸ Pause'}
+                </button>
+              )}
+              <button
+                onClick={reset}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'linear-gradient(135deg, #6b7280, #4b5563)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Reset
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '600' }}>Speed:</label>
+                <input
+                  type="range"
+                  min="200"
+                  max="2000"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  style={{ width: '100px' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{speed}ms</span>
               </div>
-              <a href="/greedyalgorithms" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Result Summary</h3>
-              <div className="space-y-3">
-                <div className="p-4 bg-amber-50 rounded-lg">
-                  <div className="text-3xl font-bold text-amber-600">{totalValue.toFixed(2)}</div>
-                  <div className="text-sm text-gray-600">Total Value</div>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Result Summary</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ padding: '1rem', background: 'linear-gradient(135deg, #fef3c7, #fde68a)', borderRadius: '0.5rem' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#92400e' }}>{totalValue.toFixed(2)}</div>
+                  <div style={{ fontSize: '0.875rem', color: '#78350f' }}>Total Value</div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-gray-50 rounded">
-                    <div className="text-xl font-bold text-gray-800">{capacity - remainingCapacity}</div>
-                    <div className="text-xs text-gray-600">Weight Used</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div style={{ padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>{capacity - remainingCapacity}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Weight Used</div>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded">
-                    <div className="text-xl font-bold text-gray-800">{remainingCapacity}</div>
-                    <div className="text-xs text-gray-600">Remaining</div>
+                  <div style={{ padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>{remainingCapacity}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Remaining</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {knapsack.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Selected Items</h3>
-                <div className="space-y-2">
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+              }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Selected Items</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {knapsack.map((item) => (
-                    <div key={item.id} className="p-3 bg-green-50 border-l-4 border-green-500 rounded">
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold">{item.name}</span>
-                        <span className="text-sm text-gray-600">{(item.fraction * 100).toFixed(1)}%</span>
+                    <div key={item.id} style={{
+                      padding: '0.75rem',
+                      background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                      borderLeft: '4px solid #10b981',
+                      borderRadius: '0.5rem'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 'bold', color: '#065f46' }}>{item.name}</span>
+                        <span style={{ fontSize: '0.875rem', color: '#047857' }}>{(item.fraction * 100).toFixed(1)}%</span>
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div style={{ fontSize: '0.875rem', color: '#047857', marginTop: '0.25rem' }}>
                         Weight: {item.takenWeight.toFixed(2)} | Value: {item.takenValue.toFixed(2)}
                       </div>
                     </div>
@@ -230,40 +364,72 @@ const FractionalKnapsackVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Value/Weight Ratios</h3>
-              <div className="space-y-2">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Value/Weight Ratios</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {[...items]
                   .map(item => ({ ...item, ratio: item.value / item.weight }))
                   .sort((a, b) => b.ratio - a.ratio)
                   .map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                      <span className="font-medium">{item.name}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
+                      <span style={{ fontWeight: '600', color: '#1f2937' }}>{item.name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '96px', background: '#e5e7eb', borderRadius: '9999px', height: '8px' }}>
                           <div
-                            className="bg-amber-500 h-2 rounded-full"
-                            style={{ width: `${(item.ratio / Math.max(...items.map(i => i.value / i.weight))) * 100}%` }}
+                            style={{
+                              background: 'linear-gradient(90deg, #f59e0b, #d97706)',
+                              height: '8px',
+                              borderRadius: '9999px',
+                              width: `${(item.ratio / Math.max(...items.map(i => i.value / i.weight))) * 100}%`
+                            }}
                           />
                         </div>
-                        <span className="text-sm font-bold text-amber-600 w-12 text-right">{item.ratio.toFixed(2)}</span>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#d97706', width: '48px', textAlign: 'right' }}>{item.ratio.toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-48 overflow-y-auto text-sm">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxHeight: '192px', overflowY: 'auto', fontSize: '0.875rem' }}>
+                <style>{`
+                  div::-webkit-scrollbar {
+                    width: 6px;
+                  }
+                  div::-webkit-scrollbar-track {
+                    background: rgba(148, 163, 184, 0.1);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb {
+                    background: rgba(148, 163, 184, 0.4);
+                    border-radius: 10px;
+                  }
+                  div::-webkit-scrollbar-thumb:hover {
+                    background: rgba(148, 163, 184, 0.6);
+                  }
+                `}</style>
                 {log.map((entry, idx) => (
                   <div
                     key={idx}
-                    className={`p-2 rounded ${
-                      entry.includes('✓') ? 'text-green-700 bg-green-50' :
-                      entry.includes('✗') ? 'text-red-700 bg-red-50' :
-                      'text-gray-700'
-                    }`}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '0.375rem',
+                      background: entry.includes('✓') ? '#d1fae5' : entry.includes('✗') ? '#fee2e2' : '#f3f4f6',
+                      color: entry.includes('✓') ? '#065f46' : entry.includes('✗') ? '#991b1b' : '#374151',
+                      borderLeft: '3px solid #3b82f6'
+                    }}
                   >
                     {entry}
                   </div>
@@ -271,13 +437,30 @@ const FractionalKnapsackVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n log n)</p>
-                <p><strong>Space Complexity:</strong> O(n)</p>
-                <p><strong>Approach:</strong> Greedy (max value/weight ratio)</p>
-                <p><strong>Use Case:</strong> Resource allocation, optimization</p>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n log n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#6b7280' }}>Approach:</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy (max value/weight ratio)</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Resource allocation, optimization</p>
+                </div>
               </div>
             </div>
           </motion.div>
