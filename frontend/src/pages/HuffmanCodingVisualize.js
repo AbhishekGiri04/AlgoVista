@@ -109,26 +109,26 @@ const HuffmanCodingVisualize = () => {
 
   const togglePause = () => setIsPaused(!isPaused);
 
-  const renderTree = (node, x = 400, y = 50, offset = 120) => {
+  const renderTree = (node, x = 800, y = 80, offset = 280) => {
     if (!node) return null;
     
     return (
       <g key={`${x}-${y}`}>
         {node.left && (
           <>
-            <line x1={x} y1={y} x2={x - offset} y2={y + 80} stroke="#6B7280" strokeWidth="2" />
-            <text x={x - offset / 2 - 10} y={y + 45} className="text-xs fill-blue-600 font-bold">0</text>
-            {renderTree(node.left, x - offset, y + 80, offset * 0.6)}
+            <line x1={x} y1={y} x2={x - offset} y2={y + 140} stroke="#6B7280" strokeWidth="2" />
+            <text x={x - offset / 2 - 10} y={y + 75} className="text-xs fill-blue-600 font-bold">0</text>
+            {renderTree(node.left, x - offset, y + 140, offset * 0.45)}
           </>
         )}
         {node.right && (
           <>
-            <line x1={x} y1={y} x2={x + offset} y2={y + 80} stroke="#6B7280" strokeWidth="2" />
-            <text x={x + offset / 2 + 5} y={y + 45} className="text-xs fill-red-600 font-bold">1</text>
-            {renderTree(node.right, x + offset, y + 80, offset * 0.6)}
+            <line x1={x} y1={y} x2={x + offset} y2={y + 140} stroke="#6B7280" strokeWidth="2" />
+            <text x={x + offset / 2 + 5} y={y + 75} className="text-xs fill-red-600 font-bold">1</text>
+            {renderTree(node.right, x + offset, y + 140, offset * 0.45)}
           </>
         )}
-        <circle cx={x} cy={y} r="25" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
+        <circle cx={x} cy={y} r="32" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
         <text x={x} y={y - 5} textAnchor="middle" className="text-xs font-bold fill-white">
           {node.char || 'N'}
         </text>
@@ -174,7 +174,9 @@ const HuffmanCodingVisualize = () => {
             background: 'rgba(255, 255, 255, 0.95)',
             borderRadius: '1rem',
             padding: '2rem',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            maxWidth: '100%',
+            overflow: 'hidden'
           }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>Huffman Tree Visualization</h2>
             
@@ -182,15 +184,34 @@ const HuffmanCodingVisualize = () => {
               background: '#fff',
               borderRadius: '0.75rem',
               padding: '1.5rem',
-              minHeight: '400px',
+              height: '400px',
               marginBottom: '1.5rem',
+              border: '2px solid #e5e7eb',
+              overflowX: 'auto',
+              overflowY: 'auto',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px solid #e5e7eb'
+              justifyContent: 'center'
             }}>
+              <style>{`
+                div::-webkit-scrollbar {
+                  width: 6px;
+                  height: 6px;
+                }
+                div::-webkit-scrollbar-track {
+                  background: rgba(148, 163, 184, 0.1);
+                  border-radius: 10px;
+                }
+                div::-webkit-scrollbar-thumb {
+                  background: rgba(148, 163, 184, 0.4);
+                  border-radius: 10px;
+                }
+                div::-webkit-scrollbar-thumb:hover {
+                  background: rgba(148, 163, 184, 0.6);
+                }
+              `}</style>
               {tree ? (
-                <svg width="800" height="500" style={{ overflow: 'visible' }}>
+                <svg width="1600" height="800" style={{ minWidth: '1200px', minHeight: '700px' }}>
                   {renderTree(tree)}
                 </svg>
               ) : (
@@ -309,9 +330,9 @@ const HuffmanCodingVisualize = () => {
                     <p style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#10b981' }}>{compressionRatio}%</p>
                   </div>
                 </div>
-                <div style={{ padding: '0.75rem', background: 'white', borderRadius: '0.5rem' }}>
+                <div style={{ padding: '0.75rem', background: 'white', borderRadius: '0.5rem', overflow: 'hidden' }}>
                   <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>Encoded Text:</p>
-                  <p style={{ fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all', color: '#1f2937' }}>{encodedText}</p>
+                  <p style={{ fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all', color: '#1f2937', overflowWrap: 'break-word' }}>{encodedText}</p>
                 </div>
               </div>
             )}
