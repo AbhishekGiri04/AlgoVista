@@ -206,11 +206,11 @@ const DepthFirstSearchVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/graphalgorithms" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -230,12 +230,13 @@ const DepthFirstSearchVisualize = () => {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
+          background: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '24px',
           padding: '40px',
           marginBottom: '30px',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           textAlign: 'center'
         }}>
           <h1 style={{
@@ -248,45 +249,47 @@ const DepthFirstSearchVisualize = () => {
           }}>
             Depth First Search (DFS)
           </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b', margin: '0' }}>
             Explore graph depth-wise using stack-based traversal
           </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.95)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1f2937'
             }}>
               Graph Visualization
             </h2>
 
             {/* Progress Bar */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.5)',
               borderRadius: '12px',
               padding: '20px',
-              marginBottom: '30px'
+              marginBottom: '30px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ color: '#94a3b8', fontSize: '14px' }}>Progress</span>
-                <span style={{ color: '#60a5fa', fontSize: '14px', fontWeight: '600' }}>
+                <span style={{ color: '#64748b', fontSize: '14px' }}>Progress</span>
+                <span style={{ color: '#3b82f6', fontSize: '14px', fontWeight: '600' }}>
                   {currentStep}/{totalSteps} vertices
                 </span>
               </div>
               <div style={{
                 width: '100%',
                 height: '8px',
-                background: 'rgba(255, 255, 255, 0.1)',
+                background: '#e5e7eb',
                 borderRadius: '4px',
                 overflow: 'hidden'
               }}>
@@ -301,7 +304,7 @@ const DepthFirstSearchVisualize = () => {
 
             {/* Graph Display */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: '#fff',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
@@ -309,7 +312,8 @@ const DepthFirstSearchVisualize = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              border: '2px solid #e5e7eb'
             }}>
               <div style={{
                 display: 'flex',
@@ -326,12 +330,13 @@ const DepthFirstSearchVisualize = () => {
               </div>
               
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: '#f9fafb',
                 padding: '15px',
                 borderRadius: '8px',
                 fontSize: '14px',
-                color: '#cbd5e1',
-                maxWidth: '600px'
+                color: '#374151',
+                maxWidth: '600px',
+                border: '1px solid #e5e7eb'
               }}>
                 <div><strong>Edges:</strong></div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '8px' }}>
@@ -351,22 +356,23 @@ const DepthFirstSearchVisualize = () => {
 
             {/* Controls */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.5)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1f2937'
               }}>
                 DFS Controls
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151' }}>
                     Start Vertex
                   </label>
                   <select
@@ -377,9 +383,9 @@ const DepthFirstSearchVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
+                      border: '1px solid #e5e7eb',
+                      background: 'white',
+                      color: '#1f2937',
                       fontSize: '14px'
                     }}
                   >
@@ -389,7 +395,7 @@ const DepthFirstSearchVisualize = () => {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151' }}>
                     Speed (ms)
                   </label>
                   <input
@@ -402,7 +408,7 @@ const DepthFirstSearchVisualize = () => {
                     disabled={isRunning}
                     style={{ width: '100%' }}
                   />
-                  <div style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                  <div style={{ textAlign: 'center', fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
                     {speed}ms
                   </div>
                 </div>
@@ -468,13 +474,14 @@ const DepthFirstSearchVisualize = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* DFS Stack */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
                 📚 DFS Stack
               </h3>
               <div style={{ minHeight: '120px' }}>
@@ -495,7 +502,8 @@ const DepthFirstSearchVisualize = () => {
                           borderRadius: '8px',
                           textAlign: 'center',
                           fontWeight: '600',
-                          fontSize: '14px'
+                          fontSize: '14px',
+                          color: index === stack.length - 1 ? 'white' : '#1f2937'
                         }}
                       >
                         {vertex} {index === stack.length - 1 && '← TOP'}
@@ -509,13 +517,14 @@ const DepthFirstSearchVisualize = () => {
             {/* Traversal Path */}
             {traversalPath.length > 0 && (
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '16px',
                 padding: '25px',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
               }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
                   🛤️ Traversal Path
                 </h3>
                 <div style={{
@@ -547,13 +556,14 @@ const DepthFirstSearchVisualize = () => {
 
             {/* Algorithm Info */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
                 ⚡ Algorithm Info
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
@@ -564,8 +574,8 @@ const DepthFirstSearchVisualize = () => {
                   { label: 'Type', value: 'Graph Traversal' }
                 ].map(({ label, value }) => (
                   <div key={label} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#94a3b8' }}>{label}:</span>
-                    <span style={{ fontWeight: '600', color: '#60a5fa' }}>{value}</span>
+                    <span style={{ color: '#64748b' }}>{label}:</span>
+                    <span style={{ fontWeight: '600', color: '#3b82f6' }}>{value}</span>
                   </div>
                 ))}
               </div>
@@ -573,14 +583,15 @@ const DepthFirstSearchVisualize = () => {
 
             {/* Operation Log */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
               flex: 1
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
                 📝 Operation Log
               </h3>
               <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
@@ -588,19 +599,20 @@ const DepthFirstSearchVisualize = () => {
                   <div key={log.id} style={{
                     padding: '10px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: '#f9fafb',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid #e5e7eb'
                   }}>
                     <div style={{ 
                       fontWeight: '600', 
                       color: log.type === 'success' ? '#10b981' :
                              log.type === 'warning' ? '#f59e0b' :
-                             log.type === 'error' ? '#ef4444' : '#60a5fa'
+                             log.type === 'error' ? '#ef4444' : '#3b82f6'
                     }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#374151', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

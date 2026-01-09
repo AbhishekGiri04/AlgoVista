@@ -15,9 +15,9 @@ const BranchAndBound = () => {
     {
       name: 'Job Scheduling',
       description: 'Optimal task allocation and timing',
-      gradient: 'linear-gradient(135deg, #a8edea, #fed6e3)',
-      shadowColor: 'rgba(168, 237, 234, 0.4)',
-      timeComplexity: 'O(2^n)',
+      gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+      shadowColor: 'rgba(139, 92, 246, 0.4)',
+      timeComplexity: 'O(n log n)',
       spaceComplexity: 'O(n)',
       stable: false,
       inPlace: false
@@ -159,13 +159,13 @@ const BranchAndBound = () => {
                 color: '#991b1b',
                 padding: '4px 10px',
                 borderRadius: '12px'
-              }}>{algorithm.timeComplexity}</span>
+              }}>Time: {algorithm.timeComplexity}</span>
               <span style={{
                 background: 'rgba(59, 130, 246, 0.2)',
                 color: '#1e40af',
                 padding: '4px 10px',
                 borderRadius: '12px'
-              }}>{algorithm.spaceComplexity}</span>
+              }}>Space: {algorithm.spaceComplexity}</span>
             </div>
             
             <div style={{

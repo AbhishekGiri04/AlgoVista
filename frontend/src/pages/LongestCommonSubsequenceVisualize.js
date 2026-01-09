@@ -214,14 +214,13 @@ const LongestCommonSubsequenceVisualize = () => {
                 <label className="text-sm text-gray-600">Speed:</label>
                 <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
               </div>
-              <a href="/dynamicprogramming" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {lcs && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">LCS Result</h3>
+              <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>LCS Result</h3>
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <div className="text-3xl font-bold text-blue-600 font-mono text-center mb-2">{lcs}</div>
                   <div className="text-sm text-gray-600 text-center">Length: {lcs.length}</div>
@@ -229,8 +228,8 @@ const LongestCommonSubsequenceVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Input Strings</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Input Strings</h3>
               <div className="space-y-3">
                 <div className="p-3 bg-gray-50 rounded">
                   <div className="text-xs text-gray-500 mb-1">Text 1:</div>
@@ -255,8 +254,8 @@ const LongestCommonSubsequenceVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">DP Recurrence</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>DP Recurrence</h3>
               <div className="p-4 bg-gray-50 rounded font-mono text-sm">
                 <div className="mb-2">if (text1[i] == text2[j]):</div>
                 <div className="ml-4 text-blue-600">dp[i][j] = dp[i-1][j-1] + 1</div>
@@ -265,9 +264,9 @@ const LongestCommonSubsequenceVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Log</h3>
+              <div className="space-y-1 text-sm" style={{ maxHeight: '120px', overflowY: 'auto' }}>
                 {log.map((entry, idx) => (
                   <div key={idx} className={`p-2 rounded ${entry.includes('✓') ? 'text-green-700 bg-green-50' : 'text-gray-700'}`}>
                     {entry}
@@ -276,13 +275,22 @@ const LongestCommonSubsequenceVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(m × n)</p>
-                <p><strong>Space Complexity:</strong> O(m × n)</p>
-                <p><strong>Approach:</strong> Dynamic Programming</p>
-                <p><strong>Use Case:</strong> Diff tools, DNA sequencing</p>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Time:</strong> <span>O(m × n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Space:</strong> <span>O(m × n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Approach:</strong> <span>Dynamic Programming</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <strong style={{ fontSize: '0.8rem' }}>Use Case:</strong>
+                  <p style={{ marginTop: '0.25rem', fontSize: '0.8rem', lineHeight: '1.3' }}>Diff tools, DNA sequencing</p>
+                </div>
               </div>
             </div>
           </motion.div>

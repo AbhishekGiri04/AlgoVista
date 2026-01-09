@@ -216,14 +216,13 @@ const MatrixChainMultiplicationVisualize = () => {
                 <label className="text-sm text-gray-600">Speed:</label>
                 <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
               </div>
-              <a href="/dynamicprogramming" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {optimalOrder && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Optimal Solution</h3>
+              <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Optimal Solution</h3>
                 <div className="space-y-3">
                   <div className="p-4 bg-purple-50 rounded-lg">
                     <div className="text-sm text-gray-600 mb-1">Minimum Cost:</div>
@@ -237,8 +236,8 @@ const MatrixChainMultiplicationVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Matrix Chain</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Matrix Chain</h3>
               <div className="space-y-2">
                 {matrices.map((matrix, idx) => (
                   <div key={idx} className="p-3 bg-purple-50 rounded flex justify-between items-center">
@@ -250,8 +249,8 @@ const MatrixChainMultiplicationVisualize = () => {
             </div>
 
             {currentCell && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Current Computation</h3>
+              <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Current Computation</h3>
                 <div className="p-3 bg-yellow-50 rounded text-sm">
                   <p>Computing: M{currentCell.i + 1} to M{currentCell.j + 1}</p>
                   <p>Split at: k = {currentCell.k}</p>
@@ -259,8 +258,8 @@ const MatrixChainMultiplicationVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">DP Recurrence</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>DP Recurrence</h3>
               <div className="p-4 bg-gray-50 rounded font-mono text-xs">
                 <div className="mb-2">dp[i][j] = min(</div>
                 <div className="ml-4">dp[i][k] + dp[k+1][j]</div>
@@ -270,9 +269,9 @@ const MatrixChainMultiplicationVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Log</h3>
+              <div className="space-y-1 text-sm" style={{ maxHeight: '120px', overflowY: 'auto' }}>
                 {log.map((entry, idx) => (
                   <div key={idx} className={`p-2 rounded ${entry.includes('✓') ? 'text-green-700 bg-green-50' : 'text-gray-700'}`}>
                     {entry}
@@ -281,13 +280,22 @@ const MatrixChainMultiplicationVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n³)</p>
-                <p><strong>Space Complexity:</strong> O(n²)</p>
-                <p><strong>Approach:</strong> Dynamic Programming</p>
-                <p><strong>Use Case:</strong> Optimization, compiler design</p>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Time:</strong> <span>O(n³)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Space:</strong> <span>O(n²)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Approach:</strong> <span>Dynamic Programming</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <strong style={{ fontSize: '0.8rem' }}>Use Case:</strong>
+                  <p style={{ marginTop: '0.25rem', fontSize: '0.8rem', lineHeight: '1.3' }}>Optimization, compiler design</p>
+                </div>
               </div>
             </div>
           </motion.div>

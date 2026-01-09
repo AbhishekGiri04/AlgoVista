@@ -309,14 +309,14 @@ const FractionalKnapsackVisualize = () => {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Result Summary</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Result Summary</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ padding: '1rem', background: 'linear-gradient(135deg, #fef3c7, #fde68a)', borderRadius: '0.5rem' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#92400e' }}>{totalValue.toFixed(2)}</div>
@@ -339,10 +339,10 @@ const FractionalKnapsackVisualize = () => {
               <div style={{
                 background: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '1rem',
-                padding: '1.5rem',
+                padding: '1rem',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
               }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Selected Items</h3>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Selected Items</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {knapsack.map((item) => (
                     <div key={item.id} style={{
@@ -367,10 +367,10 @@ const FractionalKnapsackVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Value/Weight Ratios</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Value/Weight Ratios</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {[...items]
                   .map(item => ({ ...item, ratio: item.value / item.weight }))
@@ -399,11 +399,11 @@ const FractionalKnapsackVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxHeight: '192px', overflowY: 'auto', fontSize: '0.875rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxHeight: '120px', overflowY: 'auto', fontSize: '0.875rem' }}>
                 <style>{`
                   div::-webkit-scrollbar {
                     width: 6px;
@@ -440,26 +440,26 @@ const FractionalKnapsackVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#6b7280' }}>Time:</span>
                   <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n log n)</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#6b7280' }}>Space:</span>
                   <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n)</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280' }}>Approach:</span>
-                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy (max value/weight ratio)</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy</span>
                 </div>
                 <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
-                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
-                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Resource allocation, optimization</p>
+                  <span style={{ color: '#6b7280', fontWeight: '600', fontSize: '0.8rem' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem', fontSize: '0.8rem', lineHeight: '1.3' }}>Resource allocation, optimization</p>
                 </div>
               </div>
             </div>

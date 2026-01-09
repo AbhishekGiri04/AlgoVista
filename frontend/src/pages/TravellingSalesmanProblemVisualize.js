@@ -251,14 +251,13 @@ const TravellingSalesmanProblemVisualize = () => {
                 <label className="text-sm text-gray-600">Speed:</label>
                 <input type="range" min="200" max="1500" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20" />
               </div>
-              <a href="/branchandbound" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">← Back</a>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {bestPath.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Best Solution</h3>
+              <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Best Solution</h3>
                 <div className="space-y-3">
                   <div className="p-4 bg-cyan-50 rounded-lg">
                     <div className="text-sm text-gray-600 mb-1">Shortest Distance:</div>
@@ -282,8 +281,8 @@ const TravellingSalesmanProblemVisualize = () => {
             )}
 
             {currentPath.length > 0 && isRunning && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Current Exploration</h3>
+              <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Current Exploration</h3>
                 <div className="space-y-2">
                   <div className="p-3 bg-yellow-50 rounded">
                     <div className="text-sm text-gray-600">Current Path:</div>
@@ -299,8 +298,8 @@ const TravellingSalesmanProblemVisualize = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Statistics</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-gray-50 rounded">
                   <div className="text-xs text-gray-600">Cities</div>
@@ -313,8 +312,8 @@ const TravellingSalesmanProblemVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Cities</h3>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Cities</h3>
               <div className="space-y-2">
                 {cities.map((city, idx) => (
                   <div
@@ -334,9 +333,9 @@ const TravellingSalesmanProblemVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-64 overflow-y-auto text-sm">
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Log</h3>
+              <div className="space-y-1 text-sm" style={{ maxHeight: '150px', overflowY: 'auto' }}>
                 {log.slice(-20).map((entry, idx) => (
                   <div
                     key={idx}
@@ -351,13 +350,22 @@ const TravellingSalesmanProblemVisualize = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(n!)</p>
-                <p><strong>Space Complexity:</strong> O(n)</p>
-                <p><strong>Approach:</strong> Branch and Bound</p>
-                <p><strong>Use Case:</strong> Route optimization, logistics</p>
+            <div className="bg-white rounded-xl shadow-lg" style={{ padding: '1rem' }}>
+              <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}>Algorithm Info</h3>
+              <div className="space-y-2 text-sm text-gray-600" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Time:</strong> <span>O(n!)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Space:</strong> <span>O(n)</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong>Approach:</strong> <span>Branch and Bound</span>
+                </div>
+                <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
+                  <strong style={{ fontSize: '0.8rem' }}>Use Case:</strong>
+                  <p style={{ marginTop: '0.25rem', fontSize: '0.8rem', lineHeight: '1.3' }}>Route optimization, logistics</p>
+                </div>
               </div>
             </div>
           </motion.div>

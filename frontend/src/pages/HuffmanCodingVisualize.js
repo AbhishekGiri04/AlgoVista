@@ -109,31 +109,37 @@ const HuffmanCodingVisualize = () => {
 
   const togglePause = () => setIsPaused(!isPaused);
 
-  const renderTree = (node, x = 800, y = 80, offset = 280) => {
+  const renderTree = (node, x = 800, y = 120, offset = 280, nodeId = 'root') => {
     if (!node) return null;
     
     return (
-      <g key={`${x}-${y}`}>
+      <g key={nodeId}>
         {node.left && (
           <>
             <line x1={x} y1={y} x2={x - offset} y2={y + 140} stroke="#6B7280" strokeWidth="2" />
-            <text x={x - offset / 2 - 10} y={y + 75} className="text-xs fill-blue-600 font-bold">0</text>
-            {renderTree(node.left, x - offset, y + 140, offset * 0.45)}
+            <text x={x - offset / 2 - 10} y={y + 75} style={{ fontSize: '14px', fontWeight: 'bold', fill: '#2563eb' }}>0</text>
+            {renderTree(node.left, x - offset, y + 140, offset * 0.45, `${nodeId}-left`)}
           </>
         )}
         {node.right && (
           <>
             <line x1={x} y1={y} x2={x + offset} y2={y + 140} stroke="#6B7280" strokeWidth="2" />
-            <text x={x + offset / 2 + 5} y={y + 75} className="text-xs fill-red-600 font-bold">1</text>
-            {renderTree(node.right, x + offset, y + 140, offset * 0.45)}
+            <text x={x + offset / 2 + 5} y={y + 75} style={{ fontSize: '14px', fontWeight: 'bold', fill: '#dc2626' }}>1</text>
+            {renderTree(node.right, x + offset, y + 140, offset * 0.45, `${nodeId}-right`)}
           </>
         )}
-        <circle cx={x} cy={y} r="32" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
-        <text x={x} y={y - 5} textAnchor="middle" className="text-xs font-bold fill-white">
-          {node.char || 'N'}
-        </text>
-        <text x={x} y={y + 8} textAnchor="middle" className="text-xs fill-white">
-          {node.freq}
+        <circle cx={x} cy={y} r="35" fill={node.char ? '#10B981' : '#3B82F6'} stroke="#1F2937" strokeWidth="2" />
+        {node.char ? (
+          <text x={x} y={y + 5} textAnchor="middle" style={{ fontSize: '18px', fontWeight: 'bold', fill: 'white' }}>
+            {node.char}
+          </text>
+        ) : (
+          <text x={x} y={y + 5} textAnchor="middle" style={{ fontSize: '16px', fontWeight: 'bold', fill: 'white' }}>
+            {node.freq}
+          </text>
+        )}
+        <text x={x} y={y - 45} textAnchor="middle" style={{ fontSize: '14px', fontWeight: '600', fill: '#1f2937' }}>
+          Freq: {node.freq}
         </text>
       </g>
     );
@@ -200,14 +206,11 @@ const HuffmanCodingVisualize = () => {
               background: '#fff',
               borderRadius: '0.75rem',
               padding: '1.5rem',
-              height: '400px',
+              height: '500px',
               marginBottom: '1.5rem',
               border: '2px solid #e5e7eb',
               overflowX: 'auto',
-              overflowY: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              overflowY: 'auto'
             }}>
               <style>{`
                 div::-webkit-scrollbar {
@@ -227,7 +230,7 @@ const HuffmanCodingVisualize = () => {
                 }
               `}</style>
               {tree ? (
-                <svg width="1600" height="800" style={{ minWidth: '1200px', minHeight: '700px' }}>
+                <svg width="1600" height="800" style={{ display: 'block' }}>
                   {renderTree(tree)}
                 </svg>
               ) : (

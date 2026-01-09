@@ -145,9 +145,12 @@ const ActivitySelectionVisualize = () => {
               background: '#fff',
               borderRadius: '0.75rem',
               padding: '1.5rem',
-              height: '400px',
+              minHeight: '400px',
               marginBottom: '1.5rem',
-              border: '2px solid #e5e7eb'
+              border: '2px solid #e5e7eb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}>
               <svg width="100%" height="100%" viewBox="0 0 600 350">
                 {/* Timeline axis */}
@@ -253,14 +256,14 @@ const ActivitySelectionVisualize = () => {
           </div>
 
           {/* Right Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Progress</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Progress</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
                   <span style={{ color: '#10b981', fontWeight: '600' }}>✓ Selected: {selected.length}</span>
@@ -284,10 +287,10 @@ const ActivitySelectionVisualize = () => {
               <div style={{
                 background: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '1rem',
-                padding: '1.5rem',
+                padding: '1rem',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
               }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Selected Activities</h3>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Selected Activities</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {selected.map((activity) => (
                     <div key={activity.id} style={{
@@ -309,10 +312,10 @@ const ActivitySelectionVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Activities List</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Activities List</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {activities.map((activity) => (
                   <div
@@ -339,11 +342,11 @@ const ActivitySelectionVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Log</h3>
-              <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Algorithm Log</h3>
+              <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <style>{`
                   div::-webkit-scrollbar {
                     width: 6px;
@@ -385,26 +388,26 @@ const ActivitySelectionVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '1rem',
-              padding: '1.5rem',
+              padding: '1rem',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1f2937' }}>Algorithm Info</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#6b7280' }}>Time Complexity:</span>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#1f2937' }}>Algorithm Info</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#6b7280' }}>Time:</span>
                   <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n log n)</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#6b7280' }}>Space Complexity:</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#6b7280' }}>Space:</span>
                   <span style={{ fontWeight: '600', color: '#3b82f6' }}>O(n)</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280' }}>Approach:</span>
-                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy (earliest finish)</span>
+                  <span style={{ fontWeight: '600', color: '#10b981' }}>Greedy</span>
                 </div>
                 <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' }}>
-                  <span style={{ color: '#6b7280', fontWeight: '600' }}>Use Case:</span>
-                  <p style={{ color: '#374151', marginTop: '0.25rem' }}>Scheduling, resource allocation, meeting rooms</p>
+                  <span style={{ color: '#6b7280', fontWeight: '600', fontSize: '0.8rem' }}>Use Case:</span>
+                  <p style={{ color: '#374151', marginTop: '0.25rem', fontSize: '0.8rem', lineHeight: '1.3' }}>Scheduling, resource allocation, meeting rooms</p>
                 </div>
               </div>
             </div>

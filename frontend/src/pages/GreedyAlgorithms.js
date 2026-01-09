@@ -25,8 +25,8 @@ const GreedyAlgorithms = () => {
   return (
     <div style={{
       backgroundColor: '#0a0e1a',
-      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://miro.medium.com/v2/resize:fit:1400/1*a8LqmJC44bONNMcqeH2Mpg.png)',
-      backgroundSize: 'cover',
+      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://i.ytimg.com/vi/jik0Vk5nq4w/maxresdefault.jpg)',
+      backgroundSize: '150%',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed',
