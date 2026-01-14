@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 const PrimsAlgorithmVisualize = () => {
-  const [vertices, setVertices] = useState([
-    { id: 0, x: 150, y: 100, label: 'A' },
-    { id: 1, x: 350, y: 100, label: 'B' },
-    { id: 2, x: 250, y: 200, label: 'C' },
-    { id: 3, x: 150, y: 300, label: 'D' },
-    { id: 4, x: 350, y: 300, label: 'E' }
-  ]);
+  const [graph, setGraph] = useState({
+    vertices: ['A', 'B', 'C', 'D', 'E'],
+    edges: [
+      { from: 'A', to: 'B', weight: 4 },
+      { from: 'A', to: 'C', weight: 2 },
+      { from: 'B', to: 'C', weight: 1 },
+      { from: 'B', to: 'E', weight: 5 },
+      { from: 'C', to: 'D', weight: 3 },
+      { from: 'C', to: 'E', weight: 6 },
+      { from: 'D', to: 'E', weight: 2 }
+    ]
+  });
 
-  const [edges] = useState([
-    { from: 0, to: 1, weight: 4, id: 'AB' },
-    { from: 0, to: 2, weight: 2, id: 'AC' },
-    { from: 1, to: 2, weight: 1, id: 'BC' },
-    { from: 1, to: 4, weight: 5, id: 'BE' },
-    { from: 2, to: 3, weight: 3, id: 'CD' },
-    { from: 2, to: 4, weight: 6, id: 'CE' },
-    { from: 3, to: 4, weight: 2, id: 'DE' }
-  ]);
-
-  const [startVertex, setStartVertex] = useState(0);
+  const [startVertex, setStartVertex] = useState('A');
   const [mstEdges, setMstEdges] = useState([]);
   const [visitedVertices, setVisitedVertices] = useState(new Set());
   const [currentEdge, setCurrentEdge] = useState(null);
   const [candidateEdges, setCandidateEdges] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [speed, setSpeed] = useState(1000);
   const [step, setStep] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
   const [log, setLog] = useState([]);
+  const [newVertex, setNewVertex] = useState('');
+  const [fromVertex, setFromVertex] = useState('');
+  const [toVertex, setToVertex] = useState('');
+  const [edgeWeight, setEdgeWeight] = useState('1');
+
+  const getVertexPosition = (index, total) => {
+    const angle = (index * 2 * Math.PI) / total - Math.PI / 2;
+    const radius = 35;
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
+    return { x, y };
+  };
 
   useEffect(() => {
     reset();
   }, []);
+
+  const addToLog = (message) => {
+    setLog(prev => [message, ...prev.slice(0, 9)]);
+  };
 
   const reset = () => {
     setMstEdges([]);
@@ -42,60 +51,45 @@ const PrimsAlgorithmVisualize = () => {
     setCurrentEdge(null);
     setCandidateEdges([]);
     setIsRunning(false);
-    setIsPaused(false);
     setStep(0);
     setTotalWeight(0);
-    setLog(['Algorithm initialized', `Starting from vertex ${vertices[startVertex].label}`]);
+    setLog(['Algorithm initialized', `Starting from vertex ${startVertex}`]);
   };
 
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
   const runPrims = async () => {
-    setIsRunning(true);
-    setIsPaused(false);
+    if (isRunning) return;
     
+    setIsRunning(true);
     const visited = new Set([startVertex]);
     const newMstEdges = [];
-    const newLog = [...log];
     let weight = 0;
 
     setVisitedVertices(new Set(visited));
-    newLog.push(`✓ Added vertex ${vertices[startVertex].label} to MST`);
-    setLog([...newLog]);
+    addToLog(`Added vertex ${startVertex} to MST`);
+    await sleep(speed);
 
-    await new Promise(resolve => setTimeout(resolve, speed));
-
-    while (visited.size < vertices.length) {
-      if (!isRunning) break;
-      
-      while (isPaused) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-
-      // Find all candidate edges
-      const candidates = edges.filter(edge => 
+    while (visited.size < graph.vertices.length) {
+      const candidates = graph.edges.filter(edge => 
         (visited.has(edge.from) && !visited.has(edge.to)) ||
         (visited.has(edge.to) && !visited.has(edge.from))
       );
 
       setCandidateEdges(candidates);
-      newLog.push(`Found ${candidates.length} candidate edges`);
-      setLog([...newLog]);
-
-      await new Promise(resolve => setTimeout(resolve, speed / 2));
+      addToLog(`Found ${candidates.length} candidate edges`);
+      await sleep(speed / 2);
 
       if (candidates.length === 0) break;
 
-      // Find minimum weight edge
       const minEdge = candidates.reduce((min, edge) => 
         edge.weight < min.weight ? edge : min
       );
 
       setCurrentEdge(minEdge);
-      newLog.push(`→ Considering edge ${minEdge.id} (weight: ${minEdge.weight})`);
-      setLog([...newLog]);
+      addToLog(`Considering edge ${minEdge.from}-${minEdge.to} (weight: ${minEdge.weight})`);
+      await sleep(speed);
 
-      await new Promise(resolve => setTimeout(resolve, speed));
-
-      // Add edge to MST
       const newVertex = visited.has(minEdge.from) ? minEdge.to : minEdge.from;
       visited.add(newVertex);
       newMstEdges.push(minEdge);
@@ -107,104 +101,203 @@ const PrimsAlgorithmVisualize = () => {
       setCurrentEdge(null);
       setCandidateEdges([]);
       
-      newLog.push(`✓ Added edge ${minEdge.id} and vertex ${vertices[newVertex].label} to MST`);
-      setLog([...newLog]);
+      addToLog(`Added edge ${minEdge.from}-${minEdge.to} and vertex ${newVertex} to MST`);
       setStep(visited.size);
-
-      await new Promise(resolve => setTimeout(resolve, speed));
+      await sleep(speed);
     }
 
     setIsRunning(false);
-    newLog.push(`MST completed! Total weight: ${weight}`);
-    setLog([...newLog]);
+    addToLog(`MST completed! Total weight: ${weight}`);
   };
 
-  const togglePause = () => {
-    setIsPaused(!isPaused);
+  const addVertex = () => {
+    const vertex = newVertex.trim().toUpperCase();
+    if (!vertex) {
+      alert('Please enter a vertex name');
+      return;
+    }
+    if (graph.vertices.includes(vertex)) {
+      alert('Vertex already exists!');
+      return;
+    }
+    setGraph(prev => ({
+      ...prev,
+      vertices: [...prev.vertices, vertex]
+    }));
+    addToLog(`Added vertex ${vertex}`);
+    setNewVertex('');
+    reset();
   };
 
-  const getEdgeColor = (edge) => {
-    if (mstEdges.some(mst => mst.id === edge.id)) return '#8B5CF6';
-    if (currentEdge?.id === edge.id) return '#F59E0B';
-    if (candidateEdges.some(c => c.id === edge.id)) return '#EC4899';
-    return '#6B7280';
+  const removeVertex = () => {
+    const vertex = newVertex.trim().toUpperCase();
+    if (!graph.vertices.includes(vertex)) {
+      alert('Vertex not found!');
+      return;
+    }
+    setGraph(prev => ({
+      vertices: prev.vertices.filter(v => v !== vertex),
+      edges: prev.edges.filter(e => e.from !== vertex && e.to !== vertex)
+    }));
+    addToLog(`Removed vertex ${vertex}`);
+    setNewVertex('');
+    if (startVertex === vertex) setStartVertex(graph.vertices[0]);
+    reset();
   };
 
-  const getEdgeWidth = (edge) => {
-    if (mstEdges.some(mst => mst.id === edge.id)) return 4;
-    if (currentEdge?.id === edge.id) return 3;
-    return 2;
+  const addEdge = () => {
+    const from = fromVertex.trim().toUpperCase();
+    const to = toVertex.trim().toUpperCase();
+    const weight = parseInt(edgeWeight) || 1;
+    
+    if (!from || !to) {
+      alert('Please enter both vertices');
+      return;
+    }
+    if (!graph.vertices.includes(from) || !graph.vertices.includes(to)) {
+      alert('One or both vertices do not exist!');
+      return;
+    }
+    if (graph.edges.some(e => (e.from === from && e.to === to) || (e.from === to && e.to === from))) {
+      alert('Edge already exists!');
+      return;
+    }
+    
+    setGraph(prev => ({
+      ...prev,
+      edges: [...prev.edges, { from, to, weight }]
+    }));
+    addToLog(`Added edge ${from} - ${to} (weight: ${weight})`);
+    setFromVertex('');
+    setToVertex('');
+    setEdgeWeight('1');
+    reset();
   };
 
-  const getVertexColor = (vertex) => {
-    if (visitedVertices.has(vertex.id)) return { fill: '#DDD6FE', stroke: '#7C3AED' };
-    return { fill: '#E5E7EB', stroke: '#6B7280' };
+  const removeEdge = () => {
+    const from = fromVertex.trim().toUpperCase();
+    const to = toVertex.trim().toUpperCase();
+    
+    if (!from || !to) {
+      alert('Please enter both vertices');
+      return;
+    }
+    
+    setGraph(prev => ({
+      ...prev,
+      edges: prev.edges.filter(e => !((e.from === from && e.to === to) || (e.from === to && e.to === from)))
+    }));
+    addToLog(`Removed edge ${from} - ${to}`);
+    setFromVertex('');
+    setToVertex('');
+    reset();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold text-purple-800 mb-2">
+    <div style={{
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
+      minHeight: '100vh',
+      padding: '40px',
+      fontFamily: 'Inter, sans-serif',
+      color: '#1e293b'
+    }}>
+      <a href="/graphalgorithms" style={{
+        background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+        color: 'white',
+        padding: '14px 24px',
+        border: 'none',
+        borderRadius: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        boxShadow: '0 8px 25px rgba(124, 58, 237, 0.4)',
+        display: 'inline-block',
+        marginBottom: '40px'
+      }}>
+        ← Back to Graph Algorithms
+      </a>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '24px',
+          padding: '40px',
+          marginBottom: '30px',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #7c3aed, #6366f1)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: '0 0 12px'
+          }}>
             Prim's Algorithm - Minimum Spanning Tree
           </h1>
-          <p className="text-purple-600">Greedy MST construction from starting vertex</p>
-        </motion.div>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b', margin: '0' }}>
+            Greedy MST construction from starting vertex
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Visualization Panel */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">Graph Visualization</h2>
-              <div className="text-sm text-gray-600">
-                MST Weight: <span className="font-bold text-purple-600">{totalWeight}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            padding: '40px',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>
+                Graph Visualization
+              </h2>
+              <div style={{ fontSize: '14px', color: '#64748b' }}>
+                MST Weight: <span style={{ fontWeight: '700', color: '#7c3aed' }}>{totalWeight}</span>
               </div>
             </div>
 
-            <div className="relative bg-gray-50 rounded-lg p-4 h-96">
-              <svg width="100%" height="100%" viewBox="0 0 500 400">
-                {/* Edges */}
-                {edges.map((edge) => {
-                  const fromVertex = vertices[edge.from];
-                  const toVertex = vertices[edge.to];
-                  const midX = (fromVertex.x + toVertex.x) / 2;
-                  const midY = (fromVertex.y + toVertex.y) / 2;
+            <div style={{ position: 'relative', background: '#f8fafc', borderRadius: '12px', padding: '20px', height: '500px' }}>
+              <svg width="100%" height="100%" style={{ overflow: 'visible' }}>
+                {graph.edges.map((edge, idx) => {
+                  const fromIdx = graph.vertices.indexOf(edge.from);
+                  const toIdx = graph.vertices.indexOf(edge.to);
+                  const fromPos = getVertexPosition(fromIdx, graph.vertices.length);
+                  const toPos = getVertexPosition(toIdx, graph.vertices.length);
+                  const midX = (fromPos.x + toPos.x) / 2;
+                  const midY = (fromPos.y + toPos.y) / 2;
+                  const isMST = mstEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from));
+                  const isCurrent = currentEdge && ((currentEdge.from === edge.from && currentEdge.to === edge.to) || (currentEdge.from === edge.to && currentEdge.to === edge.from));
+                  const isCandidate = candidateEdges.some(e => (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from));
                   
                   return (
-                    <g key={edge.id}>
-                      <motion.line
-                        x1={fromVertex.x}
-                        y1={fromVertex.y}
-                        x2={toVertex.x}
-                        y2={toVertex.y}
-                        stroke={getEdgeColor(edge)}
-                        strokeWidth={getEdgeWidth(edge)}
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.5 }}
+                    <g key={idx}>
+                      <line
+                        x1={`${fromPos.x}%`}
+                        y1={`${fromPos.y}%`}
+                        x2={`${toPos.x}%`}
+                        y2={`${toPos.y}%`}
+                        stroke={isMST ? '#7c3aed' : isCurrent ? '#f59e0b' : isCandidate ? '#ec4899' : '#cbd5e1'}
+                        strokeWidth={isMST ? '3' : isCurrent ? '3' : '2'}
                       />
                       <circle
-                        cx={midX}
-                        cy={midY}
-                        r="12"
+                        cx={`${midX}%`}
+                        cy={`${midY}%`}
+                        r="14"
                         fill="white"
-                        stroke={getEdgeColor(edge)}
+                        stroke={isMST ? '#7c3aed' : isCurrent ? '#f59e0b' : isCandidate ? '#ec4899' : '#94a3b8'}
                         strokeWidth="2"
                       />
                       <text
-                        x={midX}
-                        y={midY + 4}
+                        x={`${midX}%`}
+                        y={`${midY}%`}
                         textAnchor="middle"
-                        className="text-xs font-bold"
-                        fill={getEdgeColor(edge)}
+                        dy="4"
+                        style={{ fontSize: '12px', fontWeight: '700', fill: isMST ? '#7c3aed' : isCurrent ? '#f59e0b' : isCandidate ? '#ec4899' : '#64748b' }}
                       >
                         {edge.weight}
                       </text>
@@ -212,28 +305,27 @@ const PrimsAlgorithmVisualize = () => {
                   );
                 })}
 
-                {/* Vertices */}
-                {vertices.map((vertex) => {
-                  const colors = getVertexColor(vertex);
+                {graph.vertices.map((vertex, idx) => {
+                  const pos = getVertexPosition(idx, graph.vertices.length);
+                  const isVisited = visitedVertices.has(vertex);
                   return (
-                    <g key={vertex.id}>
-                      <motion.circle
-                        cx={vertex.x}
-                        cy={vertex.y}
-                        r="20"
-                        fill={colors.fill}
-                        stroke={colors.stroke}
+                    <g key={vertex}>
+                      <circle
+                        cx={`${pos.x}%`}
+                        cy={`${pos.y}%`}
+                        r="30"
+                        fill={isVisited ? '#ddd6fe' : '#e5e7eb'}
+                        stroke={isVisited ? '#7c3aed' : '#6b7280'}
                         strokeWidth="3"
-                        whileHover={{ scale: 1.1 }}
                       />
                       <text
-                        x={vertex.x}
-                        y={vertex.y + 5}
+                        x={`${pos.x}%`}
+                        y={`${pos.y}%`}
                         textAnchor="middle"
-                        className="text-sm font-bold"
-                        fill={colors.stroke}
+                        dy="6"
+                        style={{ fontSize: '18px', fontWeight: '700', fill: isVisited ? '#7c3aed' : '#6b7280' }}
                       >
-                        {vertex.label}
+                        {vertex}
                       </text>
                     </g>
                   );
@@ -241,130 +333,286 @@ const PrimsAlgorithmVisualize = () => {
               </svg>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-wrap gap-2 mt-4">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '20px' }}>
               <select
                 value={startVertex}
-                onChange={(e) => setStartVertex(Number(e.target.value))}
+                onChange={(e) => setStartVertex(e.target.value)}
                 disabled={isRunning}
-                className="px-4 py-2 border rounded-lg"
+                style={{
+                  padding: '12px 16px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: isRunning ? 'not-allowed' : 'pointer',
+                  background: 'white'
+                }}
               >
-                {vertices.map((v) => (
-                  <option key={v.id} value={v.id}>Start: {v.label}</option>
+                {graph.vertices.map((v) => (
+                  <option key={v} value={v}>Start: {v}</option>
                 ))}
               </select>
 
               <button
                 onClick={runPrims}
                 disabled={isRunning}
-                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50"
+                style={{
+                  padding: '12px 24px',
+                  background: isRunning ? '#94a3b8' : 'linear-gradient(135deg, #7c3aed, #6366f1)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: isRunning ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)'
+                }}
               >
-                {isRunning ? 'Running...' : 'Start Prim\'s'}
+                {isRunning ? 'Running...' : "Start Prim's"}
               </button>
-              
-              {isRunning && (
-                <button
-                  onClick={togglePause}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-                >
-                  {isPaused ? 'Resume' : 'Pause'}
-                </button>
-              )}
               
               <button
                 onClick={reset}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #64748b, #475569)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(100, 116, 139, 0.3)'
+                }}
               >
                 Reset
               </button>
               
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Speed:</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <label style={{ fontSize: '14px', color: '#64748b', fontWeight: '600' }}>Speed:</label>
                 <input
                   type="range"
                   min="200"
                   max="2000"
                   value={speed}
                   onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-20"
+                  style={{ width: '120px' }}
                 />
+                <span style={{ fontSize: '14px', color: '#64748b' }}>{speed}ms</span>
               </div>
-              
-              <a
-                href="/graphalgorithms"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                ← Back
-              </a>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Info Panel */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            {/* Progress */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Progress</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm text-gray-600 mb-1">
-                    <span>Vertices Added</span>
-                    <span>{step}/{vertices.length}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-purple-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(step / vertices.length) * 100}%` }}
-                    />
-                  </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Progress</h3>
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>
+                  <span>Vertices Added</span>
+                  <span>{step}/{graph.vertices.length}</span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  MST Edges: <span className="font-bold text-purple-600">{mstEdges.length}</span>
+                <div style={{ width: '100%', background: '#e2e8f0', borderRadius: '8px', height: '8px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: `${graph.vertices.length > 0 ? (step / graph.vertices.length) * 100 : 0}%`,
+                      background: 'linear-gradient(90deg, #7c3aed, #6366f1)',
+                      height: '100%',
+                      transition: 'width 0.3s ease'
+                    }}
+                  />
                 </div>
+              </div>
+              <div style={{ fontSize: '14px', color: '#64748b' }}>
+                MST Edges: <span style={{ fontWeight: '700', color: '#7c3aed' }}>{mstEdges.length}</span>
               </div>
             </div>
 
-            {/* Candidate Edges */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Candidate Edges</h3>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Candidate Edges</h3>
+              <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
                 {candidateEdges.length === 0 ? (
-                  <div className="text-sm text-gray-500 italic">No candidates</div>
+                  <div style={{ fontSize: '14px', color: '#94a3b8', fontStyle: 'italic' }}>No candidates</div>
                 ) : (
-                  candidateEdges.map((edge) => (
+                  candidateEdges.map((edge, idx) => (
                     <div
-                      key={edge.id}
-                      className={`p-2 rounded text-sm ${
-                        currentEdge?.id === edge.id
-                          ? 'bg-yellow-100 border-l-4 border-yellow-500'
-                          : 'bg-pink-50'
-                      }`}
+                      key={idx}
+                      style={{
+                        padding: '8px 12px',
+                        marginBottom: '6px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        background: currentEdge && ((currentEdge.from === edge.from && currentEdge.to === edge.to) || (currentEdge.from === edge.to && currentEdge.to === edge.from)) ? '#fef3c7' : '#fce7f3',
+                        color: '#475569',
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                      }}
                     >
-                      <div className="flex justify-between">
-                        <span className="font-medium">{edge.id}</span>
-                        <span className="text-gray-600">Weight: {edge.weight}</span>
-                      </div>
+                      <span style={{ fontWeight: '600' }}>{edge.from}-{edge.to}</span>
+                      <span>Weight: {edge.weight}</span>
                     </div>
                   ))
                 )}
               </div>
             </div>
 
-            {/* Algorithm Log */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Log</h3>
-              <div className="space-y-1 max-h-48 overflow-y-auto text-sm">
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Add/Remove Vertex</h3>
+              <input
+                type="text"
+                value={newVertex}
+                onChange={(e) => setNewVertex(e.target.value)}
+                placeholder="Vertex (e.g., F)"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  marginBottom: '12px'
+                }}
+              />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={addVertex} style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: 'linear-gradient(135deg, #7c3aed, #6366f1)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}>Add</button>
+                <button onClick={removeVertex} style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}>Remove</button>
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Add/Remove Edge</h3>
+              <input
+                type="text"
+                value={fromVertex}
+                onChange={(e) => setFromVertex(e.target.value)}
+                placeholder="From (e.g., A)"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  marginBottom: '8px'
+                }}
+              />
+              <input
+                type="text"
+                value={toVertex}
+                onChange={(e) => setToVertex(e.target.value)}
+                placeholder="To (e.g., B)"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  marginBottom: '8px'
+                }}
+              />
+              <input
+                type="number"
+                value={edgeWeight}
+                onChange={(e) => setEdgeWeight(e.target.value)}
+                placeholder="Weight"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  marginBottom: '12px'
+                }}
+              />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={addEdge} style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: 'linear-gradient(135deg, #7c3aed, #6366f1)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}>Add</button>
+                <button onClick={removeEdge} style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}>Remove</button>
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Algorithm Log</h3>
+              <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {log.map((entry, index) => (
                   <div
                     key={index}
-                    className={`p-2 rounded ${
-                      entry.includes('✓') ? 'text-green-700 bg-green-50' :
-                      entry.includes('→') ? 'text-yellow-700 bg-yellow-50' :
-                      'text-gray-700'
-                    }`}
+                    style={{
+                      padding: '8px 12px',
+                      marginBottom: '6px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      background: entry.includes('Added edge') ? '#ddd6fe' : entry.includes('Considering') ? '#fef3c7' : '#f1f5f9',
+                      color: entry.includes('Added edge') ? '#7c3aed' : entry.includes('Considering') ? '#f59e0b' : '#475569'
+                    }}
                   >
                     {entry}
                   </div>
@@ -372,17 +620,23 @@ const PrimsAlgorithmVisualize = () => {
               </div>
             </div>
 
-            {/* Algorithm Info */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Algorithm Info</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Time Complexity:</strong> O(E log V)</p>
-                <p><strong>Space Complexity:</strong> O(V)</p>
-                <p><strong>Approach:</strong> Greedy with Priority Queue</p>
-                <p><strong>Use Case:</strong> Network design, clustering</p>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '24px',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Algorithm Info</h3>
+              <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.8' }}>
+                <p style={{ margin: '0 0 8px' }}><strong>Time Complexity:</strong> O(E log V)</p>
+                <p style={{ margin: '0 0 8px' }}><strong>Space Complexity:</strong> O(V)</p>
+                <p style={{ margin: '0 0 8px' }}><strong>Approach:</strong> Greedy with Priority Queue</p>
+                <p style={{ margin: '0' }}><strong>Use Case:</strong> Network design, clustering</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

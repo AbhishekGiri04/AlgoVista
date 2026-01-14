@@ -19,21 +19,22 @@ const BreadthFirstSearchVisualize = () => {
   const [queue, setQueue] = useState([]);
   const [traversalPath, setTraversalPath] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [speed, setSpeed] = useState(1000);
   const [operationLog, setOperationLog] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(0);
+  const [newVertex, setNewVertex] = useState('');
+  const [fromVertex, setFromVertex] = useState('');
+  const [toVertex, setToVertex] = useState('');
 
-  const addToLog = (operation, details, type = 'info') => {
+  const addToLog = (operation, details) => {
     const timestamp = new Date().toLocaleTimeString();
     setOperationLog(prev => [{
       id: Date.now(),
       operation,
       details,
-      timestamp,
-      type
+      timestamp
     }, ...prev.slice(0, 9)]);
   };
 
@@ -57,22 +58,16 @@ const BreadthFirstSearchVisualize = () => {
     setQueue([]);
     setTraversalPath([]);
     setIsRunning(false);
-    setIsPaused(false);
     setCurrentStep(0);
     setTotalSteps(0);
     setCurrentLevel(0);
-    addToLog('RESET', 'BFS visualization reset', 'info');
+    addToLog('RESET', 'BFS visualization reset');
   };
 
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   const performBFS = async () => {
-    if (isRunning && !isPaused) return;
-    
-    if (isPaused) {
-      setIsPaused(false);
-      return;
-    }
+    if (isRunning) return;
 
     resetVisualization();
     setIsRunning(true);
@@ -84,28 +79,18 @@ const BreadthFirstSearchVisualize = () => {
     let stepCount = 0;
     let level = 0;
     
-    addToLog('START', `Starting BFS from vertex ${startVertex}`, 'success');
+    addToLog('START', `Starting BFS from vertex ${startVertex}`);
     setQueue([startVertex]);
     setTotalSteps(graph.vertices.length);
     setCurrentLevel(0);
 
-    while (bfsQueue.length > 0 && isRunning) {
-      if (isPaused) {
-        await new Promise(resolve => {
-          const checkPause = () => {
-            if (!isPaused) resolve();
-            else setTimeout(checkPause, 100);
-          };
-          checkPause();
-        });
-      }
-
+    while (bfsQueue.length > 0) {
       const current = bfsQueue.shift();
       setCurrentVertex(current);
       setQueue([...bfsQueue]);
       setCurrentStep(++stepCount);
       
-      addToLog('DEQUEUE', `Dequeued ${current} from queue`, 'info');
+      addToLog('DEQUEUE', `Dequeued ${current} from queue`);
       await sleep(speed);
 
       if (!visited.has(current)) {
@@ -114,10 +99,9 @@ const BreadthFirstSearchVisualize = () => {
         setVisitedVertices(new Set(visited));
         setTraversalPath([...path]);
         
-        addToLog('VISIT', `Visited vertex ${current} at level ${level}`, 'success');
+        addToLog('VISIT', `Visited vertex ${current} at level ${level}`);
         await sleep(speed);
 
-        // Add unvisited neighbors to queue
         const neighbors = adjList[current] || [];
         const unvisitedNeighbors = neighbors.filter(neighbor => 
           !visited.has(neighbor) && !bfsQueue.includes(neighbor)
@@ -125,14 +109,13 @@ const BreadthFirstSearchVisualize = () => {
         
         for (const neighbor of unvisitedNeighbors) {
           bfsQueue.push(neighbor);
-          addToLog('ENQUEUE', `Enqueued ${neighbor} to queue`, 'info');
+          addToLog('ENQUEUE', `Enqueued ${neighbor} to queue`);
         }
         
         setQueue([...bfsQueue]);
         await sleep(speed / 2);
       }
       
-      // Update level for next iteration
       if (bfsQueue.length > 0) {
         level++;
         setCurrentLevel(level);
@@ -141,12 +124,83 @@ const BreadthFirstSearchVisualize = () => {
 
     setCurrentVertex(null);
     setIsRunning(false);
-    addToLog('COMPLETE', `BFS completed! Path: ${path.join(' → ')}`, 'success');
+    addToLog('COMPLETE', `BFS completed! Path: ${path.join(' → ')}`);
   };
 
-  const pauseResume = () => {
-    setIsPaused(!isPaused);
-    addToLog(isPaused ? 'RESUME' : 'PAUSE', `BFS ${isPaused ? 'resumed' : 'paused'}`, 'warning');
+  const addVertex = () => {
+    const vertex = newVertex.trim().toUpperCase();
+    if (!vertex) {
+      alert('Please enter a vertex name');
+      return;
+    }
+    if (graph.vertices.includes(vertex)) {
+      alert('Vertex already exists!');
+      return;
+    }
+    setGraph(prev => ({
+      ...prev,
+      vertices: [...prev.vertices, vertex]
+    }));
+    addToLog('ADD_VERTEX', `Added vertex ${vertex}`);
+    setNewVertex('');
+  };
+
+  const removeVertex = () => {
+    const vertex = newVertex.trim().toUpperCase();
+    if (!graph.vertices.includes(vertex)) {
+      alert('Vertex not found!');
+      return;
+    }
+    setGraph(prev => ({
+      vertices: prev.vertices.filter(v => v !== vertex),
+      edges: prev.edges.filter(e => e.from !== vertex && e.to !== vertex)
+    }));
+    addToLog('REMOVE_VERTEX', `Removed vertex ${vertex}`);
+    setNewVertex('');
+  };
+
+  const addEdge = () => {
+    const from = fromVertex.trim().toUpperCase();
+    const to = toVertex.trim().toUpperCase();
+    
+    if (!from || !to) {
+      alert('Please enter both vertices');
+      return;
+    }
+    if (!graph.vertices.includes(from) || !graph.vertices.includes(to)) {
+      alert('One or both vertices do not exist!');
+      return;
+    }
+    if (graph.edges.some(e => (e.from === from && e.to === to) || (e.from === to && e.to === from))) {
+      alert('Edge already exists!');
+      return;
+    }
+    
+    setGraph(prev => ({
+      ...prev,
+      edges: [...prev.edges, { from, to }]
+    }));
+    addToLog('ADD_EDGE', `Added edge ${from} - ${to}`);
+    setFromVertex('');
+    setToVertex('');
+  };
+
+  const removeEdge = () => {
+    const from = fromVertex.trim().toUpperCase();
+    const to = toVertex.trim().toUpperCase();
+    
+    if (!from || !to) {
+      alert('Please enter both vertices');
+      return;
+    }
+    
+    setGraph(prev => ({
+      ...prev,
+      edges: prev.edges.filter(e => !((e.from === from && e.to === to) || (e.from === to && e.to === from)))
+    }));
+    addToLog('REMOVE_EDGE', `Removed edge ${from} - ${to}`);
+    setFromVertex('');
+    setToVertex('');
   };
 
   const getVertexStyle = (vertex) => {
@@ -192,11 +246,11 @@ const BreadthFirstSearchVisualize = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #0f172a, #1e293b, #334155)',
+      background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif',
-      color: 'white'
+      color: '#1e293b'
     }}>
       <a href="/graphalgorithms" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
@@ -216,12 +270,13 @@ const BreadthFirstSearchVisualize = () => {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
+          background: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '24px',
           padding: '40px',
           marginBottom: '30px',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           textAlign: 'center'
         }}>
           <h1 style={{
@@ -234,45 +289,47 @@ const BreadthFirstSearchVisualize = () => {
           }}>
             Breadth First Search (BFS)
           </h1>
-          <p style={{ fontSize: '1.1rem', color: '#94a3b8', margin: '0' }}>
+          <p style={{ fontSize: '1.1rem', color: '#1e293b', margin: '0' }}>
             Explore graph level by level using queue-based traversal
           </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '24px',
             padding: '40px',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
           }}>
             <h2 style={{ 
               fontSize: '1.5rem', 
               fontWeight: '700', 
               marginBottom: '30px',
-              color: '#e2e8f0'
+              color: '#1e293b'
             }}>
               Graph Visualization
             </h2>
 
             {/* Progress Bar */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.5)',
               borderRadius: '12px',
               padding: '20px',
-              marginBottom: '30px'
+              marginBottom: '30px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ color: '#94a3b8', fontSize: '14px' }}>Progress</span>
-                <span style={{ color: '#60a5fa', fontSize: '14px', fontWeight: '600' }}>
+                <span style={{ color: '#64748b', fontSize: '14px' }}>Progress</span>
+                <span style={{ color: '#3b82f6', fontSize: '14px', fontWeight: '600' }}>
                   {currentStep}/{totalSteps} vertices | Level: {currentLevel}
                 </span>
               </div>
               <div style={{
                 width: '100%',
                 height: '8px',
-                background: 'rgba(255, 255, 255, 0.1)',
+                background: '#e5e7eb',
                 borderRadius: '4px',
                 overflow: 'hidden'
               }}>
@@ -287,46 +344,119 @@ const BreadthFirstSearchVisualize = () => {
 
             {/* Graph Display */}
             <div style={{
-              background: 'rgba(0, 0, 0, 0.2)',
+              background: '#fff',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
-              minHeight: '300px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center'
+              minHeight: '400px',
+              position: 'relative',
+              border: '2px solid #e5e7eb'
             }}>
               <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '20px',
-                justifyContent: 'center',
-                marginBottom: '30px'
+                position: 'relative',
+                width: '100%',
+                height: '350px'
               }}>
-                {graph.vertices.map(vertex => (
-                  <div key={vertex} style={getVertexStyle(vertex)}>
-                    {vertex}
-                  </div>
-                ))}
+                {/* SVG for edges */}
+                <svg style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%'
+                }}>
+                  {graph.edges.map((edge, idx) => {
+                    const fromIdx = graph.vertices.indexOf(edge.from);
+                    const toIdx = graph.vertices.indexOf(edge.to);
+                    const totalVertices = graph.vertices.length;
+                    
+                    let x1, y1, x2, y2;
+                    
+                    if (totalVertices === 1) {
+                      x1 = y1 = x2 = y2 = 50;
+                    } else {
+                      const angle1 = (fromIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const angle2 = (toIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const radius = 35;
+                      x1 = 50 + radius * Math.cos(angle1);
+                      y1 = 50 + radius * Math.sin(angle1);
+                      x2 = 50 + radius * Math.cos(angle2);
+                      y2 = 50 + radius * Math.sin(angle2);
+                    }
+                    
+                    return (
+                      <line
+                        key={idx}
+                        x1={`${x1}%`}
+                        y1={`${y1}%`}
+                        x2={`${x2}%`}
+                        y2={`${y2}%`}
+                        stroke="#cbd5e1"
+                        strokeWidth="3"
+                      />
+                    );
+                  })}
+                </svg>
+                
+                {/* Vertices */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%'
+                }}>
+                  {graph.vertices.map((vertex, idx) => {
+                    const totalVertices = graph.vertices.length;
+                    let x, y;
+                    
+                    if (totalVertices === 1) {
+                      x = 50;
+                      y = 50;
+                    } else {
+                      const angle = (idx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const radius = 35;
+                      x = 50 + radius * Math.cos(angle);
+                      y = 50 + radius * Math.sin(angle);
+                    }
+                    
+                    return (
+                      <div
+                        key={vertex}
+                        style={{
+                          ...getVertexStyle(vertex),
+                          position: 'absolute',
+                          left: `calc(${x}% - 30px)`,
+                          top: `calc(${y}% - 30px)`,
+                          margin: 0
+                        }}
+                      >
+                        {vertex}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: '#f9fafb',
                 padding: '15px',
                 borderRadius: '8px',
                 fontSize: '14px',
-                color: '#cbd5e1',
-                maxWidth: '600px'
+                color: '#374151',
+                border: '1px solid #e5e7eb',
+                marginTop: '20px'
               }}>
-                <div><strong>Edges:</strong></div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '8px' }}>
+                <div style={{ fontWeight: '600', marginBottom: '8px' }}>Edges:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {graph.edges.map((edge, idx) => (
                     <span key={idx} style={{
                       background: 'rgba(6, 182, 212, 0.2)',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px'
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#06b6d4'
                     }}>
                       {edge.from} ↔ {edge.to}
                     </span>
@@ -337,22 +467,165 @@ const BreadthFirstSearchVisualize = () => {
 
             {/* Controls */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.5)',
               borderRadius: '16px',
-              padding: '25px'
+              padding: '25px',
+              border: '1px solid rgba(148, 163, 184, 0.2)'
             }}>
               <h3 style={{ 
                 fontSize: '1.2rem', 
                 fontWeight: '600', 
                 marginBottom: '20px',
-                color: '#e2e8f0'
+                color: '#1f2937'
+              }}>
+                Graph Operations
+              </h3>
+              
+              {/* Vertex Operations */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151', fontWeight: '600' }}>
+                  Vertex Name
+                </label>
+                <input
+                  type="text"
+                  value={newVertex}
+                  onChange={(e) => setNewVertex(e.target.value)}
+                  placeholder="e.g., G"
+                  disabled={isRunning}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '2px solid #e5e7eb',
+                    background: '#fff',
+                    fontSize: '14px',
+                    marginBottom: '8px'
+                  }}
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <button
+                    onClick={addVertex}
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      fontWeight: '600',
+                      cursor: isRunning ? 'not-allowed' : 'pointer',
+                      opacity: isRunning ? 0.6 : 1,
+                      fontSize: '12px'
+                    }}
+                  >
+                    Add Vertex
+                  </button>
+                  <button
+                    onClick={removeVertex}
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                      color: 'white',
+                      fontWeight: '600',
+                      cursor: isRunning ? 'not-allowed' : 'pointer',
+                      opacity: isRunning ? 0.6 : 1,
+                      fontSize: '12px'
+                    }}
+                  >
+                    Remove Vertex
+                  </button>
+                </div>
+              </div>
+
+              {/* Edge Operations */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151', fontWeight: '600' }}>
+                  Edge (From - To)
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                  <input
+                    type="text"
+                    value={fromVertex}
+                    onChange={(e) => setFromVertex(e.target.value)}
+                    placeholder="From"
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    value={toVertex}
+                    onChange={(e) => setToVertex(e.target.value)}
+                    placeholder="To"
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '2px solid #e5e7eb',
+                      background: '#fff',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <button
+                    onClick={addEdge}
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      fontWeight: '600',
+                      cursor: isRunning ? 'not-allowed' : 'pointer',
+                      opacity: isRunning ? 0.6 : 1,
+                      fontSize: '12px'
+                    }}
+                  >
+                    Add Edge
+                  </button>
+                  <button
+                    onClick={removeEdge}
+                    disabled={isRunning}
+                    style={{
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      color: 'white',
+                      fontWeight: '600',
+                      cursor: isRunning ? 'not-allowed' : 'pointer',
+                      opacity: isRunning ? 0.6 : 1,
+                      fontSize: '12px'
+                    }}
+                  >
+                    Remove Edge
+                  </button>
+                </div>
+              </div>
+
+              <h3 style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: '600', 
+                marginBottom: '20px',
+                marginTop: '30px',
+                color: '#1f2937'
               }}>
                 BFS Controls
               </h3>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151' }}>
                     Start Vertex
                   </label>
                   <select
@@ -363,9 +636,9 @@ const BreadthFirstSearchVisualize = () => {
                       width: '100%',
                       padding: '12px',
                       borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
+                      border: '1px solid #e5e7eb',
+                      background: 'white',
+                      color: '#1f2937',
                       fontSize: '14px'
                     }}
                   >
@@ -375,7 +648,7 @@ const BreadthFirstSearchVisualize = () => {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#cbd5e1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#374151' }}>
                     Speed (ms)
                   </label>
                   <input
@@ -388,7 +661,7 @@ const BreadthFirstSearchVisualize = () => {
                     disabled={isRunning}
                     style={{ width: '100%' }}
                   />
-                  <div style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                  <div style={{ textAlign: 'center', fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
                     {speed}ms
                   </div>
                 </div>
@@ -397,7 +670,7 @@ const BreadthFirstSearchVisualize = () => {
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <button
                   onClick={performBFS}
-                  disabled={isRunning && !isPaused}
+                  disabled={isRunning}
                   style={{
                     background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
                     color: 'white',
@@ -406,35 +679,17 @@ const BreadthFirstSearchVisualize = () => {
                     borderRadius: '8px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    cursor: (isRunning && !isPaused) ? 'not-allowed' : 'pointer',
-                    opacity: (isRunning && !isPaused) ? 0.6 : 1
+                    cursor: isRunning ? 'not-allowed' : 'pointer',
+                    opacity: isRunning ? 0.6 : 1
                   }}
                 >
-                  {isRunning ? (isPaused ? '▶️ Resume' : '🔄 Running') : '▶️ Start BFS'}
+                  {isRunning ? 'Running...' : 'Start BFS'}
                 </button>
-                
-                {isRunning && (
-                  <button
-                    onClick={pauseResume}
-                    style={{
-                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 20px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {isPaused ? '▶️ Resume' : '⏸️ Pause'}
-                  </button>
-                )}
                 
                 <button
                   onClick={resetVisualization}
                   style={{
-                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    background: 'linear-gradient(135deg, #6b7280, #4b5563)',
                     color: 'white',
                     border: 'none',
                     padding: '12px 20px',
@@ -444,7 +699,7 @@ const BreadthFirstSearchVisualize = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  🔄 Reset
+                  Reset
                 </button>
               </div>
             </div>
@@ -454,14 +709,15 @@ const BreadthFirstSearchVisualize = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* BFS Queue */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                🚶 BFS Queue
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
+                BFS Queue
               </h3>
               <div style={{ minHeight: '120px' }}>
                 {queue.length === 0 ? (
@@ -484,10 +740,11 @@ const BreadthFirstSearchVisualize = () => {
                           borderRadius: '8px',
                           textAlign: 'center',
                           fontWeight: '600',
-                          fontSize: '14px'
+                          fontSize: '14px',
+                          color: index === 0 ? 'white' : '#1f2937'
                         }}
                       >
-                        {vertex} {index === 0 && '← FRONT'}
+                        {vertex} {index === 0 && '(FRONT)'}
                       </div>
                     ))}
                   </div>
@@ -498,14 +755,15 @@ const BreadthFirstSearchVisualize = () => {
             {/* Traversal Path */}
             {traversalPath.length > 0 && (
               <div style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(255, 255, 255, 0.95)',
                 borderRadius: '16px',
                 padding: '25px',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
               }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                  🛤️ Traversal Path
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
+                  Traversal Path
                 </h3>
                 <div style={{
                   display: 'flex',
@@ -536,14 +794,15 @@ const BreadthFirstSearchVisualize = () => {
 
             {/* Algorithm Info */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                ⚡ Algorithm Info
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
+                Algorithm Info
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
                 {[
@@ -553,7 +812,7 @@ const BreadthFirstSearchVisualize = () => {
                   { label: 'Type', value: 'Level-wise Traversal' }
                 ].map(({ label, value }) => (
                   <div key={label} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#94a3b8' }}>{label}:</span>
+                    <span style={{ color: '#64748b' }}>{label}:</span>
                     <span style={{ fontWeight: '600', color: '#06b6d4' }}>{value}</span>
                   </div>
                 ))}
@@ -562,34 +821,31 @@ const BreadthFirstSearchVisualize = () => {
 
             {/* Operation Log */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
               padding: '25px',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
               flex: 1
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#e2e8f0' }}>
-                📝 Operation Log
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
+                Operation Log
               </h3>
               <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {operationLog.length > 0 ? operationLog.map((log) => (
                   <div key={log.id} style={{
                     padding: '10px',
                     marginBottom: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: '#f9fafb',
                     borderRadius: '8px',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    border: '1px solid #e5e7eb'
                   }}>
-                    <div style={{ 
-                      fontWeight: '600', 
-                      color: log.type === 'success' ? '#10b981' :
-                             log.type === 'warning' ? '#f59e0b' :
-                             log.type === 'error' ? '#ef4444' : '#06b6d4'
-                    }}>
+                    <div style={{ fontWeight: '600', color: '#06b6d4' }}>
                       {log.operation}
                     </div>
-                    <div style={{ color: '#cbd5e1', marginTop: '4px' }}>
+                    <div style={{ color: '#374151', marginTop: '4px' }}>
                       {log.details}
                     </div>
                     <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>

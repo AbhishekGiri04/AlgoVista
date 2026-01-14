@@ -154,29 +154,7 @@ const GraphVisualize = () => {
     addToLog('CLEAR', 'Cleared entire graph');
   };
 
-  const getVertexStyle = (vertex) => ({
-    width: '50px',
-    height: '50px',
-    background: highlightVertices.includes(vertex)
-      ? 'linear-gradient(135deg, #10b981, #34d399)'
-      : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-    border: '2px solid rgba(255, 255, 255, 0.2)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontWeight: '700',
-    fontSize: '16px',
-    boxShadow: highlightVertices.includes(vertex)
-      ? '0 8px 25px rgba(16, 185, 129, 0.4)'
-      : '0 6px 20px rgba(59, 130, 246, 0.3)',
-    transform: highlightVertices.includes(vertex) ? 'scale(1.2)' : 'scale(1)',
-    transition: 'all 0.4s ease',
-    margin: '5px'
-  });
-
-  return (
+return (
     <div style={{
       background: 'linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0)',
       minHeight: '100vh',
@@ -269,58 +247,201 @@ const GraphVisualize = () => {
 
             {/* Graph Visualization */}
             <div style={{
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05))',
               borderRadius: '16px',
               padding: '30px',
               marginBottom: '30px',
-              minHeight: '300px',
+              minHeight: '400px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid rgba(148, 163, 184, 0.2)'
+              border: '2px solid rgba(148, 163, 184, 0.2)',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
               {vertices.length > 0 ? (
                 <>
+                  {/* Visual Graph with Circular Layout */}
                   <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '350px',
                     display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '20px',
+                    alignItems: 'center',
                     justifyContent: 'center',
-                    marginBottom: '30px'
+                    marginBottom: '20px'
                   }}>
-                    {vertices.map(vertex => (
-                      <div key={vertex} style={getVertexStyle(vertex)}>
-                        {vertex}
-                      </div>
-                    ))}
+                    {/* Draw edges first (behind vertices) */}
+                    <svg style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      pointerEvents: 'none'
+                    }}>
+                      {edges.map((edge, idx) => {
+                        const fromIdx = vertices.indexOf(edge.from);
+                        const toIdx = vertices.indexOf(edge.to);
+                        const totalVertices = vertices.length;
+                        
+                        let x1, y1, x2, y2;
+                        
+                        if (totalVertices === 1) {
+                          x1 = y1 = x2 = y2 = 50;
+                        } else {
+                          const angle1 = (fromIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                          const angle2 = (toIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                          const radius = 35;
+                          x1 = 50 + radius * Math.cos(angle1);
+                          y1 = 50 + radius * Math.sin(angle1);
+                          x2 = 50 + radius * Math.cos(angle2);
+                          y2 = 50 + radius * Math.sin(angle2);
+                        }
+                        
+                        return (
+                          <g key={idx}>
+                            <line
+                              x1={`${x1}%`}
+                              y1={`${y1}%`}
+                              x2={`${x2}%`}
+                              y2={`${y2}%`}
+                              stroke="rgba(59, 130, 246, 0.4)"
+                              strokeWidth="2"
+                            />
+                            <text
+                              x={`${(x1 + x2) / 2}%`}
+                              y={`${(y1 + y2) / 2}%`}
+                              fill="#3b82f6"
+                              fontSize="12"
+                              fontWeight="600"
+                              textAnchor="middle"
+                              dy="-5"
+                            >
+                              {edge.weight}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+                    
+                    {/* Draw vertices in circular layout */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%'
+                    }}>
+                      {vertices.map((vertex, idx) => {
+                        const totalVertices = vertices.length;
+                        let x, y;
+                        
+                        if (totalVertices === 1) {
+                          // Center single vertex
+                          x = 50;
+                          y = 50;
+                        } else {
+                          // Circular layout for multiple vertices
+                          const angle = (idx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                          const radius = 35; // Percentage-based radius
+                          x = 50 + radius * Math.cos(angle);
+                          y = 50 + radius * Math.sin(angle);
+                        }
+                        
+                        const isHighlighted = highlightVertices.includes(vertex);
+                        
+                        return (
+                          <div
+                            key={vertex}
+                            style={{
+                              position: 'absolute',
+                              left: `calc(${x}% - 25px)`,
+                              top: `calc(${y}% - 25px)`,
+                              width: '50px',
+                              height: '50px',
+                              background: isHighlighted
+                                ? 'linear-gradient(135deg, #10b981, #34d399)'
+                                : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                              border: '2px solid rgba(255, 255, 255, 0.2)',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontWeight: '700',
+                              fontSize: '18px',
+                              boxShadow: isHighlighted
+                                ? '0 8px 25px rgba(16, 185, 129, 0.4)'
+                                : '0 6px 20px rgba(59, 130, 246, 0.3)',
+                              transform: isHighlighted ? 'scale(1.2)' : 'scale(1)',
+                              transition: 'all 0.4s ease',
+                              zIndex: 10
+                            }}
+                          >
+                            {vertex}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                   
+                  {/* Edge List */}
                   <div style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    padding: '15px 20px',
+                    borderRadius: '12px',
+                    fontSize: '13px',
                     color: '#475569',
-                    border: '1px solid rgba(148, 163, 184, 0.2)'
+                    border: '1px solid rgba(148, 163, 184, 0.3)',
+                    width: '100%',
+                    maxWidth: '600px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
                   }}>
-                    <div><strong>Edges:</strong></div>
-                    {edges.length > 0 ? edges.map((edge, idx) => (
-                      <div key={idx} style={{ margin: '5px 0' }}>
-                        {edge.from} ↔ {edge.to} (weight: {edge.weight})
-                      </div>
-                    )) : (
-                      <div style={{ fontStyle: 'italic', color: '#64748b' }}>No edges</div>
-                    )}
+                    <div style={{ fontWeight: '700', marginBottom: '8px', color: '#1e293b' }}>Edges ({edges.length}):</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {edges.length > 0 ? edges.map((edge, idx) => (
+                        <span key={idx} style={{
+                          background: 'linear-gradient(135deg, #dbeafe, #e0e7ff)',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          color: '#3b82f6',
+                          border: '1px solid rgba(59, 130, 246, 0.2)'
+                        }}>
+                          {edge.from} - {edge.to} (w: {edge.weight})
+                        </span>
+                      )) : (
+                        <span style={{ fontStyle: 'italic', color: '#94a3b8' }}>No edges yet</span>
+                      )}
+                    </div>
                   </div>
                 </>
               ) : (
                 <div style={{
-                  color: '#64748b',
-                  fontSize: '18px',
-                  fontStyle: 'italic'
+                  textAlign: 'center',
+                  padding: '40px'
                 }}>
-                  Graph is empty - add vertices to begin
+                  <div style={{
+                    fontSize: '48px',
+                    marginBottom: '16px'
+                  }}>🔵</div>
+                  <div style={{
+                    color: '#64748b',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '8px'
+                  }}>
+                    Graph is Empty
+                  </div>
+                  <div style={{
+                    color: '#94a3b8',
+                    fontSize: '14px'
+                  }}>
+                    Add vertices to start building your graph
+                  </div>
                 </div>
               )}
             </div>
