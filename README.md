@@ -1,7 +1,7 @@
 <h1 align="center">🚀 ALGOVISTA — Next Gen DSA Platform</h1>
 
 <p align="center">
-  🎯 A comprehensive full-stack learning platform that transforms <b>Data Structures and Algorithms</b> education through immersive, hands-on learning with real-time C++ algorithm execution and interactive 3D visualizations.
+  🎯 A production-ready learning platform that transforms <b>Data Structures and Algorithms</b> education through real-time C++ execution, interactive 3D visualizations, and comprehensive algorithm coverage.
 </p>
 
 <p align="center">
@@ -197,6 +197,7 @@ AlgoVista/
 │   ├── 📄 Linear_Search_Code.png  # 💻 Linear search code view
 │   └── 📄 About_Page.png          # ℹ️ About page screenshot
 ├── 📄 .gitignore                  # 🚫 Git ignore rules
+├── 📄 LICENSE                    # 📜 MIT License
 ├── 📄 package.json                # 📦 Root package configuration
 ├── 📄 server.js                   # 🚀 Root server file
 ├── 📄 start.sh                    # 🎬 Startup script
@@ -405,6 +406,14 @@ cd backend && rm -rf node_modules && npm install
 
 ---
 
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<br>
+
+---
+
 **🚀 Built with ❤️ for Educational Excellence**  
 *Transforming Computer Science Education Through Interactive Learning*
 
@@ -414,6 +423,6 @@ cd backend && rm -rf node_modules && npm install
 
 <div align="center">
 
-**© 2025 ALGOVISTA - Next Gen DSA Platform. All Rights Reserved.**
+**© 2026 ALGOVISTA - Next Gen DSA Platform. All Rights Reserved.**
 
 </div>
