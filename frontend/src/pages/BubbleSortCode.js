@@ -20,9 +20,49 @@ using namespace std;
 class BubbleSort {
 public:
     /**
+     * Add element to array
+     */
+    static void addElement(vector<int>& arr, int element) {
+        arr.push_back(element);
+        cout << "Added " << element << " to array" << endl;
+    }
+    
+    /**
+     * Remove element at index
+     */
+    static void removeElement(vector<int>& arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Removed " << arr[index] << " from array" << endl;
+            arr.erase(arr.begin() + index);
+        }
+    }
+    
+    /**
+     * Update element at index
+     */
+    static void updateElement(vector<int>& arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Updated arr[" << index << "]: " << arr[index] << " -> " << newValue << endl;
+            arr[index] = newValue;
+        }
+    }
+    
+    /**
      * Sorts array using bubble sort algorithm
      * @param arr Reference to vector to be sorted
      */
+    
+    /**
+     * Generate random array
+     */
+    static void generateRandom(vector<int>& arr, int size) {
+        arr.clear();
+        for (int i = 0; i < size; i++) {
+            arr.push_back(rand() % 100 + 1);
+        }
+        cout << "Generated random array of size " << size << endl;
+    }
+    
     static void sort(vector<int>& arr) {
         int n = arr.size();
         bool swapped;
@@ -63,10 +103,18 @@ int main() {
     cout << "=== Bubble Sort Algorithm ==="  << endl;
     BubbleSort::printArray(arr, "Original Array");
     
+    BubbleSort::addElement(arr, 15);
+    BubbleSort::updateElement(arr, 0, 70);
+    BubbleSort::printArray(arr, "Modified Array");
+    
     BubbleSort::sort(arr);
     
     BubbleSort::printArray(arr, "Sorted Array  ");
-    cout << "\nSorting completed successfully!" << endl;
+    
+    BubbleSort::removeElement(arr, 0);
+    BubbleSort::printArray(arr, "After Removal ");
+    
+    cout << "Sorting completed successfully!" << endl;
     
     return 0;
 }`,
@@ -78,28 +126,47 @@ int main() {
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
-/**
- * Swaps two integers
- */
+#define MAX_SIZE 100
+
 void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
     *b = temp;
 }
 
-/**
- * Bubble sort implementation with early termination
- * @param arr Array to be sorted
- * @param n Size of the array
- */
+void addElement(int arr[], int* n, int element) {
+    if (*n < MAX_SIZE) {
+        arr[*n] = element;
+        (*n)++;
+        printf("Added %d to array", element);
+    }
+}
+
+void removeElement(int arr[], int* n, int index) {
+    if (index >= 0 && index < *n) {
+        printf("Removed %d from array", arr[index]);
+        for (int i = index; i < *n - 1; i++) {
+            arr[i] = arr[i + 1];
+        }
+        (*n)--;
+    }
+}
+
+void updateElement(int arr[], int n, int index, int newValue) {
+    if (index >= 0 && index < n) {
+        printf("Updated arr[%d]: %d -> %d", index, arr[index], newValue);
+        arr[index] = newValue;
+    }
+}
+
 void bubbleSort(int arr[], int n) {
     bool swapped;
     
     for (int i = 0; i < n - 1; i++) {
         swapped = false;
         
-        // Last i elements are already in place
         for (int j = 0; j < n - i - 1; j++) {
             if (arr[j] > arr[j + 1]) {
                 swap(&arr[j], &arr[j + 1]);
@@ -107,37 +174,36 @@ void bubbleSort(int arr[], int n) {
             }
         }
         
-        // If no swapping occurred, array is sorted
-        if (!swapped) {
-            break;
-        }
+        if (!swapped) break;
     }
 }
 
-/**
- * Utility function to print array
- */
 void printArray(int arr[], int size, const char* label) {
     printf("%s: ", label);
     for (int i = 0; i < size; i++) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90, 5};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    int arr[MAX_SIZE] = {64, 34, 25, 12, 22, 11, 90, 5};
+    int n = 8;
     
-    printf("=== Bubble Sort Algorithm ===\n");
+    printf("=== Bubble Sort Algorithm ===");
     printArray(arr, n, "Original Array");
     
+    addElement(arr, &n, 15);
+    updateElement(arr, n, 0, 70);
+    printArray(arr, n, "Modified Array");
+    
     bubbleSort(arr, n);
-    
     printArray(arr, n, "Sorted Array  ");
-    printf("\nSorting completed successfully!\n");
     
+    removeElement(arr, &n, 0);
+    printArray(arr, n, "After Removal ");
+    
+    printf("Sorting completed successfully!");
     return 0;
 }`,
     python: `"""
@@ -154,58 +220,59 @@ class BubbleSort:
     """
     
     @staticmethod
+    def add_element(arr: List[int], element: int) -> None:
+        arr.append(element)
+        print(f"Added {element} to array")
+    
+    @staticmethod
+    def remove_element(arr: List[int], index: int) -> None:
+        if 0 <= index < len(arr):
+            removed = arr.pop(index)
+            print(f"Removed {removed} from array")
+    
+    @staticmethod
+    def update_element(arr: List[int], index: int, new_value: int) -> None:
+        if 0 <= index < len(arr):
+            print(f"Updated arr[{index}]: {arr[index]} -> {new_value}")
+            arr[index] = new_value
+    
+    @staticmethod
     def sort(arr: List[int]) -> None:
-        """
-        Sorts the array in-place using bubble sort algorithm
-        
-        Args:
-            arr: List of integers to be sorted
-        
-        Returns:
-            None (sorts in-place)
-        """
         n = len(arr)
         
         for i in range(n - 1):
             swapped = False
             
-            # Last i elements are already sorted
             for j in range(n - i - 1):
                 if arr[j] > arr[j + 1]:
                     arr[j], arr[j + 1] = arr[j + 1], arr[j]
                     swapped = True
             
-            # Early termination if no swaps occurred
             if not swapped:
                 break
     
     @staticmethod
     def print_array(arr: List[int], label: str) -> None:
-        """
-        Utility function to print array with formatting
-        
-        Args:
-            arr: Array to print
-            label: Description label
-        """
         formatted_arr = ', '.join(f'{num:3d}' for num in arr)
         print(f"{label}: [{formatted_arr}]")
 
 def main() -> None:
-    """
-    Main function to demonstrate bubble sort
-    """
-    # Test data
     test_array = [64, 34, 25, 12, 22, 11, 90, 5]
     
     print("=== Bubble Sort Algorithm ===")
     BubbleSort.print_array(test_array, "Original Array")
     
-    # Sort the array
-    BubbleSort.sort(test_array)
+    BubbleSort.add_element(test_array, 15)
+    BubbleSort.update_element(test_array, 0, 70)
+    BubbleSort.print_array(test_array, "Modified Array")
     
+    BubbleSort.sort(test_array)
     BubbleSort.print_array(test_array, "Sorted Array  ")
-    print("\nSorting completed successfully!")
+    
+    BubbleSort.remove_element(test_array, 0)
+    BubbleSort.print_array(test_array, "After Removal ")
+    
+    print("Sorting completed successfully!")
 
 if __name__ == "__main__":
     main()`,
@@ -219,86 +286,75 @@ if __name__ == "__main__":
  */
 
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class BubbleSort {
     
-    /**
-     * Sorts an array using the bubble sort algorithm
-     * Includes optimization for early termination
-     * 
-     * @param arr The array to be sorted
-     */
-    public static void sort(int[] arr) {
-        int n = arr.length;
+    public static void addElement(ArrayList<Integer> arr, int element) {
+        arr.add(element);
+        System.out.println("Added " + element + " to array");
+    }
+    
+    public static void removeElement(ArrayList<Integer> arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            int removed = arr.remove(index);
+            System.out.println("Removed " + removed + " from array");
+        }
+    }
+    
+    public static void updateElement(ArrayList<Integer> arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            System.out.println("Updated arr[" + index + "]: " + arr.get(index) + " -> " + newValue);
+            arr.set(index, newValue);
+        }
+    }
+    
+    public static void sort(ArrayList<Integer> arr) {
+        int n = arr.size();
         boolean swapped;
         
         for (int i = 0; i < n - 1; i++) {
             swapped = false;
             
-            // Last i elements are already in place
             for (int j = 0; j < n - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    // Swap elements
-                    swap(arr, j, j + 1);
+                if (arr.get(j) > arr.get(j + 1)) {
+                    int temp = arr.get(j);
+                    arr.set(j, arr.get(j + 1));
+                    arr.set(j + 1, temp);
                     swapped = true;
                 }
             }
             
-            // If no swapping occurred, array is sorted
-            if (!swapped) {
-                break;
-            }
+            if (!swapped) break;
         }
     }
     
-    /**
-     * Utility method to swap two elements in an array
-     * 
-     * @param arr The array containing elements to swap
-     * @param i Index of first element
-     * @param j Index of second element
-     */
-    private static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-    
-    /**
-     * Utility method to print array with formatting
-     * 
-     * @param arr Array to print
-     * @param label Description label
-     */
-    public static void printArray(int[] arr, String label) {
-        System.out.printf("%-15s: ", label);
-        System.out.print("[");
-        for (int i = 0; i < arr.length; i++) {
-            System.out.printf("%3d", arr[i]);
-            if (i < arr.length - 1) {
-                System.out.print(", ");
-            }
+    public static void printArray(ArrayList<Integer> arr, String label) {
+        System.out.printf("%-15s: [", label);
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.printf("%3d", arr.get(i));
+            if (i < arr.size() - 1) System.out.print(", ");
         }
         System.out.println("]");
     }
     
-    /**
-     * Main method to demonstrate bubble sort algorithm
-     * 
-     * @param args Command line arguments (not used)
-     */
     public static void main(String[] args) {
-        // Test data
-        int[] testArray = {64, 34, 25, 12, 22, 11, 90, 5};
+        ArrayList<Integer> testArray = new ArrayList<>(Arrays.asList(64, 34, 25, 12, 22, 11, 90, 5));
         
         System.out.println("=== Bubble Sort Algorithm ===");
         printArray(testArray, "Original Array");
         
-        // Perform sorting
-        sort(testArray);
+        addElement(testArray, 15);
+        updateElement(testArray, 0, 70);
+        printArray(testArray, "Modified Array");
         
+        sort(testArray);
         printArray(testArray, "Sorted Array");
-        System.out.println("\nSorting completed successfully!");
+        
+        removeElement(testArray, 0);
+        printArray(testArray, "After Removal");
+        
+        System.out.println("Sorting completed successfully!");
     }
 }`
   };

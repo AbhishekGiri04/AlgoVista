@@ -175,7 +175,7 @@ router.post('/bubblesort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/BubbleSort/bubble_sort_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/BubbleSort/BubbleSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -209,7 +209,7 @@ router.post('/selectionsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/SelectionSort/selection_sort_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/SelectionSort/SelectionSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -236,6 +236,176 @@ router.post('/selectionsort/visualize', (req, res) => {
   });
 });
 
+// Radix Sort Visualization
+router.post('/radixsort/visualize', (req, res) => {
+  const { array } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/RadixSort/RadixSort');
+  const child = spawn(execPath, [arrayStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Radix Sort',
+        input: array,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+// Counting Sort Visualization
+router.post('/countingsort/visualize', (req, res) => {
+  const { array } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/CountingSort/CountingSort');
+  const child = spawn(execPath, [arrayStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Counting Sort',
+        input: array,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+// Heap Sort Visualization
+router.post('/heapsort/visualize', (req, res) => {
+  const { array } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/HeapSort/HeapSort');
+  const child = spawn(execPath, [arrayStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Heap Sort',
+        input: array,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+// Quick Sort Visualization
+router.post('/quicksort/visualize', (req, res) => {
+  const { array } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/QuickSort/QuickSort');
+  const child = spawn(execPath, [arrayStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Quick Sort',
+        input: array,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+// Merge Sort Visualization
+router.post('/mergesort/visualize', (req, res) => {
+  const { array } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/MergeSort/MergeSort');
+  const child = spawn(execPath, [arrayStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Merge Sort',
+        input: array,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
 // Insertion Sort Visualization
 router.post('/insertionsort/visualize', (req, res) => {
   const { array } = req.body;
@@ -243,7 +413,7 @@ router.post('/insertionsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/InsertionSort/insertion_sort_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Sorting/InsertionSort/InsertionSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -273,45 +443,36 @@ router.post('/insertionsort/visualize', (req, res) => {
 // Linear Search
 router.post('/linearsearch', (req, res) => {
   const { array, target } = req.body;
+  const arrayStr = array.join(',');
+  const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Direct logic without files
-  const steps = [];
-  let found = false;
-  let foundIndex = -1;
+  const execPath = path.join(__dirname, '../../algorithms/Searching/LinearSearch/LinearSearch');
+  const child = spawn(execPath, [arrayStr, target.toString()]);
   
-  for (let i = 0; i < array.length; i++) {
-    const step = {
-      stepNumber: i + 1,
-      index: i,
-      value: array[i],
-      status: array[i] === target ? 'found' : 'checking',
-      comparison: `arr[${i}] ${array[i] === target ? '==' : '!='} ${target} ${array[i] === target ? '✓' : '✗'}`
-    };
-    steps.push(step);
-    
-    if (array[i] === target) {
-      found = true;
-      foundIndex = i;
-      break;
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        algorithm: 'Linear Search',
+        array: array,
+        target: target,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
     }
-  }
+  });
   
-  const result = {
-    algorithm: 'Linear Search',
-    array: array,
-    target: target,
-    found: found,
-    foundIndex: foundIndex,
-    totalComparisons: steps.length,
-    steps: steps,
-    result: {
-      message: found ? `Target ${target} found at index ${foundIndex}` : `Target ${target} not found in array`,
-      timeComplexity: 'O(n)',
-      spaceComplexity: 'O(1)'
-    }
-  };
-  
-  res.json(result);
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
 });
 
 // Linear Search Algorithm
@@ -873,7 +1034,7 @@ router.post('/tree/insert', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['insert', value.toString()]);
   
   let output = '';
@@ -906,7 +1067,7 @@ router.post('/tree/search', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['search', value.toString()]);
   
   let output = '';
@@ -958,7 +1119,7 @@ router.post('/tree/inorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['inorder']);
   
   let output = '';
@@ -989,7 +1150,7 @@ router.post('/tree/preorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['preorder']);
   
   let output = '';
@@ -1020,7 +1181,7 @@ router.post('/tree/postorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['postorder']);
   
   let output = '';
@@ -1051,7 +1212,7 @@ router.post('/tree/levelorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/tree_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['levelorder']);
   
   let output = '';
@@ -1104,7 +1265,7 @@ router.post('/exponentialsearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/ExponentialSearch/exponential_search_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Searching/ExponentialSearch/ExponentialSearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1130,7 +1291,7 @@ router.post('/jumpsearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/JumpSearch/jump_search_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Searching/JumpSearch/JumpSearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1156,7 +1317,7 @@ router.post('/binarysearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/BinarySearch/binary_search_steps_exec');
+  const execPath = path.join(__dirname, '../../algorithms/Searching/BinarySearch/BinarySearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';

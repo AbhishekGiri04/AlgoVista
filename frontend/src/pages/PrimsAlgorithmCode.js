@@ -7,315 +7,430 @@ const PrimsAlgorithmCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Prim's Algorithm - C++ Implementation
- * Greedy MST construction using priority queue
+ * Prim Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <queue>
-#include <climits>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<pair<int, int>>> adjList;
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
         adjList.resize(v);
     }
     
-    void addEdge(int src, int dest, int weight) {
-        adjList[src].push_back({dest, weight});
-        adjList[dest].push_back({src, weight});
+    void addEdge(int src, int dest) {
+        adjList[src].push_back(dest);
+        adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void primMST() {
-        vector<int> key(vertices, INT_MAX);
-        vector<int> parent(vertices, -1);
-        vector<bool> inMST(vertices, false);
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
+        for (int i = 0; i < vertices; i++) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
         
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
         
-        key[0] = 0;
-        pq.push({0, 0});
+        visited[start] = true;
+        q.push(start);
         
-        while (!pq.empty()) {
-            int u = pq.top().second;
-            pq.pop();
+        cout << "BFS from " << start << ": ";
+        
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
             
-            if (inMST[u]) continue;
-            inMST[u] = true;
-            
-            for (auto& edge : adjList[u]) {
-                int v = edge.first;
-                int weight = edge.second;
-                
-                if (!inMST[v] && weight < key[v]) {
-                    key[v] = weight;
-                    parent[v] = u;
-                    pq.push({key[v], v});
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
                 }
             }
         }
-        
-        cout << "Minimum Spanning Tree:" << endl;
-        int totalWeight = 0;
-        for (int i = 1; i < vertices; i++) {
-            cout << parent[i] << " - " << i << " : " << key[i] << endl;
-            totalWeight += key[i];
-        }
-        cout << "Total weight: " << totalWeight << endl;
+        cout << endl;
     }
 };
 
 int main() {
-    cout << "=== Prim's Algorithm ===" << endl;
+    cout << "=== Prim Algorithm ===" << endl;
     Graph g(5);
     
-    g.addEdge(0, 1, 2);
-    g.addEdge(0, 3, 6);
-    g.addEdge(1, 2, 3);
-    g.addEdge(1, 3, 8);
-    g.addEdge(1, 4, 5);
-    g.addEdge(2, 4, 7);
-    g.addEdge(3, 4, 9);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
     
-    g.primMST();
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Prim's Algorithm - C Implementation
- * Greedy MST construction
+ * Prim Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <stdbool.h>
 
 #define MAX_VERTICES 100
 
-int minKey(int key[], bool mstSet[], int V) {
-    int min = INT_MAX, min_index;
+typedef struct {
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int vertices;
+} Graph;
+
+Graph* createGraph(int vertices) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->vertices = vertices;
     
-    for (int v = 0; v < V; v++) {
-        if (mstSet[v] == false && key[v] < min) {
-            min = key[v];
-            min_index = v;
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph->adjMatrix[i][j] = 0;
         }
     }
-    return min_index;
+    return graph;
 }
 
-void primMST(int graph[MAX_VERTICES][MAX_VERTICES], int V) {
-    int parent[MAX_VERTICES];
-    int key[MAX_VERTICES];
-    bool mstSet[MAX_VERTICES];
-    
-    for (int i = 0; i < V; i++) {
-        key[i] = INT_MAX;
-        mstSet[i] = false;
+void addEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
     }
+}
+
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
     
-    key[0] = 0;
-    parent[0] = -1;
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
     
-    for (int count = 0; count < V - 1; count++) {
-        int u = minKey(key, mstSet, V);
-        mstSet[u] = true;
+    visited[start] = true;
+    queue[rear++] = start;
+    
+    printf("BFS from %d: ", start);
+    
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
         
-        for (int v = 0; v < V; v++) {
-            if (graph[u][v] && mstSet[v] == false && graph[u][v] < key[v]) {
-                parent[v] = u;
-                key[v] = graph[u][v];
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
             }
         }
     }
-    
-    printf("Minimum Spanning Tree:\\n");
-    int totalWeight = 0;
-    for (int i = 1; i < V; i++) {
-        printf("%d - %d : %d\\n", parent[i], i, key[i]);
-        totalWeight += key[i];
-    }
-    printf("Total weight: %d\\n", totalWeight);
+    printf("\n");
 }
 
 int main() {
-    printf("=== Prim's Algorithm ===\\n");
-    int graph[MAX_VERTICES][MAX_VERTICES] = {
-        {0, 2, 0, 6, 0},
-        {2, 0, 3, 8, 5},
-        {0, 3, 0, 0, 7},
-        {6, 8, 0, 0, 9},
-        {0, 5, 7, 9, 0}
-    };
+    printf("=== Prim Algorithm ===\n");
+    Graph* g = createGraph(5);
     
-    primMST(graph, 5);
+    addEdge(g, 0, 1);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
+    addEdge(g, 1, 3);
+    addEdge(g, 2, 3);
     
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
+    
+    free(g);
     return 0;
 }`,
     python: `"""
-Prim's Algorithm - Python Implementation
-Greedy MST construction using heapq
+Prim Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-import heapq
-from collections import defaultdict
-from typing import List, Tuple
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
     def __init__(self, vertices: int):
         self.vertices = vertices
-        self.graph = defaultdict(list)
+        self.adj_list = defaultdict(list)
     
-    def add_edge(self, src: int, dest: int, weight: int) -> None:
-        self.graph[src].append((dest, weight))
-        self.graph[dest].append((src, weight))
+    def add_edge(self, src: int, dest: int) -> None:
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def prim_mst(self) -> None:
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
+        
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
+    
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
         visited = set()
-        min_heap = [(0, 0, -1)]  # (weight, vertex, parent)
-        mst_edges = []
-        total_weight = 0
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
         
-        while min_heap and len(visited) < self.vertices:
-            weight, u, parent = heapq.heappop(min_heap)
+        print(f"BFS from {start}: ", end="")
+        
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
             
-            if u in visited:
-                continue
-            
-            visited.add(u)
-            if parent != -1:
-                mst_edges.append((parent, u, weight))
-                total_weight += weight
-            
-            for neighbor, edge_weight in self.graph[u]:
+            for neighbor in self.adj_list[current]:
                 if neighbor not in visited:
-                    heapq.heappush(min_heap, (edge_weight, neighbor, u))
-        
-        print("Minimum Spanning Tree:")
-        for parent, vertex, weight in mst_edges:
-            print(f"{parent} - {vertex} : {weight}")
-        print(f"Total weight: {total_weight}")
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        print()
 
 def main() -> None:
-    print("=== Prim's Algorithm ===")
-    g = Graph(5)
+    print("=== Prim Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1, 2)
-    g.add_edge(0, 3, 6)
-    g.add_edge(1, 2, 3)
-    g.add_edge(1, 3, 8)
-    g.add_edge(1, 4, 5)
-    g.add_edge(2, 4, 7)
-    g.add_edge(3, 4, 9)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.prim_mst()
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Prim's Algorithm - Java Implementation
- * Greedy MST construction using PriorityQueue
+ * Prim Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-class Edge implements Comparable<Edge> {
-    int vertex, weight, parent;
-    
-    Edge(int vertex, int weight, int parent) {
-        this.vertex = vertex;
-        this.weight = weight;
-        this.parent = parent;
-    }
-    
-    public int compareTo(Edge other) {
-        return Integer.compare(this.weight, other.weight);
-    }
-}
-
-public class PrimAlgorithm {
+public class Graph {
     private int vertices;
-    private Map<Integer, List<Edge>> adjList;
+    private List<List<Integer>> adjList;
     
-    public PrimAlgorithm(int vertices) {
+    public Graph(int vertices) {
         this.vertices = vertices;
-        this.adjList = new HashMap<>();
+        this.adjList = new ArrayList<>();
+        
         for (int i = 0; i < vertices; i++) {
-            adjList.put(i, new ArrayList<>());
+            adjList.add(new ArrayList<>());
         }
     }
     
-    public void addEdge(int src, int dest, int weight) {
-        adjList.get(src).add(new Edge(dest, weight, -1));
-        adjList.get(dest).add(new Edge(src, weight, -1));
+    public void addEdge(int src, int dest) {
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    public void primMST() {
-        boolean[] visited = new boolean[vertices];
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
-        List<Edge> mstEdges = new ArrayList<>();
-        
-        pq.offer(new Edge(0, 0, -1));
-        int totalWeight = 0;
-        
-        while (!pq.isEmpty() && mstEdges.size() < vertices - 1) {
-            Edge current = pq.poll();
-            
-            if (visited[current.vertex]) continue;
-            
-            visited[current.vertex] = true;
-            if (current.parent != -1) {
-                mstEdges.add(new Edge(current.vertex, current.weight, current.parent));
-                totalWeight += current.weight;
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
+    }
+    
+    public void display() {
+        System.out.println("Graph adjacency list:");
+        for (int i = 0; i < vertices; i++) {
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
             }
+            System.out.println();
+        }
+    }
+    
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        visited[start] = true;
+        queue.offer(start);
+        
+        System.out.print("BFS from " + start + ": ");
+        
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
             
-            for (Edge neighbor : adjList.get(current.vertex)) {
-                if (!visited[neighbor.vertex]) {
-                    pq.offer(new Edge(neighbor.vertex, neighbor.weight, current.vertex));
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
                 }
             }
         }
-        
-        System.out.println("Minimum Spanning Tree:");
-        for (Edge edge : mstEdges) {
-            System.out.println(edge.parent + " - " + edge.vertex + " : " + edge.weight);
-        }
-        System.out.println("Total weight: " + totalWeight);
+        System.out.println();
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Prim's Algorithm ===");
-        PrimAlgorithm g = new PrimAlgorithm(5);
+        System.out.println("=== Prim Algorithm ===");
+        Graph g = new Graph(5);
         
-        g.addEdge(0, 1, 2);
-        g.addEdge(0, 3, 6);
-        g.addEdge(1, 2, 3);
-        g.addEdge(1, 3, 8);
-        g.addEdge(1, 4, 5);
-        g.addEdge(2, 4, 7);
-        g.addEdge(3, 4, 9);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 3);
         
-        g.primMST();
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #f3e8ff, #e9d5ff, #c084fc)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -328,7 +443,7 @@ public class PrimAlgorithm {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -339,7 +454,7 @@ public class PrimAlgorithm {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Prim's Algorithm Code
+        Graph Code
       </h1>
       
       <div style={{
@@ -380,7 +495,16 @@ public class PrimAlgorithm {
                 fontSize: '14px',
                 cursor: 'pointer',
                 margin: '0 2px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textShadow: selectedLanguage === key 
+                  ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
+                  : 'none',
+                boxShadow: selectedLanguage === key 
+                  ? `0 4px 20px ${color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                transform: selectedLanguage === key 
+                  ? 'translateY(-1px)' 
+                  : 'translateY(0)'
               }}
             >
               {label}
@@ -427,9 +551,9 @@ public class PrimAlgorithm {
                   fontSize: '14px',
                   fontWeight: '500'
                 }}>
-                  {selectedLanguage === 'cpp' ? 'prims.cpp' : 
-                   selectedLanguage === 'c' ? 'prims.c' :
-                   selectedLanguage === 'python' ? 'prims.py' : 'PrimAlgorithm.java'}
+                  {selectedLanguage === 'cpp' ? 'prim.cpp' : 
+                   selectedLanguage === 'c' ? 'prim.c' :
+                   selectedLanguage === 'python' ? 'prim.py' : 'PrimsAlgorithm.java'}
                 </span>
               </div>
               <button
@@ -449,7 +573,10 @@ public class PrimAlgorithm {
                   fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: copied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+                    : '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

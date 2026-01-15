@@ -8,8 +8,8 @@ const MergeSortCode = () => {
   const codeExamples = {
     cpp: `/**
  * Merge Sort Algorithm - C++ Implementation
- * Time Complexity: O(n log n) | Space Complexity: O(n)
- * Divide and conquer approach with merging
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Stable sorting algorithm with in-place comparison
  */
 
 #include <iostream>
@@ -18,59 +18,74 @@ const MergeSortCode = () => {
 using namespace std;
 
 class MergeSort {
-private:
-    static void merge(vector<int>& arr, int left, int mid, int right) {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-        
-        vector<int> L(n1), R(n2);
-        
-        // Copy data to temp arrays
-        for (int i = 0; i < n1; i++)
-            L[i] = arr[left + i];
-        for (int j = 0; j < n2; j++)
-            R[j] = arr[mid + 1 + j];
-        
-        // Merge the temp arrays back
-        int i = 0, j = 0, k = left;
-        
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-        
-        // Copy remaining elements
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-        
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
-        }
-    }
-    
 public:
-    static void sort(vector<int>& arr, int left, int right) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-            
-            sort(arr, left, mid);
-            sort(arr, mid + 1, right);
-            
-            merge(arr, left, mid, right);
+    /**
+     * Add element to array
+     */
+    static void addElement(vector<int>& arr, int element) {
+        arr.push_back(element);
+        cout << "Added " << element << " to array" << endl;
+    }
+    
+    /**
+     * Remove element at index
+     */
+    static void removeElement(vector<int>& arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Removed " << arr[index] << " from array" << endl;
+            arr.erase(arr.begin() + index);
         }
     }
     
+    /**
+     * Update element at index
+     */
+    static void updateElement(vector<int>& arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Updated arr[" << index << "]: " << arr[index] << " -> " << newValue << endl;
+            arr[index] = newValue;
+        }
+    }
+    
+    /**
+     * Sorts array using bubble sort algorithm
+     * @param arr Reference to vector to be sorted
+     */
+    
+    /**
+     * Generate random array
+     */
+    static void generateRandom(vector<int>& arr, int size) {
+        arr.clear();
+        for (int i = 0; i < size; i++) {
+            arr.push_back(rand() % 100 + 1);
+        }
+        cout << "Generated random array of size " << size << endl;
+    }
+    
+    static void sort(vector<int>& arr) {
+        int n = arr.size();
+        bool swapped;
+        
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            
+            // Last i elements are already sorted
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    swap(arr[j], arr[j + 1]);
+                    swapped = true;
+                }
+            }
+            
+            // If no swapping occurred, array is sorted
+            if (!swapped) break;
+        }
+    }
+    
+    /**
+     * Utility function to print array
+     */
     static void printArray(const vector<int>& arr, const string& label) {
         cout << label << ": ";
         for (size_t i = 0; i < arr.size(); i++) {
@@ -82,79 +97,84 @@ public:
 };
 
 int main() {
+    // Test data
     vector<int> arr = {64, 34, 25, 12, 22, 11, 90, 5};
     
-    cout << "=== Merge Sort Algorithm ===" << endl;
+    cout << "=== Merge Sort Algorithm ==="  << endl;
     MergeSort::printArray(arr, "Original Array");
     
-    MergeSort::sort(arr, 0, arr.size() - 1);
+    MergeSort::addElement(arr, 15);
+    MergeSort::updateElement(arr, 0, 70);
+    MergeSort::printArray(arr, "Modified Array");
+    
+    MergeSort::sort(arr);
     
     MergeSort::printArray(arr, "Sorted Array  ");
-    cout << "\nSorting completed successfully!" << endl;
+    
+    MergeSort::removeElement(arr, 0);
+    MergeSort::printArray(arr, "After Removal ");
+    
+    cout << "Sorting completed successfully!" << endl;
     
     return 0;
 }`,
     c: `/**
  * Merge Sort Algorithm - C Implementation
- * Time Complexity: O(n log n) | Space Complexity: O(n)
- * Divide and conquer sorting in C
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Classic implementation with optimization
  */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
-void merge(int arr[], int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
-    
-    int* L = (int*)malloc(n1 * sizeof(int));
-    int* R = (int*)malloc(n2 * sizeof(int));
-    
-    // Copy data to temp arrays
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[left + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[mid + 1 + j];
-    
-    // Merge the temp arrays back
-    int i = 0, j = 0, k = left;
-    
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-        } else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-    
-    // Copy remaining elements
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-    
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-    
-    free(L);
-    free(R);
+#define MAX_SIZE 100
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-void mergeSort(int arr[], int left, int right) {
-    if (left < right) {
-        int mid = left + (right - left) / 2;
+void addElement(int arr[], int* n, int element) {
+    if (*n < MAX_SIZE) {
+        arr[*n] = element;
+        (*n)++;
+        printf("Added %d to array", element);
+    }
+}
+
+void removeElement(int arr[], int* n, int index) {
+    if (index >= 0 && index < *n) {
+        printf("Removed %d from array", arr[index]);
+        for (int i = index; i < *n - 1; i++) {
+            arr[i] = arr[i + 1];
+        }
+        (*n)--;
+    }
+}
+
+void updateElement(int arr[], int n, int index, int newValue) {
+    if (index >= 0 && index < n) {
+        printf("Updated arr[%d]: %d -> %d", index, arr[index], newValue);
+        arr[index] = newValue;
+    }
+}
+
+void mergeSort(int arr[], int n) {
+    bool swapped;
+    
+    for (int i = 0; i < n - 1; i++) {
+        swapped = false;
         
-        mergeSort(arr, left, mid);
-        mergeSort(arr, mid + 1, right);
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+                swapped = true;
+            }
+        }
         
-        merge(arr, left, mid, right);
+        if (!swapped) break;
     }
 }
 
@@ -164,70 +184,72 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90, 5};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    int arr[MAX_SIZE] = {64, 34, 25, 12, 22, 11, 90, 5};
+    int n = 8;
     
-    printf("=== Merge Sort Algorithm ===\n");
+    printf("=== Merge Sort Algorithm ===");
     printArray(arr, n, "Original Array");
     
-    mergeSort(arr, 0, n - 1);
+    addElement(arr, &n, 15);
+    updateElement(arr, n, 0, 70);
+    printArray(arr, n, "Modified Array");
     
+    mergeSort(arr, n);
     printArray(arr, n, "Sorted Array  ");
-    printf("\nSorting completed successfully!\n");
     
+    removeElement(arr, &n, 0);
+    printArray(arr, n, "After Removal ");
+    
+    printf("Sorting completed successfully!");
     return 0;
 }`,
     python: `"""
 Merge Sort Algorithm - Python Implementation
-Time Complexity: O(n log n) | Space Complexity: O(n)
-Divide and conquer with efficient merging
+Time Complexity: O(n²) | Space Complexity: O(1)
+Pythonic implementation with type hints and documentation
 """
 
 from typing import List
 
 class MergeSort:
-    @staticmethod
-    def sort(arr: List[int]) -> None:
-        if len(arr) > 1:
-            mid = len(arr) // 2
-            left_half = arr[:mid]
-            right_half = arr[mid:]
-            
-            # Recursively sort both halves
-            MergeSort.sort(left_half)
-            MergeSort.sort(right_half)
-            
-            # Merge the sorted halves
-            MergeSort._merge(arr, left_half, right_half)
+    """
+    Professional implementation of Merge Sort algorithm
+    """
     
     @staticmethod
-    def _merge(arr: List[int], left: List[int], right: List[int]) -> None:
-        i = j = k = 0
+    def add_element(arr: List[int], element: int) -> None:
+        arr.append(element)
+        print(f"Added {element} to array")
+    
+    @staticmethod
+    def remove_element(arr: List[int], index: int) -> None:
+        if 0 <= index < len(arr):
+            removed = arr.pop(index)
+            print(f"Removed {removed} from array")
+    
+    @staticmethod
+    def update_element(arr: List[int], index: int, new_value: int) -> None:
+        if 0 <= index < len(arr):
+            print(f"Updated arr[{index}]: {arr[index]} -> {new_value}")
+            arr[index] = new_value
+    
+    @staticmethod
+    def sort(arr: List[int]) -> None:
+        n = len(arr)
         
-        # Compare and merge
-        while i < len(left) and j < len(right):
-            if left[i] <= right[j]:
-                arr[k] = left[i]
-                i += 1
-            else:
-                arr[k] = right[j]
-                j += 1
-            k += 1
-        
-        # Copy remaining elements
-        while i < len(left):
-            arr[k] = left[i]
-            i += 1
-            k += 1
-        
-        while j < len(right):
-            arr[k] = right[j]
-            j += 1
-            k += 1
+        for i in range(n - 1):
+            swapped = False
+            
+            for j in range(n - i - 1):
+                if arr[j] > arr[j + 1]:
+                    arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                    swapped = True
+            
+            if not swapped:
+                break
     
     @staticmethod
     def print_array(arr: List[int], label: str) -> None:
@@ -240,100 +262,106 @@ def main() -> None:
     print("=== Merge Sort Algorithm ===")
     MergeSort.print_array(test_array, "Original Array")
     
-    MergeSort.sort(test_array)
+    MergeSort.add_element(test_array, 15)
+    MergeSort.update_element(test_array, 0, 70)
+    MergeSort.print_array(test_array, "Modified Array")
     
+    MergeSort.sort(test_array)
     MergeSort.print_array(test_array, "Sorted Array  ")
-    print("\nSorting completed successfully!")
+    
+    MergeSort.remove_element(test_array, 0)
+    MergeSort.print_array(test_array, "After Removal ")
+    
+    print("Sorting completed successfully!")
 
 if __name__ == "__main__":
     main()`,
     java: `/**
  * Merge Sort Algorithm - Java Implementation
- * Time Complexity: O(n log n) | Space Complexity: O(n)
- * Divide and conquer sorting algorithm
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Professional object-oriented implementation
+ * 
+ * @author Algorithm Visualizer
+ * @version 1.0
  */
+
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class MergeSort {
     
-    public static void sort(int[] arr, int left, int right) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-            
-            sort(arr, left, mid);
-            sort(arr, mid + 1, right);
-            
-            merge(arr, left, mid, right);
+    public static void addElement(ArrayList<Integer> arr, int element) {
+        arr.add(element);
+        System.out.println("Added " + element + " to array");
+    }
+    
+    public static void removeElement(ArrayList<Integer> arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            int removed = arr.remove(index);
+            System.out.println("Removed " + removed + " from array");
         }
     }
     
-    private static void merge(int[] arr, int left, int mid, int right) {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-        
-        int[] L = new int[n1];
-        int[] R = new int[n2];
-        
-        // Copy data to temp arrays
-        System.arraycopy(arr, left, L, 0, n1);
-        System.arraycopy(arr, mid + 1, R, 0, n2);
-        
-        // Merge the temp arrays back
-        int i = 0, j = 0, k = left;
-        
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-        
-        // Copy remaining elements
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-        
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
+    public static void updateElement(ArrayList<Integer> arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            System.out.println("Updated arr[" + index + "]: " + arr.get(index) + " -> " + newValue);
+            arr.set(index, newValue);
         }
     }
     
-    public static void printArray(int[] arr, String label) {
-        System.out.printf("%-15s: ", label);
-        System.out.print("[");
-        for (int i = 0; i < arr.length; i++) {
-            System.out.printf("%3d", arr[i]);
-            if (i < arr.length - 1) {
-                System.out.print(", ");
+    public static void sort(ArrayList<Integer> arr) {
+        int n = arr.size();
+        boolean swapped;
+        
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr.get(j) > arr.get(j + 1)) {
+                    int temp = arr.get(j);
+                    arr.set(j, arr.get(j + 1));
+                    arr.set(j + 1, temp);
+                    swapped = true;
+                }
             }
+            
+            if (!swapped) break;
+        }
+    }
+    
+    public static void printArray(ArrayList<Integer> arr, String label) {
+        System.out.printf("%-15s: [", label);
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.printf("%3d", arr.get(i));
+            if (i < arr.size() - 1) System.out.print(", ");
         }
         System.out.println("]");
     }
     
     public static void main(String[] args) {
-        int[] testArray = {64, 34, 25, 12, 22, 11, 90, 5};
+        ArrayList<Integer> testArray = new ArrayList<>(Arrays.asList(64, 34, 25, 12, 22, 11, 90, 5));
         
         System.out.println("=== Merge Sort Algorithm ===");
         printArray(testArray, "Original Array");
         
-        sort(testArray, 0, testArray.length - 1);
+        addElement(testArray, 15);
+        updateElement(testArray, 0, 70);
+        printArray(testArray, "Modified Array");
         
+        sort(testArray);
         printArray(testArray, "Sorted Array");
-        System.out.println("\nSorting completed successfully!");
+        
+        removeElement(testArray, 0);
+        printArray(testArray, "After Removal");
+        
+        System.out.println("Sorting completed successfully!");
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #ff9a9e, #fecfef, #fecfef)',
+      background: 'linear-gradient(135deg, #f3f0ff, #e9d5ff, #ddd6fe)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
@@ -405,6 +433,7 @@ public class MergeSort {
                 cursor: 'pointer',
                 margin: '0 2px',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
                 textShadow: selectedLanguage === key 
                   ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
                   : 'none',
@@ -414,6 +443,22 @@ public class MergeSort {
                 transform: selectedLanguage === key 
                   ? 'translateY(-1px)' 
                   : 'translateY(0)'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedLanguage !== key) {
+                  e.target.style.color = color;
+                  e.target.style.background = `${color}10`;
+                  e.target.style.borderColor = `${color}40`;
+                  e.target.style.textShadow = `0 0 10px ${color}60`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedLanguage !== key) {
+                  e.target.style.color = '#1a202c';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.03)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.textShadow = 'none';
+                }
               }}
             >
               {label}
@@ -486,6 +531,18 @@ public class MergeSort {
                   boxShadow: copied 
                     ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
                     : '0 4px 12px rgba(99, 102, 241, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!copied) {
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!copied) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                  }
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

@@ -7,52 +7,20 @@ const KosarajusAlgorithmCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Kosaraju's Algorithm - C++ Implementation
- * Find strongly connected components using DFS
+ * Kosaraju Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
-#include <stack>
+#include <list>
+#include <queue>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<int>> adjList;
-    
-    void DFSUtil(int v, vector<bool>& visited, stack<int>& Stack) {
-        visited[v] = true;
-        
-        for (int neighbor : adjList[v]) {
-            if (!visited[neighbor]) {
-                DFSUtil(neighbor, visited, Stack);
-            }
-        }
-        
-        Stack.push(v);
-    }
-    
-    void DFSUtil2(int v, vector<bool>& visited, vector<int>& component) {
-        visited[v] = true;
-        component.push_back(v);
-        
-        for (int neighbor : adjList[v]) {
-            if (!visited[neighbor]) {
-                DFSUtil2(neighbor, visited, component);
-            }
-        }
-    }
-    
-    Graph getTranspose() {
-        Graph transpose(vertices);
-        for (int v = 0; v < vertices; v++) {
-            for (int neighbor : adjList[v]) {
-                transpose.adjList[neighbor].push_back(v);
-            }
-        }
-        return transpose;
-    }
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
@@ -61,64 +29,93 @@ public:
     
     void addEdge(int src, int dest) {
         adjList[src].push_back(dest);
+        adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void kosarajuSCC() {
-        stack<int> Stack;
-        vector<bool> visited(vertices, false);
-        
-        // Fill vertices in stack according to their finishing times
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
         for (int i = 0; i < vertices; i++) {
-            if (!visited[i]) {
-                DFSUtil(i, visited, Stack);
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
+        
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
             }
         }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
         
-        // Create transpose graph
-        Graph transpose = getTranspose();
+        visited[start] = true;
+        q.push(start);
         
-        // Mark all vertices as not visited for second DFS
-        fill(visited.begin(), visited.end(), false);
+        cout << "BFS from " << start << ": ";
         
-        cout << "Strongly Connected Components:" << endl;
-        int sccCount = 0;
-        
-        // Process all vertices in order defined by Stack
-        while (!Stack.empty()) {
-            int v = Stack.top();
-            Stack.pop();
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
             
-            if (!visited[v]) {
-                vector<int> component;
-                transpose.DFSUtil2(v, visited, component);
-                
-                cout << "SCC " << ++sccCount << ": ";
-                for (int vertex : component) {
-                    cout << vertex << " ";
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
                 }
-                cout << endl;
             }
         }
+        cout << endl;
     }
 };
 
 int main() {
-    cout << "=== Kosaraju's Algorithm ===" << endl;
+    cout << "=== Kosaraju Algorithm ===" << endl;
     Graph g(5);
     
-    g.addEdge(1, 0);
-    g.addEdge(0, 2);
-    g.addEdge(2, 1);
-    g.addEdge(0, 3);
-    g.addEdge(3, 4);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
     
-    g.kosarajuSCC();
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Kosaraju's Algorithm - C Implementation
- * Find strongly connected components using DFS
+ * Kosaraju Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
@@ -128,310 +125,312 @@ int main() {
 #define MAX_VERTICES 100
 
 typedef struct {
-    int items[MAX_VERTICES];
-    int top;
-} Stack;
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int vertices;
+} Graph;
 
-void initStack(Stack* s) {
-    s->top = -1;
-}
-
-void push(Stack* s, int item) {
-    s->items[++s->top] = item;
-}
-
-int pop(Stack* s) {
-    return s->items[s->top--];
-}
-
-bool isEmpty(Stack* s) {
-    return s->top == -1;
-}
-
-void DFSUtil(int adjMatrix[][MAX_VERTICES], int v, bool visited[], Stack* stack, int V) {
-    visited[v] = true;
+Graph* createGraph(int vertices) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->vertices = vertices;
     
-    for (int i = 0; i < V; i++) {
-        if (adjMatrix[v][i] && !visited[i]) {
-            DFSUtil(adjMatrix, i, visited, stack, V);
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph->adjMatrix[i][j] = 0;
         }
     }
-    
-    push(stack, v);
+    return graph;
 }
 
-void DFSUtil2(int adjMatrix[][MAX_VERTICES], int v, bool visited[], int V) {
-    visited[v] = true;
-    printf("%d ", v);
-    
-    for (int i = 0; i < V; i++) {
-        if (adjMatrix[v][i] && !visited[i]) {
-            DFSUtil2(adjMatrix, i, visited, V);
+void addEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
         }
+        printf("\n");
     }
 }
 
-void kosarajuSCC(int adjMatrix[][MAX_VERTICES], int V) {
-    Stack stack;
-    initStack(&stack);
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
+    
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
     
-    // Fill vertices in stack according to their finishing times
-    for (int i = 0; i < V; i++) {
-        if (!visited[i]) {
-            DFSUtil(adjMatrix, i, visited, &stack, V);
-        }
-    }
+    visited[start] = true;
+    queue[rear++] = start;
     
-    // Create transpose graph
-    int transpose[MAX_VERTICES][MAX_VERTICES];
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            transpose[i][j] = adjMatrix[j][i];
-        }
-    }
+    printf("BFS from %d: ", start);
     
-    // Mark all vertices as not visited for second DFS
-    for (int i = 0; i < V; i++) {
-        visited[i] = false;
-    }
-    
-    printf("Strongly Connected Components:\\n");
-    int sccCount = 0;
-    
-    // Process all vertices in order defined by Stack
-    while (!isEmpty(&stack)) {
-        int v = pop(&stack);
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
         
-        if (!visited[v]) {
-            printf("SCC %d: ", ++sccCount);
-            DFSUtil2(transpose, v, visited, V);
-            printf("\\n");
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
+            }
         }
     }
+    printf("\n");
 }
 
 int main() {
-    printf("=== Kosaraju's Algorithm ===\\n");
-    int adjMatrix[MAX_VERTICES][MAX_VERTICES] = {0};
+    printf("=== Kosaraju Algorithm ===\n");
+    Graph* g = createGraph(5);
     
-    // Add edges
-    adjMatrix[1][0] = 1;
-    adjMatrix[0][2] = 1;
-    adjMatrix[2][1] = 1;
-    adjMatrix[0][3] = 1;
-    adjMatrix[3][4] = 1;
+    addEdge(g, 0, 1);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
+    addEdge(g, 1, 3);
+    addEdge(g, 2, 3);
     
-    kosarajuSCC(adjMatrix, 5);
+    display(g);
     
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
+    
+    free(g);
     return 0;
 }`,
     python: `"""
-Kosaraju's Algorithm - Python Implementation
-Find strongly connected components using DFS
+Kosaraju Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-from collections import defaultdict
-from typing import List
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
     def __init__(self, vertices: int):
         self.vertices = vertices
-        self.graph = defaultdict(list)
+        self.adj_list = defaultdict(list)
     
     def add_edge(self, src: int, dest: int) -> None:
-        self.graph[src].append(dest)
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def dfs_util(self, v: int, visited: List[bool], stack: List[int]) -> None:
-        visited[v] = True
-        
-        for neighbor in self.graph[v]:
-            if not visited[neighbor]:
-                self.dfs_util(neighbor, visited, stack)
-        
-        stack.append(v)
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
     
-    def dfs_util2(self, v: int, visited: List[bool], component: List[int]) -> None:
-        visited[v] = True
-        component.append(v)
-        
-        for neighbor in self.graph[v]:
-            if not visited[neighbor]:
-                self.dfs_util2(neighbor, visited, component)
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
     
-    def get_transpose(self) -> 'Graph':
-        transpose = Graph(self.vertices)
-        for v in range(self.vertices):
-            for neighbor in self.graph[v]:
-                transpose.graph[neighbor].append(v)
-        return transpose
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
+        
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
     
-    def kosaraju_scc(self) -> None:
-        stack = []
-        visited = [False] * self.vertices
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
+        visited = set()
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
         
-        # Fill vertices in stack according to their finishing times
-        for i in range(self.vertices):
-            if not visited[i]:
-                self.dfs_util(i, visited, stack)
+        print(f"BFS from {start}: ", end="")
         
-        # Create transpose graph
-        transpose = self.get_transpose()
-        
-        # Mark all vertices as not visited for second DFS
-        visited = [False] * self.vertices
-        
-        print("Strongly Connected Components:")
-        scc_count = 0
-        
-        # Process all vertices in order defined by Stack
-        while stack:
-            v = stack.pop()
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
             
-            if not visited[v]:
-                component = []
-                transpose.dfs_util2(v, visited, component)
-                
-                scc_count += 1
-                print(f"SCC {scc_count}: {' '.join(map(str, component))}")
+            for neighbor in self.adj_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        print()
 
 def main() -> None:
-    print("=== Kosaraju's Algorithm ===")
-    g = Graph(5)
+    print("=== Kosaraju Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(1, 0)
-    g.add_edge(0, 2)
-    g.add_edge(2, 1)
-    g.add_edge(0, 3)
-    g.add_edge(3, 4)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.kosaraju_scc()
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Kosaraju's Algorithm - Java Implementation
- * Find strongly connected components using DFS
+ * Kosaraju Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-public class KosarajuAlgorithm {
+public class Graph {
     private int vertices;
-    private Map<Integer, List<Integer>> adjList;
+    private List<List<Integer>> adjList;
     
-    public KosarajuAlgorithm(int vertices) {
+    public Graph(int vertices) {
         this.vertices = vertices;
-        this.adjList = new HashMap<>();
+        this.adjList = new ArrayList<>();
+        
         for (int i = 0; i < vertices; i++) {
-            adjList.put(i, new ArrayList<>());
+            adjList.add(new ArrayList<>());
         }
     }
     
     public void addEdge(int src, int dest) {
         adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    private void dfsUtil(int v, boolean[] visited, Stack<Integer> stack) {
-        visited[v] = true;
-        
-        for (int neighbor : adjList.get(v)) {
-            if (!visited[neighbor]) {
-                dfsUtil(neighbor, visited, stack);
-            }
-        }
-        
-        stack.push(v);
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
     }
     
-    private void dfsUtil2(int v, boolean[] visited, List<Integer> component, 
-                         Map<Integer, List<Integer>> transpose) {
-        visited[v] = true;
-        component.add(v);
-        
-        for (int neighbor : transpose.get(v)) {
-            if (!visited[neighbor]) {
-                dfsUtil2(neighbor, visited, component, transpose);
-            }
-        }
-    }
-    
-    private Map<Integer, List<Integer>> getTranspose() {
-        Map<Integer, List<Integer>> transpose = new HashMap<>();
+    public void display() {
+        System.out.println("Graph adjacency list:");
         for (int i = 0; i < vertices; i++) {
-            transpose.put(i, new ArrayList<>());
-        }
-        
-        for (int v = 0; v < vertices; v++) {
-            for (int neighbor : adjList.get(v)) {
-                transpose.get(neighbor).add(v);
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
             }
+            System.out.println();
         }
-        
-        return transpose;
     }
     
-    public void kosarajuSCC() {
-        Stack<Integer> stack = new Stack<>();
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
         boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
         
-        // Fill vertices in stack according to their finishing times
-        for (int i = 0; i < vertices; i++) {
-            if (!visited[i]) {
-                dfsUtil(i, visited, stack);
-            }
-        }
+        visited[start] = true;
+        queue.offer(start);
         
-        // Create transpose graph
-        Map<Integer, List<Integer>> transpose = getTranspose();
+        System.out.print("BFS from " + start + ": ");
         
-        // Mark all vertices as not visited for second DFS
-        Arrays.fill(visited, false);
-        
-        System.out.println("Strongly Connected Components:");
-        int sccCount = 0;
-        
-        // Process all vertices in order defined by Stack
-        while (!stack.isEmpty()) {
-            int v = stack.pop();
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
             
-            if (!visited[v]) {
-                List<Integer> component = new ArrayList<>();
-                dfsUtil2(v, visited, component, transpose);
-                
-                System.out.print("SCC " + (++sccCount) + ": ");
-                for (int vertex : component) {
-                    System.out.print(vertex + " ");
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
                 }
-                System.out.println();
             }
         }
+        System.out.println();
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Kosaraju's Algorithm ===");
-        KosarajuAlgorithm g = new KosarajuAlgorithm(5);
+        System.out.println("=== Kosaraju Algorithm ===");
+        Graph g = new Graph(5);
         
-        g.addEdge(1, 0);
-        g.addEdge(0, 2);
-        g.addEdge(2, 1);
-        g.addEdge(0, 3);
-        g.addEdge(3, 4);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 3);
         
-        g.kosarajuSCC();
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fef2f2, #fecaca, #f87171)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -444,7 +443,7 @@ public class KosarajuAlgorithm {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -455,7 +454,7 @@ public class KosarajuAlgorithm {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Kosaraju's Algorithm Code
+        Graph Code
       </h1>
       
       <div style={{
@@ -496,7 +495,16 @@ public class KosarajuAlgorithm {
                 fontSize: '14px',
                 cursor: 'pointer',
                 margin: '0 2px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textShadow: selectedLanguage === key 
+                  ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
+                  : 'none',
+                boxShadow: selectedLanguage === key 
+                  ? `0 4px 20px ${color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                transform: selectedLanguage === key 
+                  ? 'translateY(-1px)' 
+                  : 'translateY(0)'
               }}
             >
               {label}
@@ -545,7 +553,7 @@ public class KosarajuAlgorithm {
                 }}>
                   {selectedLanguage === 'cpp' ? 'kosaraju.cpp' : 
                    selectedLanguage === 'c' ? 'kosaraju.c' :
-                   selectedLanguage === 'python' ? 'kosaraju.py' : 'KosarajuAlgorithm.java'}
+                   selectedLanguage === 'python' ? 'kosaraju.py' : 'KosarajusAlgorithm.java'}
                 </span>
               </div>
               <button
@@ -565,7 +573,10 @@ public class KosarajuAlgorithm {
                   fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: copied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+                    : '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

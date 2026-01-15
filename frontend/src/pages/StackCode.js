@@ -34,6 +34,30 @@ public:
         }
     }
     
+    int peek() {
+        if (!st.empty()) {
+            return st.top();
+        } else {
+            cout << "Stack is empty!" << endl;
+            return -1;
+        }
+    }
+    
+    void traverse() {
+        if (st.empty()) {
+            cout << "Stack is empty!" << endl;
+            return;
+        }
+        stack<int> temp = st;
+        cout << "Traversing stack (top to bottom): ";
+        while (!temp.empty()) {
+            cout << temp.top();
+            temp.pop();
+            if (!temp.empty()) cout << " -> ";
+        }
+        cout << endl;
+    }
+    
     int top() {
         if (!st.empty()) {
             return st.top();
@@ -76,8 +100,10 @@ int main() {
     s.push(30);
     s.display();
     
-    cout << "Top element: " << s.top() << endl;
+    cout << "Top element (peek): " << s.peek() << endl;
     cout << "Stack size: " << s.size() << endl;
+    
+    s.traverse();
     
     s.pop();
     s.display();
@@ -108,25 +134,45 @@ Stack* createStack() {
 
 void push(Stack* stack, int element) {
     if (stack->top >= MAX_SIZE - 1) {
-        printf("Stack overflow!\n");
+        printf("Stack overflow!");
         return;
     }
     stack->data[++stack->top] = element;
-    printf("Pushed %d\n", element);
+    printf("Pushed %d", element);
 }
 
 void pop(Stack* stack) {
     if (stack->top < 0) {
-        printf("Stack is empty!\n");
+        printf("Stack is empty!");
         return;
     }
-    printf("Popped %d\n", stack->data[stack->top]);
+    printf("Popped %d", stack->data[stack->top]);
     stack->top--;
+}
+
+int peek(Stack* stack) {
+    if (stack->top < 0) {
+        printf("Stack is empty!");
+        return -1;
+    }
+    return stack->data[stack->top];
+}
+
+void traverse(Stack* stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty!");
+        return;
+    }
+    printf("Traversing stack (top to bottom): ");
+    for (int i = stack->top; i >= 0; i--) {
+        printf("%d", stack->data[i]);
+        if (i > 0) printf(" -> ");
+    }
 }
 
 int top(Stack* stack) {
     if (stack->top < 0) {
-        printf("Stack is empty!\n");
+        printf("Stack is empty!");
         return -1;
     }
     return stack->data[stack->top];
@@ -142,19 +188,18 @@ int size(Stack* stack) {
 
 void display(Stack* stack) {
     if (isEmpty(stack)) {
-        printf("Stack is empty!\n");
+        printf("Stack is empty!");
         return;
     }
     
     printf("Stack (top to bottom): ");
     for (int i = stack->top; i >= 0; i--) {
-        printf("%d ", stack->data[i]);
+        printf("%d", stack->data[i]);
     }
-    printf("\n");
 }
 
 int main() {
-    printf("=== Stack Data Structure ===\n");
+    printf("=== Stack Data Structure ===");
     Stack* s = createStack();
     
     push(s, 10);
@@ -162,8 +207,10 @@ int main() {
     push(s, 30);
     display(s);
     
-    printf("Top element: %d\n", top(s));
-    printf("Stack size: %d\n", size(s));
+    printf("Top element (peek): %d", peek(s));
+    printf("Stack size: %d", size(s));
+    
+    traverse(s);
     
     pop(s);
     display(s);
@@ -195,6 +242,19 @@ class Stack:
         print(f"Popped {element}")
         return element
     
+    def peek(self) -> Optional[int]:
+        if self.is_empty():
+            print("Stack is empty!")
+            return None
+        return self.data[-1]
+    
+    def traverse(self) -> None:
+        if self.is_empty():
+            print("Stack is empty!")
+            return
+        elements = ' -> '.join(str(x) for x in reversed(self.data))
+        print(f"Traversing stack (top to bottom): {elements}")
+    
     def top(self) -> Optional[int]:
         if self.is_empty():
             print("Stack is empty!")
@@ -224,8 +284,10 @@ def main() -> None:
     stack.push(30)
     stack.display()
     
-    print(f"Top element: {stack.top()}")
+    print(f"Top element (peek): {stack.peek()}")
     print(f"Stack size: {stack.size()}")
+    
+    stack.traverse()
     
     stack.pop()
     stack.display()
@@ -266,6 +328,27 @@ public class Stack {
         top--;
     }
     
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty!");
+            return -1;
+        }
+        return data[top];
+    }
+    
+    public void traverse() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty!");
+            return;
+        }
+        System.out.print("Traversing stack (top to bottom): ");
+        for (int i = top; i >= 0; i--) {
+            System.out.print(data[i]);
+            if (i > 0) System.out.print(" -> ");
+        }
+        System.out.println();
+    }
+    
     public int top() {
         if (isEmpty()) {
             System.out.println("Stack is empty!");
@@ -304,8 +387,10 @@ public class Stack {
         s.push(30);
         s.display();
         
-        System.out.println("Top element: " + s.top());
+        System.out.println("Top element (peek): " + s.peek());
         System.out.println("Stack size: " + s.size());
+        
+        s.traverse();
         
         s.pop();
         s.display();

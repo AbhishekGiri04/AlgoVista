@@ -1,9 +1,0 @@
-push 10
-push 20
-push 30
-top
-pop
-top
-push 40
-pop
-pop

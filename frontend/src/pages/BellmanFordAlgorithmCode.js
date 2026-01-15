@@ -7,316 +7,430 @@ const BellmanFordAlgorithmCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Bellman-Ford Algorithm - C++ Implementation
- * Detect negative cycles and find shortest paths
+ * Bellman Ford Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
-#include <climits>
+#include <list>
+#include <queue>
 using namespace std;
-
-struct Edge {
-    int src, dest, weight;
-};
 
 class Graph {
 private:
     int vertices;
-    vector<Edge> edges;
+    vector<list<int>> adjList;
     
 public:
-    Graph(int v) : vertices(v) {}
-    
-    void addEdge(int src, int dest, int weight) {
-        edges.push_back({src, dest, weight});
+    Graph(int v) : vertices(v) {
+        adjList.resize(v);
     }
     
-    bool bellmanFord(int src) {
-        vector<int> dist(vertices, INT_MAX);
-        dist[src] = 0;
+    void addEdge(int src, int dest) {
+        adjList[src].push_back(dest);
+        adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
+    }
+    
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
+        for (int i = 0; i < vertices; i++) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
         
-        // Relax all edges V-1 times
-        for (int i = 0; i < vertices - 1; i++) {
-            for (const Edge& edge : edges) {
-                if (dist[edge.src] != INT_MAX && 
-                    dist[edge.src] + edge.weight < dist[edge.dest]) {
-                    dist[edge.dest] = dist[edge.src] + edge.weight;
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
+        
+        visited[start] = true;
+        q.push(start);
+        
+        cout << "BFS from " << start << ": ";
+        
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
+            
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
                 }
             }
         }
-        
-        // Check for negative cycles
-        for (const Edge& edge : edges) {
-            if (dist[edge.src] != INT_MAX && 
-                dist[edge.src] + edge.weight < dist[edge.dest]) {
-                cout << "Graph contains negative cycle!" << endl;
-                return false;
-            }
-        }
-        
-        cout << "Shortest distances from vertex " << src << ":" << endl;
-        for (int i = 0; i < vertices; i++) {
-            cout << "Vertex " << i << ": ";
-            if (dist[i] == INT_MAX) {
-                cout << "INF" << endl;
-            } else {
-                cout << dist[i] << endl;
-            }
-        }
-        return true;
+        cout << endl;
     }
 };
 
 int main() {
-    cout << "=== Bellman-Ford Algorithm ===" << endl;
+    cout << "=== Bellman Ford Algorithm ===" << endl;
     Graph g(5);
     
-    g.addEdge(0, 1, -1);
-    g.addEdge(0, 2, 4);
-    g.addEdge(1, 2, 3);
-    g.addEdge(1, 3, 2);
-    g.addEdge(1, 4, 2);
-    g.addEdge(3, 2, 5);
-    g.addEdge(3, 1, 1);
-    g.addEdge(4, 3, -3);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
     
-    g.bellmanFord(0);
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Bellman-Ford Algorithm - C Implementation
- * Detect negative cycles and find shortest paths
+ * Bellman Ford Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <stdbool.h>
 
-typedef struct {
-    int src, dest, weight;
-} Edge;
+#define MAX_VERTICES 100
 
-bool bellmanFord(Edge edges[], int V, int E, int src) {
-    int* dist = (int*)malloc(V * sizeof(int));
+typedef struct {
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int vertices;
+} Graph;
+
+Graph* createGraph(int vertices) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->vertices = vertices;
     
-    for (int i = 0; i < V; i++) {
-        dist[i] = INT_MAX;
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph->adjMatrix[i][j] = 0;
+        }
     }
-    dist[src] = 0;
+    return graph;
+}
+
+void addEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
+    }
+}
+
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
     
-    // Relax all edges V-1 times
-    for (int i = 0; i < V - 1; i++) {
-        for (int j = 0; j < E; j++) {
-            if (dist[edges[j].src] != INT_MAX && 
-                dist[edges[j].src] + edges[j].weight < dist[edges[j].dest]) {
-                dist[edges[j].dest] = dist[edges[j].src] + edges[j].weight;
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
+    
+    visited[start] = true;
+    queue[rear++] = start;
+    
+    printf("BFS from %d: ", start);
+    
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
+        
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
             }
         }
     }
-    
-    // Check for negative cycles
-    for (int j = 0; j < E; j++) {
-        if (dist[edges[j].src] != INT_MAX && 
-            dist[edges[j].src] + edges[j].weight < dist[edges[j].dest]) {
-            printf("Graph contains negative cycle!\\n");
-            free(dist);
-            return false;
-        }
-    }
-    
-    printf("Shortest distances from vertex %d:\\n", src);
-    for (int i = 0; i < V; i++) {
-        printf("Vertex %d: ", i);
-        if (dist[i] == INT_MAX) {
-            printf("INF\\n");
-        } else {
-            printf("%d\\n", dist[i]);
-        }
-    }
-    
-    free(dist);
-    return true;
+    printf("\n");
 }
 
 int main() {
-    printf("=== Bellman-Ford Algorithm ===\\n");
-    Edge edges[] = {
-        {0, 1, -1},
-        {0, 2, 4},
-        {1, 2, 3},
-        {1, 3, 2},
-        {1, 4, 2},
-        {3, 2, 5},
-        {3, 1, 1},
-        {4, 3, -3}
-    };
+    printf("=== Bellman Ford Algorithm ===\n");
+    Graph* g = createGraph(5);
     
-    bellmanFord(edges, 5, 8, 0);
+    addEdge(g, 0, 1);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
+    addEdge(g, 1, 3);
+    addEdge(g, 2, 3);
     
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
+    
+    free(g);
     return 0;
 }`,
     python: `"""
-Bellman-Ford Algorithm - Python Implementation
-Detect negative cycles and find shortest paths
+Bellman Ford Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-from typing import List, Tuple, Optional
-
-class Edge:
-    def __init__(self, src: int, dest: int, weight: int):
-        self.src = src
-        self.dest = dest
-        self.weight = weight
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
     def __init__(self, vertices: int):
         self.vertices = vertices
-        self.edges: List[Edge] = []
+        self.adj_list = defaultdict(list)
     
-    def add_edge(self, src: int, dest: int, weight: int) -> None:
-        self.edges.append(Edge(src, dest, weight))
+    def add_edge(self, src: int, dest: int) -> None:
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def bellman_ford(self, src: int) -> bool:
-        dist = [float('inf')] * self.vertices
-        dist[src] = 0
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
         
-        # Relax all edges V-1 times
-        for _ in range(self.vertices - 1):
-            for edge in self.edges:
-                if (dist[edge.src] != float('inf') and 
-                    dist[edge.src] + edge.weight < dist[edge.dest]):
-                    dist[edge.dest] = dist[edge.src] + edge.weight
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
+    
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
+        visited = set()
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
         
-        # Check for negative cycles
-        for edge in self.edges:
-            if (dist[edge.src] != float('inf') and 
-                dist[edge.src] + edge.weight < dist[edge.dest]):
-                print("Graph contains negative cycle!")
-                return False
+        print(f"BFS from {start}: ", end="")
         
-        print(f"Shortest distances from vertex {src}:")
-        for i in range(self.vertices):
-            if dist[i] == float('inf'):
-                print(f"Vertex {i}: INF")
-            else:
-                print(f"Vertex {i}: {dist[i]}")
-        
-        return True
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
+            
+            for neighbor in self.adj_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        print()
 
 def main() -> None:
-    print("=== Bellman-Ford Algorithm ===")
-    g = Graph(5)
+    print("=== Bellman Ford Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1, -1)
-    g.add_edge(0, 2, 4)
-    g.add_edge(1, 2, 3)
-    g.add_edge(1, 3, 2)
-    g.add_edge(1, 4, 2)
-    g.add_edge(3, 2, 5)
-    g.add_edge(3, 1, 1)
-    g.add_edge(4, 3, -3)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.bellman_ford(0)
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Bellman-Ford Algorithm - Java Implementation
- * Detect negative cycles and find shortest paths
+ * Bellman Ford Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-class Edge {
-    int src, dest, weight;
-    
-    Edge(int src, int dest, int weight) {
-        this.src = src;
-        this.dest = dest;
-        this.weight = weight;
-    }
-}
-
-public class BellmanFordAlgorithm {
+public class Graph {
     private int vertices;
-    private List<Edge> edges;
+    private List<List<Integer>> adjList;
     
-    public BellmanFordAlgorithm(int vertices) {
+    public Graph(int vertices) {
         this.vertices = vertices;
-        this.edges = new ArrayList<>();
-    }
-    
-    public void addEdge(int src, int dest, int weight) {
-        edges.add(new Edge(src, dest, weight));
-    }
-    
-    public boolean bellmanFord(int src) {
-        int[] dist = new int[vertices];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[src] = 0;
+        this.adjList = new ArrayList<>();
         
-        // Relax all edges V-1 times
-        for (int i = 0; i < vertices - 1; i++) {
-            for (Edge edge : edges) {
-                if (dist[edge.src] != Integer.MAX_VALUE && 
-                    dist[edge.src] + edge.weight < dist[edge.dest]) {
-                    dist[edge.dest] = dist[edge.src] + edge.weight;
+        for (int i = 0; i < vertices; i++) {
+            adjList.add(new ArrayList<>());
+        }
+    }
+    
+    public void addEdge(int src, int dest) {
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
+    }
+    
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
+    }
+    
+    public void display() {
+        System.out.println("Graph adjacency list:");
+        for (int i = 0; i < vertices; i++) {
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
+            }
+            System.out.println();
+        }
+    }
+    
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        visited[start] = true;
+        queue.offer(start);
+        
+        System.out.print("BFS from " + start + ": ");
+        
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
+            
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
                 }
             }
         }
-        
-        // Check for negative cycles
-        for (Edge edge : edges) {
-            if (dist[edge.src] != Integer.MAX_VALUE && 
-                dist[edge.src] + edge.weight < dist[edge.dest]) {
-                System.out.println("Graph contains negative cycle!");
-                return false;
-            }
-        }
-        
-        System.out.println("Shortest distances from vertex " + src + ":");
-        for (int i = 0; i < vertices; i++) {
-            System.out.print("Vertex " + i + ": ");
-            if (dist[i] == Integer.MAX_VALUE) {
-                System.out.println("INF");
-            } else {
-                System.out.println(dist[i]);
-            }
-        }
-        
-        return true;
+        System.out.println();
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Bellman-Ford Algorithm ===");
-        BellmanFordAlgorithm g = new BellmanFordAlgorithm(5);
+        System.out.println("=== Bellman Ford Algorithm ===");
+        Graph g = new Graph(5);
         
-        g.addEdge(0, 1, -1);
-        g.addEdge(0, 2, 4);
-        g.addEdge(1, 2, 3);
-        g.addEdge(1, 3, 2);
-        g.addEdge(1, 4, 2);
-        g.addEdge(3, 2, 5);
-        g.addEdge(3, 1, 1);
-        g.addEdge(4, 3, -3);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 3);
         
-        g.bellmanFord(0);
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #ecfdf5, #d1fae5, #6ee7b7)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -329,7 +443,7 @@ public class BellmanFordAlgorithm {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -340,7 +454,7 @@ public class BellmanFordAlgorithm {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Bellman-Ford Algorithm Code
+        Graph Code
       </h1>
       
       <div style={{
@@ -381,7 +495,16 @@ public class BellmanFordAlgorithm {
                 fontSize: '14px',
                 cursor: 'pointer',
                 margin: '0 2px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textShadow: selectedLanguage === key 
+                  ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
+                  : 'none',
+                boxShadow: selectedLanguage === key 
+                  ? `0 4px 20px ${color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                transform: selectedLanguage === key 
+                  ? 'translateY(-1px)' 
+                  : 'translateY(0)'
               }}
             >
               {label}
@@ -450,7 +573,10 @@ public class BellmanFordAlgorithm {
                   fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: copied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+                    : '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

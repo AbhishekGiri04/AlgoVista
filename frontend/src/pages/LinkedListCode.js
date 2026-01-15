@@ -73,6 +73,32 @@ public:
         }
     }
     
+    bool search(int data) {
+        Node* temp = head;
+        while (temp) {
+            if (temp->data == data) {
+                cout << "Found " << data << " in list" << endl;
+                return true;
+            }
+            temp = temp->next;
+        }
+        cout << data << " not found in list" << endl;
+        return false;
+    }
+    
+    void traverse() {
+        cout << "Traversing list: ";
+        Node* temp = head;
+        int position = 0;
+        while (temp) {
+            cout << "[" << position << "]:" << temp->data;
+            if (temp->next) cout << " -> ";
+            temp = temp->next;
+            position++;
+        }
+        cout << " -> NULL" << endl;
+    }
+    
     void display() {
         cout << "List: ";
         Node* temp = head;
@@ -102,6 +128,9 @@ int main() {
     list.append(30);
     list.display();
     
+    list.search(20);
+    list.traverse();
+    
     list.remove(20);
     list.display();
     
@@ -130,7 +159,7 @@ Node* createNode(int data) {
 Node* insert(Node* head, int data) {
     Node* newNode = createNode(data);
     newNode->next = head;
-    printf("Inserted %d at head\n", data);
+    printf("Inserted %d at head", data);
     return newNode;
 }
 
@@ -138,7 +167,7 @@ Node* append(Node* head, int data) {
     Node* newNode = createNode(data);
     
     if (head == NULL) {
-        printf("Appended %d at tail\n", data);
+        printf("Appended %d at tail", data);
         return newNode;
     }
     
@@ -147,7 +176,7 @@ Node* append(Node* head, int data) {
         temp = temp->next;
     }
     temp->next = newNode;
-    printf("Appended %d at tail\n", data);
+    printf("Appended %d at tail", data);
     return head;
 }
 
@@ -158,7 +187,7 @@ Node* removeNode(Node* head, int data) {
         Node* temp = head;
         head = head->next;
         free(temp);
-        printf("Removed %d\n", data);
+        printf("Removed %d", data);
         return head;
     }
     
@@ -171,10 +200,36 @@ Node* removeNode(Node* head, int data) {
         Node* temp = current->next;
         current->next = current->next->next;
         free(temp);
-        printf("Removed %d\n", data);
+        printf("Removed %d", data);
     }
     
     return head;
+}
+
+int search(Node* head, int data) {
+    Node* temp = head;
+    while (temp != NULL) {
+        if (temp->data == data) {
+            printf("Found %d in list", data);
+            return 1;
+        }
+        temp = temp->next;
+    }
+    printf("%d not found in list", data);
+    return 0;
+}
+
+void traverse(Node* head) {
+    printf("Traversing list: ");
+    Node* temp = head;
+    int position = 0;
+    while (temp != NULL) {
+        printf("[%d]:%d", position, temp->data);
+        if (temp->next != NULL) printf(" -> ");
+        temp = temp->next;
+        position++;
+    }
+    printf(" -> NULL");
 }
 
 void display(Node* head) {
@@ -185,7 +240,7 @@ void display(Node* head) {
         if (temp->next != NULL) printf(" -> ");
         temp = temp->next;
     }
-    printf(" -> NULL\n");
+    printf(" -> NULL");
 }
 
 void freeList(Node* head) {
@@ -197,13 +252,16 @@ void freeList(Node* head) {
 }
 
 int main() {
-    printf("=== Linked List Data Structure ===\n");
+    printf("=== Linked List Data Structure ===");
     Node* list = NULL;
     
     list = insert(list, 10);
     list = insert(list, 20);
     list = append(list, 30);
     display(list);
+    
+    search(list, 20);
+    traverse(list);
     
     list = removeNode(list, 20);
     display(list);
@@ -264,6 +322,28 @@ class LinkedList:
             current.next = current.next.next
             print(f"Removed {data}")
     
+    def search(self, data: int) -> bool:
+        """Search for data in the list"""
+        current = self.head
+        while current:
+            if current.data == data:
+                print(f"Found {data} in list")
+                return True
+            current = current.next
+        print(f"{data} not found in list")
+        return False
+    
+    def traverse(self) -> None:
+        """Traverse and display list with positions"""
+        elements = []
+        current = self.head
+        position = 0
+        while current:
+            elements.append(f"[{position}]:{current.data}")
+            current = current.next
+            position += 1
+        print(f"Traversing list: {' -> '.join(elements)} -> NULL")
+    
     def display(self) -> None:
         """Display the entire list"""
         elements = []
@@ -282,6 +362,9 @@ def main() -> None:
     linked_list.insert(20)
     linked_list.append(30)
     linked_list.display()
+    
+    linked_list.search(20)
+    linked_list.traverse()
     
     linked_list.remove(20)
     linked_list.display()
@@ -352,6 +435,32 @@ public class LinkedList {
         }
     }
     
+    public boolean search(int data) {
+        Node temp = head;
+        while (temp != null) {
+            if (temp.data == data) {
+                System.out.println("Found " + data + " in list");
+                return true;
+            }
+            temp = temp.next;
+        }
+        System.out.println(data + " not found in list");
+        return false;
+    }
+    
+    public void traverse() {
+        System.out.print("Traversing list: ");
+        Node temp = head;
+        int position = 0;
+        while (temp != null) {
+            System.out.print("[" + position + "]:" + temp.data);
+            if (temp.next != null) System.out.print(" -> ");
+            temp = temp.next;
+            position++;
+        }
+        System.out.println(" -> NULL");
+    }
+    
     public void display() {
         System.out.print("List: ");
         Node temp = head;
@@ -371,6 +480,9 @@ public class LinkedList {
         list.insert(20);
         list.append(30);
         list.display();
+        
+        list.search(20);
+        list.traverse();
         
         list.remove(20);
         list.display();

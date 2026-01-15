@@ -106,7 +106,6 @@ import KMPVisualize from './pages/KMPVisualize';
 import KMPCode from './pages/KMPCode';
 import RabinKarpVisualize from './pages/RabinKarpVisualize';
 import RabinKarpCode from './pages/RabinKarpCode';
-import BubbleSortVisualize3D from './pages/BubbleSortVisualize3D';
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -244,7 +243,6 @@ const AppContent = () => {
       <Route path="/kmpcode" element={<KMPCode />} />
       <Route path="/rabinkarpvisualize" element={<RabinKarpVisualize />} />
       <Route path="/rabinkarpcode" element={<RabinKarpCode />} />
-      <Route path="/bubblesort3d" element={<BubbleSortVisualize3D />} />
     </Routes>
   );
 };

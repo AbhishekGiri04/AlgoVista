@@ -79,7 +79,6 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
@@ -87,16 +86,16 @@ int main() {
     int n = sizeof(arr) / sizeof(arr[0]);
     int target = 10;
     
-    printf("=== Linear Search Algorithm ===\n");
+    printf("=== Linear Search Algorithm ===");
     printArray(arr, n, "Array");
-    printf("Target: %d\n\n", target);
+    printf("Target: %d", target);
     
     int result = linearSearch(arr, n, target);
     
     if (result != -1) {
-        printf("Element %d found at index %d\n", target, result);
+        printf("Element %d found at index %d", target, result);
     } else {
-        printf("Element %d not found\n", target);
+        printf("Element %d not found", target);
     }
     
     return 0;
@@ -138,7 +137,7 @@ def main() -> None:
     
     print("=== Linear Search Algorithm ===")
     LinearSearch.print_array(test_array, "Array")
-    print(f"Target: {target}\n")
+    print(f"Target: {target}")
     
     result = LinearSearch.search(test_array, target)
     
@@ -184,7 +183,7 @@ public class LinearSearch {
         
         System.out.println("=== Linear Search Algorithm ===");
         printArray(testArray, "Array");
-        System.out.println("Target: " + target + "\n");
+        System.out.println("Target: " + target);
         
         int result = search(testArray, target);
         

@@ -64,12 +64,40 @@ private:
         return node;
     }
     
+    bool searchHelper(TreeNode* node, int data) {
+        if (!node) return false;
+        if (node->data == data) return true;
+        if (data < node->data) return searchHelper(node->left, data);
+        return searchHelper(node->right, data);
+    }
+    
+    void traverseHelper(TreeNode* node, int level) {
+        if (node) {
+            traverseHelper(node->right, level + 1);
+            for (int i = 0; i < level; i++) cout << "  ";
+            cout << node->data << endl;
+            traverseHelper(node->left, level + 1);
+        }
+    }
+    
 public:
     BinarySearchTree() : root(nullptr) {}
     
     void insert(int data) {
         root = insertHelper(root, data);
         cout << "Inserted " << data << endl;
+    }
+    
+    bool search(int data) {
+        bool found = searchHelper(root, data);
+        if (found) cout << "Found " << data << " in tree" << endl;
+        else cout << data << " not found in tree" << endl;
+        return found;
+    }
+    
+    void traverse() {
+        cout << "Tree structure:" << endl;
+        traverseHelper(root, 0);
     }
     
     void inorder() {
@@ -103,6 +131,9 @@ int main() {
     tree.insert(60);
     tree.insert(80);
     
+    tree.search(40);
+    tree.traverse();
+    
     tree.inorder();
     tree.preorder();
     tree.postorder();
@@ -133,7 +164,7 @@ TreeNode* createNode(int data) {
 
 TreeNode* insert(TreeNode* root, int data) {
     if (root == NULL) {
-        printf("Inserted %d\n", data);
+        printf("Inserted %d", data);
         return createNode(data);
     }
     
@@ -146,17 +177,33 @@ TreeNode* insert(TreeNode* root, int data) {
     return root;
 }
 
+int search(TreeNode* root, int data) {
+    if (root == NULL) return 0;
+    if (root->data == data) return 1;
+    if (data < root->data) return search(root->left, data);
+    return search(root->right, data);
+}
+
+void traverseTree(TreeNode* root, int level) {
+    if (root != NULL) {
+        traverseTree(root->right, level + 1);
+        for (int i = 0; i < level; i++) printf("  ");
+        printf("%d", root->data);
+        traverseTree(root->left, level + 1);
+    }
+}
+
 void inorder(TreeNode* root) {
     if (root != NULL) {
         inorder(root->left);
-        printf("%d ", root->data);
+        printf("%d", root->data);
         inorder(root->right);
     }
 }
 
 void preorder(TreeNode* root) {
     if (root != NULL) {
-        printf("%d ", root->data);
+        printf("%d", root->data);
         preorder(root->left);
         preorder(root->right);
     }
@@ -166,12 +213,12 @@ void postorder(TreeNode* root) {
     if (root != NULL) {
         postorder(root->left);
         postorder(root->right);
-        printf("%d ", root->data);
+        printf("%d", root->data);
     }
 }
 
 int main() {
-    printf("=== Binary Search Tree ===\n");
+    printf("=== Binary Search Tree ===");
     TreeNode* root = NULL;
     
     root = insert(root, 50);
@@ -182,17 +229,20 @@ int main() {
     root = insert(root, 60);
     root = insert(root, 80);
     
+    if (search(root, 40)) printf("Found 40 in tree");
+    else printf("40 not found in tree");
+    
+    printf("Tree structure:");
+    traverseTree(root, 0);
+    
     printf("Inorder: ");
     inorder(root);
-    printf("\n");
     
     printf("Preorder: ");
     preorder(root);
-    printf("\n");
     
     printf("Postorder: ");
     postorder(root);
-    printf("\n");
     
     return 0;
 }`,
@@ -216,6 +266,33 @@ class BinarySearchTree:
     def insert(self, data: int) -> None:
         self.root = self._insert_helper(self.root, data)
         print(f"Inserted {data}")
+    
+    def search(self, data: int) -> bool:
+        found = self._search_helper(self.root, data)
+        if found:
+            print(f"Found {data} in tree")
+        else:
+            print(f"{data} not found in tree")
+        return found
+    
+    def _search_helper(self, node: Optional[TreeNode], data: int) -> bool:
+        if node is None:
+            return False
+        if node.data == data:
+            return True
+        if data < node.data:
+            return self._search_helper(node.left, data)
+        return self._search_helper(node.right, data)
+    
+    def traverse(self) -> None:
+        print("Tree structure:")
+        self._traverse_helper(self.root, 0)
+    
+    def _traverse_helper(self, node: Optional[TreeNode], level: int) -> None:
+        if node:
+            self._traverse_helper(node.right, level + 1)
+            print("  " * level + str(node.data))
+            self._traverse_helper(node.left, level + 1)
     
     def _insert_helper(self, node: Optional[TreeNode], data: int) -> TreeNode:
         if node is None:
@@ -273,6 +350,9 @@ def main() -> None:
     tree.insert(60)
     tree.insert(80)
     
+    tree.search(40)
+    tree.traverse()
+    
     tree.inorder()
     tree.preorder()
     tree.postorder()
@@ -306,6 +386,34 @@ public class BinarySearchTree {
     public void insert(int data) {
         root = insertHelper(root, data);
         System.out.println("Inserted " + data);
+    }
+    
+    public boolean search(int data) {
+        boolean found = searchHelper(root, data);
+        if (found) System.out.println("Found " + data + " in tree");
+        else System.out.println(data + " not found in tree");
+        return found;
+    }
+    
+    private boolean searchHelper(TreeNode node, int data) {
+        if (node == null) return false;
+        if (node.data == data) return true;
+        if (data < node.data) return searchHelper(node.left, data);
+        return searchHelper(node.right, data);
+    }
+    
+    public void traverse() {
+        System.out.println("Tree structure:");
+        traverseHelper(root, 0);
+    }
+    
+    private void traverseHelper(TreeNode node, int level) {
+        if (node != null) {
+            traverseHelper(node.right, level + 1);
+            for (int i = 0; i < level; i++) System.out.print("  ");
+            System.out.println(node.data);
+            traverseHelper(node.left, level + 1);
+        }
     }
     
     private TreeNode insertHelper(TreeNode node, int data) {
@@ -375,6 +483,9 @@ public class BinarySearchTree {
         tree.insert(40);
         tree.insert(60);
         tree.insert(80);
+        
+        tree.search(40);
+        tree.traverse();
         
         tree.inorder();
         tree.preorder();

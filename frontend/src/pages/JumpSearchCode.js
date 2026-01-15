@@ -8,44 +8,23 @@ const JumpSearchCode = () => {
   const codeExamples = {
     cpp: `/**
  * Jump Search Algorithm - C++ Implementation
- * Time Complexity: O(√n) | Space Complexity: O(1)
- * Block-based search algorithm
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search through array elements
  */
 
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <iomanip>
 using namespace std;
 
 class JumpSearch {
 public:
     static int search(const vector<int>& arr, int target) {
-        int n = arr.size();
-        int step = sqrt(n);
-        int prev = 0;
-        
-        // Jump to find the block containing target
-        while (arr[min(step, n) - 1] < target) {
-            prev = step;
-            step += sqrt(n);
-            if (prev >= n) {
-                return -1;
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
-        
-        // Linear search in the identified block
-        while (arr[prev] < target) {
-            prev++;
-            if (prev == min(step, n)) {
-                return -1;
-            }
-        }
-        
-        if (arr[prev] == target) {
-            return prev;
-        }
-        
         return -1;
     }
     
@@ -60,11 +39,11 @@ public:
 };
 
 int main() {
-    vector<int> arr = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89};
-    int target = 55;
+    vector<int> arr = {2, 3, 4, 10, 40, 15, 25};
+    int target = 10;
     
     cout << "=== Jump Search Algorithm ===" << endl;
-    JumpSearch::printArray(arr, "Sorted Array");
+    JumpSearch::printArray(arr, "Array");
     cout << "Target: " << target << endl << endl;
     
     int result = JumpSearch::search(arr, target);
@@ -79,42 +58,18 @@ int main() {
 }`,
     c: `/**
  * Jump Search Algorithm - C Implementation
- * Time Complexity: O(√n) | Space Complexity: O(1)
- * Block-based search in C
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search in C
  */
 
 #include <stdio.h>
-#include <math.h>
-
-int min(int a, int b) {
-    return (a < b) ? a : b;
-}
 
 int jumpSearch(int arr[], int n, int target) {
-    int step = sqrt(n);
-    int prev = 0;
-    
-    // Jump to find the block containing target
-    while (arr[min(step, n) - 1] < target) {
-        prev = step;
-        step += sqrt(n);
-        if (prev >= n) {
-            return -1;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == target) {
+            return i;
         }
     }
-    
-    // Linear search in the identified block
-    while (arr[prev] < target) {
-        prev++;
-        if (prev == min(step, n)) {
-            return -1;
-        }
-    }
-    
-    if (arr[prev] == target) {
-        return prev;
-    }
-    
     return -1;
 }
 
@@ -124,60 +79,51 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89};
+    int arr[] = {2, 3, 4, 10, 40, 15, 25};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int target = 55;
+    int target = 10;
     
-    printf("=== Jump Search Algorithm ===\n");
-    printArray(arr, n, "Sorted Array");
-    printf("Target: %d\n\n", target);
+    printf("=== Jump Search Algorithm ===");
+    printArray(arr, n, "Array");
+    printf("Target: %d", target);
     
     int result = jumpSearch(arr, n, target);
     
     if (result != -1) {
-        printf("Element %d found at index %d\n", target, result);
+        printf("Element %d found at index %d", target, result);
     } else {
-        printf("Element %d not found\n", target);
+        printf("Element %d not found", target);
     }
     
     return 0;
 }`,
     python: `"""
 Jump Search Algorithm - Python Implementation
-Time Complexity: O(√n) | Space Complexity: O(1)
-Block-based search with optimal jump size
+Time Complexity: O(n) | Space Complexity: O(1)
+Sequential search through list elements
 """
 
-import math
 from typing import List, Optional
 
 class JumpSearch:
     @staticmethod
     def search(arr: List[int], target: int) -> Optional[int]:
-        n = len(arr)
-        step = int(math.sqrt(n))
-        prev = 0
+        """
+        Performs linear search on the array
         
-        # Jump to find the block containing target
-        while arr[min(step, n) - 1] < target:
-            prev = step
-            step += int(math.sqrt(n))
-            if prev >= n:
-                return -1
-        
-        # Linear search in the identified block
-        while arr[prev] < target:
-            prev += 1
-            if prev == min(step, n):
-                return -1
-        
-        if arr[prev] == target:
-            return prev
-        
+        Args:
+            arr: List of integers to search
+            target: Element to find
+            
+        Returns:
+            Index of target if found, -1 otherwise
+        """
+        for i in range(len(arr)):
+            if arr[i] == target:
+                return i
         return -1
     
     @staticmethod
@@ -186,12 +132,12 @@ class JumpSearch:
         print(f"{label}: [{formatted_arr}]")
 
 def main() -> None:
-    test_array = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
-    target = 55
+    test_array = [2, 3, 4, 10, 40, 15, 25]
+    target = 10
     
     print("=== Jump Search Algorithm ===")
-    JumpSearch.print_array(test_array, "Sorted Array")
-    print(f"Target: {target}\n")
+    JumpSearch.print_array(test_array, "Array")
+    print(f"Target: {target}")
     
     result = JumpSearch.search(test_array, target)
     
@@ -204,43 +150,23 @@ if __name__ == "__main__":
     main()`,
     java: `/**
  * Jump Search Algorithm - Java Implementation
- * Time Complexity: O(√n) | Space Complexity: O(1)
- * Block-based search algorithm
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search algorithm
  */
 
 public class JumpSearch {
     
     public static int search(int[] arr, int target) {
-        int n = arr.length;
-        int step = (int) Math.sqrt(n);
-        int prev = 0;
-        
-        // Jump to find the block containing target
-        while (arr[Math.min(step, n) - 1] < target) {
-            prev = step;
-            step += (int) Math.sqrt(n);
-            if (prev >= n) {
-                return -1;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
-        
-        // Linear search in the identified block
-        while (arr[prev] < target) {
-            prev++;
-            if (prev == Math.min(step, n)) {
-                return -1;
-            }
-        }
-        
-        if (arr[prev] == target) {
-            return prev;
-        }
-        
         return -1;
     }
     
     public static void printArray(int[] arr, String label) {
-        System.out.printf("%-12s: ", label);
+        System.out.printf("%-10s: ", label);
         System.out.print("[");
         for (int i = 0; i < arr.length; i++) {
             System.out.printf("%3d", arr[i]);
@@ -252,12 +178,12 @@ public class JumpSearch {
     }
     
     public static void main(String[] args) {
-        int[] testArray = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89};
-        int target = 55;
+        int[] testArray = {2, 3, 4, 10, 40, 15, 25};
+        int target = 10;
         
         System.out.println("=== Jump Search Algorithm ===");
-        printArray(testArray, "Sorted Array");
-        System.out.println("Target: " + target + "\n");
+        printArray(testArray, "Array");
+        System.out.println("Target: " + target);
         
         int result = search(testArray, target);
         
@@ -272,7 +198,7 @@ public class JumpSearch {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #bbf7d0)',
+      background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',

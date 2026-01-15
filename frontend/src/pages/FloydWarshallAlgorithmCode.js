@@ -7,252 +7,430 @@ const FloydWarshallAlgorithmCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Floyd-Warshall Algorithm - C++ Implementation
- * All pairs shortest paths
+ * Floyd Warshall Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
-#include <climits>
+#include <list>
+#include <queue>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<int>> dist;
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
-        dist.assign(v, vector<int>(v, INT_MAX));
-        for (int i = 0; i < v; i++) {
-            dist[i][i] = 0;
-        }
+        adjList.resize(v);
     }
     
-    void addEdge(int src, int dest, int weight) {
-        dist[src][dest] = weight;
+    void addEdge(int src, int dest) {
+        adjList[src].push_back(dest);
+        adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void floydWarshall() {
-        for (int k = 0; k < vertices; k++) {
-            for (int i = 0; i < vertices; i++) {
-                for (int j = 0; j < vertices; j++) {
-                    if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX &&
-                        dist[i][k] + dist[k][j] < dist[i][j]) {
-                        dist[i][j] = dist[i][k] + dist[k][j];
-                    }
-                }
-            }
-        }
-        
-        cout << "All pairs shortest paths:" << endl;
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
         for (int i = 0; i < vertices; i++) {
-            for (int j = 0; j < vertices; j++) {
-                if (dist[i][j] == INT_MAX) {
-                    cout << "INF ";
-                } else {
-                    cout << dist[i][j] << " ";
-                }
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
             }
             cout << endl;
         }
     }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
+        
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
+        
+        visited[start] = true;
+        q.push(start);
+        
+        cout << "BFS from " << start << ": ";
+        
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
+            
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
+                }
+            }
+        }
+        cout << endl;
+    }
 };
 
 int main() {
-    cout << "=== Floyd-Warshall Algorithm ===" << endl;
-    Graph g(4);
+    cout << "=== Floyd Warshall Algorithm ===" << endl;
+    Graph g(5);
     
-    g.addEdge(0, 1, 5);
-    g.addEdge(0, 3, 10);
-    g.addEdge(1, 2, 3);
-    g.addEdge(2, 3, 1);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
     
-    g.floydWarshall();
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Floyd-Warshall Algorithm - C Implementation
- * All pairs shortest paths
+ * Floyd Warshall Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
-#include <limits.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX_VERTICES 100
 
-void floydWarshall(int graph[][MAX_VERTICES], int V) {
-    int dist[MAX_VERTICES][MAX_VERTICES];
+typedef struct {
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int vertices;
+} Graph;
+
+Graph* createGraph(int vertices) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->vertices = vertices;
     
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            dist[i][j] = graph[i][j];
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph->adjMatrix[i][j] = 0;
         }
     }
-    
-    for (int k = 0; k < V; k++) {
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX &&
-                    dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                }
+    return graph;
+}
+
+void addEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
             }
         }
-    }
-    
-    printf("All pairs shortest paths:\\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            if (dist[i][j] == INT_MAX) {
-                printf("INF ");
-            } else {
-                printf("%d ", dist[i][j]);
-            }
-        }
-        printf("\\n");
+        printf("\n");
     }
 }
 
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
+    
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
+    
+    visited[start] = true;
+    queue[rear++] = start;
+    
+    printf("BFS from %d: ", start);
+    
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
+        
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
+            }
+        }
+    }
+    printf("\n");
+}
+
 int main() {
-    printf("=== Floyd-Warshall Algorithm ===\\n");
-    int graph[MAX_VERTICES][MAX_VERTICES] = {
-        {0, 5, INT_MAX, 10},
-        {INT_MAX, 0, 3, INT_MAX},
-        {INT_MAX, INT_MAX, 0, 1},
-        {INT_MAX, INT_MAX, INT_MAX, 0}
-    };
+    printf("=== Floyd Warshall Algorithm ===\n");
+    Graph* g = createGraph(5);
     
-    floydWarshall(graph, 4);
+    addEdge(g, 0, 1);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
+    addEdge(g, 1, 3);
+    addEdge(g, 2, 3);
     
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
+    
+    free(g);
     return 0;
 }`,
     python: `"""
-Floyd-Warshall Algorithm - Python Implementation
-All pairs shortest paths
+Floyd Warshall Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-from typing import List
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
     def __init__(self, vertices: int):
         self.vertices = vertices
-        self.dist = [[float('inf')] * vertices for _ in range(vertices)]
-        for i in range(vertices):
-            self.dist[i][i] = 0
+        self.adj_list = defaultdict(list)
     
-    def add_edge(self, src: int, dest: int, weight: int) -> None:
-        self.dist[src][dest] = weight
+    def add_edge(self, src: int, dest: int) -> None:
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def floyd_warshall(self) -> None:
-        for k in range(self.vertices):
-            for i in range(self.vertices):
-                for j in range(self.vertices):
-                    if (self.dist[i][k] != float('inf') and 
-                        self.dist[k][j] != float('inf') and
-                        self.dist[i][k] + self.dist[k][j] < self.dist[i][j]):
-                        self.dist[i][j] = self.dist[i][k] + self.dist[k][j]
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
         
-        print("All pairs shortest paths:")
-        for i in range(self.vertices):
-            for j in range(self.vertices):
-                if self.dist[i][j] == float('inf'):
-                    print("INF", end=" ")
-                else:
-                    print(self.dist[i][j], end=" ")
-            print()
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
+    
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
+        visited = set()
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
+        
+        print(f"BFS from {start}: ", end="")
+        
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
+            
+            for neighbor in self.adj_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        print()
 
 def main() -> None:
-    print("=== Floyd-Warshall Algorithm ===")
-    g = Graph(4)
+    print("=== Floyd Warshall Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1, 5)
-    g.add_edge(0, 3, 10)
-    g.add_edge(1, 2, 3)
-    g.add_edge(2, 3, 1)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.floyd_warshall()
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Floyd-Warshall Algorithm - Java Implementation
- * All pairs shortest paths
+ * Floyd Warshall Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
-public class FloydWarshallAlgorithm {
+import java.util.*;
+
+public class Graph {
     private int vertices;
-    private int[][] dist;
+    private List<List<Integer>> adjList;
     
-    public FloydWarshallAlgorithm(int vertices) {
+    public Graph(int vertices) {
         this.vertices = vertices;
-        this.dist = new int[vertices][vertices];
+        this.adjList = new ArrayList<>();
         
         for (int i = 0; i < vertices; i++) {
-            for (int j = 0; j < vertices; j++) {
-                if (i == j) {
-                    dist[i][j] = 0;
-                } else {
-                    dist[i][j] = Integer.MAX_VALUE;
-                }
-            }
+            adjList.add(new ArrayList<>());
         }
     }
     
-    public void addEdge(int src, int dest, int weight) {
-        dist[src][dest] = weight;
+    public void addEdge(int src, int dest) {
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    public void floydWarshall() {
-        for (int k = 0; k < vertices; k++) {
-            for (int i = 0; i < vertices; i++) {
-                for (int j = 0; j < vertices; j++) {
-                    if (dist[i][k] != Integer.MAX_VALUE && 
-                        dist[k][j] != Integer.MAX_VALUE &&
-                        dist[i][k] + dist[k][j] < dist[i][j]) {
-                        dist[i][j] = dist[i][k] + dist[k][j];
-                    }
-                }
-            }
-        }
-        
-        System.out.println("All pairs shortest paths:");
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
+    }
+    
+    public void display() {
+        System.out.println("Graph adjacency list:");
         for (int i = 0; i < vertices; i++) {
-            for (int j = 0; j < vertices; j++) {
-                if (dist[i][j] == Integer.MAX_VALUE) {
-                    System.out.print("INF ");
-                } else {
-                    System.out.print(dist[i][j] + " ");
-                }
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
             }
             System.out.println();
         }
     }
     
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        visited[start] = true;
+        queue.offer(start);
+        
+        System.out.print("BFS from " + start + ": ");
+        
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
+            
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        System.out.println();
+    }
+    
     public static void main(String[] args) {
-        System.out.println("=== Floyd-Warshall Algorithm ===");
-        FloydWarshallAlgorithm g = new FloydWarshallAlgorithm(4);
+        System.out.println("=== Floyd Warshall Algorithm ===");
+        Graph g = new Graph(5);
         
-        g.addEdge(0, 1, 5);
-        g.addEdge(0, 3, 10);
-        g.addEdge(1, 2, 3);
-        g.addEdge(2, 3, 1);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 3);
         
-        g.floydWarshall();
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fff7ed, #fed7aa, #fb923c)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -265,7 +443,7 @@ public class FloydWarshallAlgorithm {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -276,7 +454,7 @@ public class FloydWarshallAlgorithm {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Floyd-Warshall Algorithm Code
+        Graph Code
       </h1>
       
       <div style={{
@@ -317,7 +495,16 @@ public class FloydWarshallAlgorithm {
                 fontSize: '14px',
                 cursor: 'pointer',
                 margin: '0 2px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textShadow: selectedLanguage === key 
+                  ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
+                  : 'none',
+                boxShadow: selectedLanguage === key 
+                  ? `0 4px 20px ${color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                transform: selectedLanguage === key 
+                  ? 'translateY(-1px)' 
+                  : 'translateY(0)'
               }}
             >
               {label}
@@ -386,7 +573,10 @@ public class FloydWarshallAlgorithm {
                   fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: copied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+                    : '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

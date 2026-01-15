@@ -13,31 +13,31 @@ const BubbleSortVisualize = () => {
   const runBubbleSort = async () => {
     setLoading(true);
     
-    // Client-side bubble sort implementation
-    const arr = [...array];
-    const sortSteps = [];
-    const n = arr.length;
-    
-    sortSteps.push({ arr: [...arr], type: 'start', i: -1, j: -1 });
-    
-    for (let i = 0; i < n - 1; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        // Compare step
-        sortSteps.push({ arr: [...arr], type: 'compare', i: j, j: j + 1 });
-        
-        if (arr[j] > arr[j + 1]) {
-          // Swap step
-          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-          sortSteps.push({ arr: [...arr], type: 'swap', i: j, j: j + 1 });
-        }
+    try {
+      const response = await fetch('http://localhost:8000/api/bubblesort/visualize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ array })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      setSteps(result.steps || []);
+      setCurrentStep(0);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error: ' + error.message + '\nMake sure backend is running on port 8000');
+    } finally {
+      setLoading(false);
     }
-    
-    sortSteps.push({ arr: [...arr], type: 'done', i: -1, j: -1 });
-    
-    setSteps(sortSteps);
-    setCurrentStep(0);
-    setLoading(false);
   };
 
   const play = () => {

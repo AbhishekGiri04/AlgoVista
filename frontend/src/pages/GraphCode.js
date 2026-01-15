@@ -33,6 +33,12 @@ public:
         cout << "Added edge: " << src << " - " << dest << endl;
     }
     
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
     void display() {
         cout << "Graph adjacency list:" << endl;
         for (int i = 0; i < vertices; i++) {
@@ -98,6 +104,10 @@ int main() {
     g.addEdge(2, 3);
     
     g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
     g.DFSTraversal(0);
     g.BFSTraversal(0);
     
@@ -134,11 +144,17 @@ Graph* createGraph(int vertices) {
 void addEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 1;
     graph->adjMatrix[dest][src] = 1; // Undirected graph
-    printf("Added edge: %d - %d\n", src, dest);
+    printf("Added edge: %d - %d", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d", src, dest);
 }
 
 void display(Graph* graph) {
-    printf("Graph adjacency list:\n");
+    printf("Graph adjacency list:");
     for (int i = 0; i < graph->vertices; i++) {
         printf("%d: ", i);
         for (int j = 0; j < graph->vertices; j++) {
@@ -146,7 +162,6 @@ void display(Graph* graph) {
                 printf("%d ", j);
             }
         }
-        printf("\n");
     }
 }
 
@@ -165,7 +180,6 @@ void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
     printf("DFS from %d: ", start);
     DFS(graph, start, visited);
-    printf("\n");
 }
 
 void BFSTraversal(Graph* graph, int start) {
@@ -189,11 +203,10 @@ void BFSTraversal(Graph* graph, int start) {
             }
         }
     }
-    printf("\n");
 }
 
 int main() {
-    printf("=== Graph Data Structure ===\n");
+    printf("=== Graph Data Structure ===");
     Graph* g = createGraph(5);
     
     addEdge(g, 0, 1);
@@ -203,6 +216,10 @@ int main() {
     addEdge(g, 2, 3);
     
     display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
     DFSTraversal(g, 0);
     BFSTraversal(g, 0);
     
@@ -227,6 +244,14 @@ class Graph:
         self.adj_list[src].append(dest)
         self.adj_list[dest].append(src)
         print(f"Added edge: {src} - {dest}")
+    
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
     
     def display(self) -> None:
         """Display the adjacency list representation"""
@@ -280,6 +305,10 @@ def main() -> None:
     graph.add_edge(2, 3)
     
     graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
     graph.dfs_traversal(0)
     graph.bfs_traversal(0)
 
@@ -309,6 +338,12 @@ public class Graph {
         adjList.get(src).add(dest);
         adjList.get(dest).add(src); // Undirected graph
         System.out.println("Added edge: " + src + " - " + dest);
+    }
+    
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
     }
     
     public void display() {
@@ -374,6 +409,10 @@ public class Graph {
         g.addEdge(2, 3);
         
         g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
         g.DFSTraversal(0);
         g.BFSTraversal(0);
     }

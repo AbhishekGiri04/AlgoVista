@@ -7,19 +7,20 @@ const BreadthFirstSearchCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Breadth First Search (BFS) - C++ Implementation
- * Explore graph level by level using queue
+ * BreadthFirst Search Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <queue>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<int>> adjList;
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
@@ -29,9 +30,45 @@ public:
     void addEdge(int src, int dest) {
         adjList[src].push_back(dest);
         adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void BFS(int start) {
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
+        for (int i = 0; i < vertices; i++) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
+        
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
         vector<bool> visited(vertices, false);
         queue<int> q;
         
@@ -41,11 +78,11 @@ public:
         cout << "BFS from " << start << ": ";
         
         while (!q.empty()) {
-            int vertex = q.front();
+            int current = q.front();
             q.pop();
-            cout << vertex << " ";
+            cout << current << " ";
             
-            for (int neighbor : adjList[vertex]) {
+            for (int neighbor : adjList[current]) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
                     q.push(neighbor);
@@ -57,22 +94,28 @@ public:
 };
 
 int main() {
-    cout << "=== Breadth First Search ===" << endl;
-    Graph g(6);
+    cout << "=== BreadthFirst Search Algorithm ===" << endl;
+    Graph g(5);
     
     g.addEdge(0, 1);
-    g.addEdge(0, 2);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
     g.addEdge(1, 3);
-    g.addEdge(1, 4);
-    g.addEdge(2, 5);
+    g.addEdge(2, 3);
     
-    g.BFS(0);
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Breadth First Search (BFS) - C Implementation
- * Explore graph level by level using queue
+ * BreadthFirst Search Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
@@ -82,40 +125,9 @@ int main() {
 #define MAX_VERTICES 100
 
 typedef struct {
-    int items[MAX_VERTICES];
-    int front, rear;
-} Queue;
-
-typedef struct {
     int adjMatrix[MAX_VERTICES][MAX_VERTICES];
     int vertices;
 } Graph;
-
-Queue* createQueue() {
-    Queue* q = (Queue*)malloc(sizeof(Queue));
-    q->front = -1;
-    q->rear = -1;
-    return q;
-}
-
-bool isEmpty(Queue* q) {
-    return q->front == -1;
-}
-
-void enqueue(Queue* q, int value) {
-    if (q->front == -1) q->front = 0;
-    q->rear++;
-    q->items[q->rear] = value;
-}
-
-int dequeue(Queue* q) {
-    int item = q->items[q->front];
-    q->front++;
-    if (q->front > q->rear) {
-        q->front = q->rear = -1;
-    }
-    return item;
-}
 
 Graph* createGraph(int vertices) {
     Graph* graph = (Graph*)malloc(sizeof(Graph));
@@ -131,65 +143,144 @@ Graph* createGraph(int vertices) {
 
 void addEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 1;
-    graph->adjMatrix[dest][src] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
 }
 
-void BFS(Graph* graph, int start) {
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
+    }
+}
+
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
+    
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
-    Queue* q = createQueue();
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
     
     visited[start] = true;
-    enqueue(q, start);
+    queue[rear++] = start;
     
     printf("BFS from %d: ", start);
     
-    while (!isEmpty(q)) {
-        int vertex = dequeue(q);
-        printf("%d ", vertex);
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
         
         for (int i = 0; i < graph->vertices; i++) {
-            if (graph->adjMatrix[vertex][i] == 1 && !visited[i]) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
                 visited[i] = true;
-                enqueue(q, i);
+                queue[rear++] = i;
             }
         }
     }
     printf("\n");
-    free(q);
 }
 
 int main() {
-    printf("=== Breadth First Search ===\n");
-    Graph* g = createGraph(6);
+    printf("=== BreadthFirst Search Algorithm ===\n");
+    Graph* g = createGraph(5);
     
     addEdge(g, 0, 1);
-    addEdge(g, 0, 2);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
     addEdge(g, 1, 3);
-    addEdge(g, 1, 4);
-    addEdge(g, 2, 5);
+    addEdge(g, 2, 3);
     
-    BFS(g, 0);
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
     
     free(g);
     return 0;
 }`,
     python: `"""
-Breadth First Search (BFS) - Python Implementation
-Explore graph level by level using queue
+BreadthFirst Search Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-from collections import defaultdict, deque
-from typing import Set
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
-    def __init__(self):
-        self.graph = defaultdict(list)
+    def __init__(self, vertices: int):
+        self.vertices = vertices
+        self.adj_list = defaultdict(list)
     
     def add_edge(self, src: int, dest: int) -> None:
-        self.graph[src].append(dest)
-        self.graph[dest].append(src)  # Undirected graph
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def bfs(self, start: int) -> None:
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
+        
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
+    
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
+        visited = set()
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
         visited = set()
         queue = deque([start])
         visited.add(start)
@@ -197,65 +288,112 @@ class Graph:
         print(f"BFS from {start}: ", end="")
         
         while queue:
-            vertex = queue.popleft()
-            print(vertex, end=" ")
+            current = queue.popleft()
+            print(current, end=" ")
             
-            for neighbor in self.graph[vertex]:
+            for neighbor in self.adj_list[current]:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
         print()
 
 def main() -> None:
-    print("=== Breadth First Search ===")
-    g = Graph()
+    print("=== BreadthFirst Search Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1)
-    g.add_edge(0, 2)
-    g.add_edge(1, 3)
-    g.add_edge(1, 4)
-    g.add_edge(2, 5)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.bfs(0)
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Breadth First Search (BFS) - Java Implementation
- * Explore graph level by level using queue
+ * BreadthFirst Search Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-public class BreadthFirstSearch {
-    private Map<Integer, List<Integer>> adjList;
+public class Graph {
+    private int vertices;
+    private List<List<Integer>> adjList;
     
-    public BreadthFirstSearch() {
-        this.adjList = new HashMap<>();
+    public Graph(int vertices) {
+        this.vertices = vertices;
+        this.adjList = new ArrayList<>();
+        
+        for (int i = 0; i < vertices; i++) {
+            adjList.add(new ArrayList<>());
+        }
     }
     
     public void addEdge(int src, int dest) {
-        adjList.computeIfAbsent(src, k -> new ArrayList<>()).add(dest);
-        adjList.computeIfAbsent(dest, k -> new ArrayList<>()).add(src);
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    public void bfs(int start) {
-        Set<Integer> visited = new HashSet<>();
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
+    }
+    
+    public void display() {
+        System.out.println("Graph adjacency list:");
+        for (int i = 0; i < vertices; i++) {
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
+            }
+            System.out.println();
+        }
+    }
+    
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
         Queue<Integer> queue = new LinkedList<>();
         
-        visited.add(start);
+        visited[start] = true;
         queue.offer(start);
         
         System.out.print("BFS from " + start + ": ");
         
         while (!queue.isEmpty()) {
-            int vertex = queue.poll();
-            System.out.print(vertex + " ");
+            int current = queue.poll();
+            System.out.print(current + " ");
             
-            List<Integer> neighbors = adjList.getOrDefault(vertex, new ArrayList<>());
-            for (int neighbor : neighbors) {
-                if (!visited.contains(neighbor)) {
-                    visited.add(neighbor);
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
                     queue.offer(neighbor);
                 }
             }
@@ -264,16 +402,22 @@ public class BreadthFirstSearch {
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Breadth First Search ===");
-        BreadthFirstSearch g = new BreadthFirstSearch();
+        System.out.println("=== BreadthFirst Search Algorithm ===");
+        Graph g = new Graph(5);
         
         g.addEdge(0, 1);
-        g.addEdge(0, 2);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
         g.addEdge(1, 3);
-        g.addEdge(1, 4);
-        g.addEdge(2, 5);
+        g.addEdge(2, 3);
         
-        g.bfs(0);
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
@@ -286,7 +430,7 @@ public class BreadthFirstSearch {
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -299,7 +443,7 @@ public class BreadthFirstSearch {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -310,7 +454,7 @@ public class BreadthFirstSearch {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Breadth First Search Code
+        Graph Code
       </h1>
       
       <div style={{

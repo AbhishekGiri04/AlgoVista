@@ -114,4 +114,13 @@ jspm_packages/
 
 # Backup files
 *.bak
+*.backup# Temporary algorithm I/O files
+algorithms/**/input.txt
+algorithms/**/output.txt
+backend/output.txt
+*.txt
+# Backup files
 *.backup
+*.bak
+*.old
+*.tmp

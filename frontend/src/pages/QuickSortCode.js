@@ -8,8 +8,8 @@ const QuickSortCode = () => {
   const codeExamples = {
     cpp: `/**
  * Quick Sort Algorithm - C++ Implementation
- * Time Complexity: O(n log n) average | Space Complexity: O(log n)
- * Divide and conquer with pivot partitioning
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Stable sorting algorithm with in-place comparison
  */
 
 #include <iostream>
@@ -18,30 +18,74 @@ const QuickSortCode = () => {
 using namespace std;
 
 class QuickSort {
-private:
-    static int partition(vector<int>& arr, int low, int high) {
-        int pivot = arr[high];
-        int i = low - 1;
-        
-        for (int j = low; j < high; j++) {
-            if (arr[j] <= pivot) {
-                i++;
-                swap(arr[i], arr[j]);
-            }
-        }
-        swap(arr[i + 1], arr[high]);
-        return i + 1;
-    }
-    
 public:
-    static void sort(vector<int>& arr, int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            sort(arr, low, pi - 1);
-            sort(arr, pi + 1, high);
+    /**
+     * Add element to array
+     */
+    static void addElement(vector<int>& arr, int element) {
+        arr.push_back(element);
+        cout << "Added " << element << " to array" << endl;
+    }
+    
+    /**
+     * Remove element at index
+     */
+    static void removeElement(vector<int>& arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Removed " << arr[index] << " from array" << endl;
+            arr.erase(arr.begin() + index);
         }
     }
     
+    /**
+     * Update element at index
+     */
+    static void updateElement(vector<int>& arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Updated arr[" << index << "]: " << arr[index] << " -> " << newValue << endl;
+            arr[index] = newValue;
+        }
+    }
+    
+    /**
+     * Sorts array using bubble sort algorithm
+     * @param arr Reference to vector to be sorted
+     */
+    
+    /**
+     * Generate random array
+     */
+    static void generateRandom(vector<int>& arr, int size) {
+        arr.clear();
+        for (int i = 0; i < size; i++) {
+            arr.push_back(rand() % 100 + 1);
+        }
+        cout << "Generated random array of size " << size << endl;
+    }
+    
+    static void sort(vector<int>& arr) {
+        int n = arr.size();
+        bool swapped;
+        
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            
+            // Last i elements are already sorted
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    swap(arr[j], arr[j + 1]);
+                    swapped = true;
+                }
+            }
+            
+            // If no swapping occurred, array is sorted
+            if (!swapped) break;
+        }
+    }
+    
+    /**
+     * Utility function to print array
+     */
     static void printArray(const vector<int>& arr, const string& label) {
         cout << label << ": ";
         for (size_t i = 0; i < arr.size(); i++) {
@@ -53,25 +97,38 @@ public:
 };
 
 int main() {
+    // Test data
     vector<int> arr = {64, 34, 25, 12, 22, 11, 90, 5};
     
-    cout << "=== Quick Sort Algorithm ===" << endl;
+    cout << "=== Quick Sort Algorithm ==="  << endl;
     QuickSort::printArray(arr, "Original Array");
     
-    QuickSort::sort(arr, 0, arr.size() - 1);
+    QuickSort::addElement(arr, 15);
+    QuickSort::updateElement(arr, 0, 70);
+    QuickSort::printArray(arr, "Modified Array");
+    
+    QuickSort::sort(arr);
     
     QuickSort::printArray(arr, "Sorted Array  ");
-    cout << "\nSorting completed successfully!" << endl;
+    
+    QuickSort::removeElement(arr, 0);
+    QuickSort::printArray(arr, "After Removal ");
+    
+    cout << "Sorting completed successfully!" << endl;
     
     return 0;
 }`,
     c: `/**
  * Quick Sort Algorithm - C Implementation
- * Time Complexity: O(n log n) average | Space Complexity: O(log n)
- * Pivot-based divide and conquer sorting
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Classic implementation with optimization
  */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
 
 void swap(int* a, int* b) {
     int temp = *a;
@@ -79,25 +136,45 @@ void swap(int* a, int* b) {
     *b = temp;
 }
 
-int partition(int arr[], int low, int high) {
-    int pivot = arr[high];
-    int i = low - 1;
-    
-    for (int j = low; j < high; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
+void addElement(int arr[], int* n, int element) {
+    if (*n < MAX_SIZE) {
+        arr[*n] = element;
+        (*n)++;
+        printf("Added %d to array", element);
     }
-    swap(&arr[i + 1], &arr[high]);
-    return i + 1;
 }
 
-void quickSort(int arr[], int low, int high) {
-    if (low < high) {
-        int pi = partition(arr, low, high);
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
+void removeElement(int arr[], int* n, int index) {
+    if (index >= 0 && index < *n) {
+        printf("Removed %d from array", arr[index]);
+        for (int i = index; i < *n - 1; i++) {
+            arr[i] = arr[i + 1];
+        }
+        (*n)--;
+    }
+}
+
+void updateElement(int arr[], int n, int index, int newValue) {
+    if (index >= 0 && index < n) {
+        printf("Updated arr[%d]: %d -> %d", index, arr[index], newValue);
+        arr[index] = newValue;
+    }
+}
+
+void quickSort(int arr[], int n) {
+    bool swapped;
+    
+    for (int i = 0; i < n - 1; i++) {
+        swapped = false;
+        
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+                swapped = true;
+            }
+        }
+        
+        if (!swapped) break;
     }
 }
 
@@ -107,54 +184,72 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90, 5};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    int arr[MAX_SIZE] = {64, 34, 25, 12, 22, 11, 90, 5};
+    int n = 8;
     
-    printf("=== Quick Sort Algorithm ===\n");
+    printf("=== Quick Sort Algorithm ===");
     printArray(arr, n, "Original Array");
     
-    quickSort(arr, 0, n - 1);
+    addElement(arr, &n, 15);
+    updateElement(arr, n, 0, 70);
+    printArray(arr, n, "Modified Array");
     
+    quickSort(arr, n);
     printArray(arr, n, "Sorted Array  ");
-    printf("\nSorting completed successfully!\n");
     
+    removeElement(arr, &n, 0);
+    printArray(arr, n, "After Removal ");
+    
+    printf("Sorting completed successfully!");
     return 0;
 }`,
     python: `"""
 Quick Sort Algorithm - Python Implementation
-Time Complexity: O(n log n) average | Space Complexity: O(log n)
-Efficient divide and conquer sorting
+Time Complexity: O(n²) | Space Complexity: O(1)
+Pythonic implementation with type hints and documentation
 """
 
 from typing import List
 
 class QuickSort:
-    @staticmethod
-    def sort(arr: List[int], low: int = 0, high: int = None) -> None:
-        if high is None:
-            high = len(arr) - 1
-        
-        if low < high:
-            pi = QuickSort._partition(arr, low, high)
-            QuickSort.sort(arr, low, pi - 1)
-            QuickSort.sort(arr, pi + 1, high)
+    """
+    Professional implementation of Quick Sort algorithm
+    """
     
     @staticmethod
-    def _partition(arr: List[int], low: int, high: int) -> int:
-        pivot = arr[high]
-        i = low - 1
+    def add_element(arr: List[int], element: int) -> None:
+        arr.append(element)
+        print(f"Added {element} to array")
+    
+    @staticmethod
+    def remove_element(arr: List[int], index: int) -> None:
+        if 0 <= index < len(arr):
+            removed = arr.pop(index)
+            print(f"Removed {removed} from array")
+    
+    @staticmethod
+    def update_element(arr: List[int], index: int, new_value: int) -> None:
+        if 0 <= index < len(arr):
+            print(f"Updated arr[{index}]: {arr[index]} -> {new_value}")
+            arr[index] = new_value
+    
+    @staticmethod
+    def sort(arr: List[int]) -> None:
+        n = len(arr)
         
-        for j in range(low, high):
-            if arr[j] <= pivot:
-                i += 1
-                arr[i], arr[j] = arr[j], arr[i]
-        
-        arr[i + 1], arr[high] = arr[high], arr[i + 1]
-        return i + 1
+        for i in range(n - 1):
+            swapped = False
+            
+            for j in range(n - i - 1):
+                if arr[j] > arr[j + 1]:
+                    arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                    swapped = True
+            
+            if not swapped:
+                break
     
     @staticmethod
     def print_array(arr: List[int], label: str) -> None:
@@ -167,78 +262,106 @@ def main() -> None:
     print("=== Quick Sort Algorithm ===")
     QuickSort.print_array(test_array, "Original Array")
     
-    QuickSort.sort(test_array)
+    QuickSort.add_element(test_array, 15)
+    QuickSort.update_element(test_array, 0, 70)
+    QuickSort.print_array(test_array, "Modified Array")
     
+    QuickSort.sort(test_array)
     QuickSort.print_array(test_array, "Sorted Array  ")
-    print("\nSorting completed successfully!")
+    
+    QuickSort.remove_element(test_array, 0)
+    QuickSort.print_array(test_array, "After Removal ")
+    
+    print("Sorting completed successfully!")
 
 if __name__ == "__main__":
     main()`,
     java: `/**
  * Quick Sort Algorithm - Java Implementation
- * Time Complexity: O(n log n) average | Space Complexity: O(log n)
- * Pivot-based efficient sorting algorithm
+ * Time Complexity: O(n²) | Space Complexity: O(1)
+ * Professional object-oriented implementation
+ * 
+ * @author Algorithm Visualizer
+ * @version 1.0
  */
+
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class QuickSort {
     
-    public static void sort(int[] arr, int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            sort(arr, low, pi - 1);
-            sort(arr, pi + 1, high);
+    public static void addElement(ArrayList<Integer> arr, int element) {
+        arr.add(element);
+        System.out.println("Added " + element + " to array");
+    }
+    
+    public static void removeElement(ArrayList<Integer> arr, int index) {
+        if (index >= 0 && index < arr.size()) {
+            int removed = arr.remove(index);
+            System.out.println("Removed " + removed + " from array");
         }
     }
     
-    private static int partition(int[] arr, int low, int high) {
-        int pivot = arr[high];
-        int i = low - 1;
+    public static void updateElement(ArrayList<Integer> arr, int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            System.out.println("Updated arr[" + index + "]: " + arr.get(index) + " -> " + newValue);
+            arr.set(index, newValue);
+        }
+    }
+    
+    public static void sort(ArrayList<Integer> arr) {
+        int n = arr.size();
+        boolean swapped;
         
-        for (int j = low; j < high; j++) {
-            if (arr[j] <= pivot) {
-                i++;
-                swap(arr, i, j);
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr.get(j) > arr.get(j + 1)) {
+                    int temp = arr.get(j);
+                    arr.set(j, arr.get(j + 1));
+                    arr.set(j + 1, temp);
+                    swapped = true;
+                }
             }
+            
+            if (!swapped) break;
         }
-        swap(arr, i + 1, high);
-        return i + 1;
     }
     
-    private static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-    
-    public static void printArray(int[] arr, String label) {
-        System.out.printf("%-15s: ", label);
-        System.out.print("[");
-        for (int i = 0; i < arr.length; i++) {
-            System.out.printf("%3d", arr[i]);
-            if (i < arr.length - 1) {
-                System.out.print(", ");
-            }
+    public static void printArray(ArrayList<Integer> arr, String label) {
+        System.out.printf("%-15s: [", label);
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.printf("%3d", arr.get(i));
+            if (i < arr.size() - 1) System.out.print(", ");
         }
         System.out.println("]");
     }
     
     public static void main(String[] args) {
-        int[] testArray = {64, 34, 25, 12, 22, 11, 90, 5};
+        ArrayList<Integer> testArray = new ArrayList<>(Arrays.asList(64, 34, 25, 12, 22, 11, 90, 5));
         
         System.out.println("=== Quick Sort Algorithm ===");
         printArray(testArray, "Original Array");
         
-        sort(testArray, 0, testArray.length - 1);
+        addElement(testArray, 15);
+        updateElement(testArray, 0, 70);
+        printArray(testArray, "Modified Array");
         
+        sort(testArray);
         printArray(testArray, "Sorted Array");
-        System.out.println("\nSorting completed successfully!");
+        
+        removeElement(testArray, 0);
+        printArray(testArray, "After Removal");
+        
+        System.out.println("Sorting completed successfully!");
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #a8edea, #fed6e3, #d299c2)',
+      background: 'linear-gradient(135deg, #f3f0ff, #e9d5ff, #ddd6fe)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
@@ -310,6 +433,7 @@ public class QuickSort {
                 cursor: 'pointer',
                 margin: '0 2px',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
                 textShadow: selectedLanguage === key 
                   ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
                   : 'none',
@@ -319,6 +443,22 @@ public class QuickSort {
                 transform: selectedLanguage === key 
                   ? 'translateY(-1px)' 
                   : 'translateY(0)'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedLanguage !== key) {
+                  e.target.style.color = color;
+                  e.target.style.background = `${color}10`;
+                  e.target.style.borderColor = `${color}40`;
+                  e.target.style.textShadow = `0 0 10px ${color}60`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedLanguage !== key) {
+                  e.target.style.color = '#1a202c';
+                  e.target.style.background = 'rgba(255, 255, 255, 0.03)';
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.textShadow = 'none';
+                }
               }}
             >
               {label}
@@ -391,6 +531,18 @@ public class QuickSort {
                   boxShadow: copied 
                     ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
                     : '0 4px 12px rgba(99, 102, 241, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!copied) {
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!copied) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                  }
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}

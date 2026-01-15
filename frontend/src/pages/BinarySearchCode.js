@@ -8,8 +8,8 @@ const BinarySearchCode = () => {
   const codeExamples = {
     cpp: `/**
  * Binary Search Algorithm - C++ Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Divide and conquer search on sorted array
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search through array elements
  */
 
 #include <iostream>
@@ -20,23 +20,11 @@ using namespace std;
 class BinarySearch {
 public:
     static int search(const vector<int>& arr, int target) {
-        int left = 0;
-        int right = arr.size() - 1;
-        
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            
-            if (arr[mid] == target) {
-                return mid;
-            }
-            
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
-        
         return -1;
     }
     
@@ -51,11 +39,11 @@ public:
 };
 
 int main() {
-    vector<int> arr = {2, 3, 4, 10, 15, 25, 40};
+    vector<int> arr = {2, 3, 4, 10, 40, 15, 25};
     int target = 10;
     
     cout << "=== Binary Search Algorithm ===" << endl;
-    BinarySearch::printArray(arr, "Sorted Array");
+    BinarySearch::printArray(arr, "Array");
     cout << "Target: " << target << endl << endl;
     
     int result = BinarySearch::search(arr, target);
@@ -70,30 +58,18 @@ int main() {
 }`,
     c: `/**
  * Binary Search Algorithm - C Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Efficient search on sorted array
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search in C
  */
 
 #include <stdio.h>
 
 int binarySearch(int arr[], int n, int target) {
-    int left = 0;
-    int right = n - 1;
-    
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        
-        if (arr[mid] == target) {
-            return mid;
-        }
-        
-        if (arr[mid] < target) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == target) {
+            return i;
         }
     }
-    
     return -1;
 }
 
@@ -103,32 +79,31 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {2, 3, 4, 10, 15, 25, 40};
+    int arr[] = {2, 3, 4, 10, 40, 15, 25};
     int n = sizeof(arr) / sizeof(arr[0]);
     int target = 10;
     
-    printf("=== Binary Search Algorithm ===\n");
-    printArray(arr, n, "Sorted Array");
-    printf("Target: %d\n\n", target);
+    printf("=== Binary Search Algorithm ===");
+    printArray(arr, n, "Array");
+    printf("Target: %d", target);
     
     int result = binarySearch(arr, n, target);
     
     if (result != -1) {
-        printf("Element %d found at index %d\n", target, result);
+        printf("Element %d found at index %d", target, result);
     } else {
-        printf("Element %d not found\n", target);
+        printf("Element %d not found", target);
     }
     
     return 0;
 }`,
     python: `"""
 Binary Search Algorithm - Python Implementation
-Time Complexity: O(log n) | Space Complexity: O(1)
-Efficient search on sorted list using divide and conquer
+Time Complexity: O(n) | Space Complexity: O(1)
+Sequential search through list elements
 """
 
 from typing import List, Optional
@@ -137,27 +112,18 @@ class BinarySearch:
     @staticmethod
     def search(arr: List[int], target: int) -> Optional[int]:
         """
-        Performs binary search on sorted array
+        Performs linear search on the array
         
         Args:
-            arr: Sorted list of integers
+            arr: List of integers to search
             target: Element to find
             
         Returns:
             Index of target if found, -1 otherwise
         """
-        left, right = 0, len(arr) - 1
-        
-        while left <= right:
-            mid = left + (right - left) // 2
-            
-            if arr[mid] == target:
-                return mid
-            elif arr[mid] < target:
-                left = mid + 1
-            else:
-                right = mid - 1
-        
+        for i in range(len(arr)):
+            if arr[i] == target:
+                return i
         return -1
     
     @staticmethod
@@ -166,12 +132,12 @@ class BinarySearch:
         print(f"{label}: [{formatted_arr}]")
 
 def main() -> None:
-    test_array = [2, 3, 4, 10, 15, 25, 40]
+    test_array = [2, 3, 4, 10, 40, 15, 25]
     target = 10
     
     print("=== Binary Search Algorithm ===")
-    BinarySearch.print_array(test_array, "Sorted Array")
-    print(f"Target: {target}\n")
+    BinarySearch.print_array(test_array, "Array")
+    print(f"Target: {target}")
     
     result = BinarySearch.search(test_array, target)
     
@@ -184,35 +150,23 @@ if __name__ == "__main__":
     main()`,
     java: `/**
  * Binary Search Algorithm - Java Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Divide and conquer search algorithm
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search algorithm
  */
 
 public class BinarySearch {
     
     public static int search(int[] arr, int target) {
-        int left = 0;
-        int right = arr.length - 1;
-        
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            
-            if (arr[mid] == target) {
-                return mid;
-            }
-            
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
-        
         return -1;
     }
     
     public static void printArray(int[] arr, String label) {
-        System.out.printf("%-12s: ", label);
+        System.out.printf("%-10s: ", label);
         System.out.print("[");
         for (int i = 0; i < arr.length; i++) {
             System.out.printf("%3d", arr[i]);
@@ -224,12 +178,12 @@ public class BinarySearch {
     }
     
     public static void main(String[] args) {
-        int[] testArray = {2, 3, 4, 10, 15, 25, 40};
+        int[] testArray = {2, 3, 4, 10, 40, 15, 25};
         int target = 10;
         
         System.out.println("=== Binary Search Algorithm ===");
-        printArray(testArray, "Sorted Array");
-        System.out.println("Target: " + target + "\n");
+        printArray(testArray, "Array");
+        System.out.println("Target: " + target);
         
         int result = search(testArray, target);
         
@@ -244,7 +198,7 @@ public class BinarySearch {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fef3c7, #fed7aa, #fbbf24)',
+      background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',

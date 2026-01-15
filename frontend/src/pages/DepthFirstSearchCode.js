@@ -7,18 +7,20 @@ const DepthFirstSearchCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Depth First Search (DFS) - C++ Implementation
- * Explore graph depth-wise using recursion
+ * DepthFirst Search Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
+#include <list>
+#include <queue>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<int>> adjList;
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
@@ -28,44 +30,92 @@ public:
     void addEdge(int src, int dest) {
         adjList[src].push_back(dest);
         adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void DFSUtil(int vertex, vector<bool>& visited) {
-        visited[vertex] = true;
-        cout << vertex << " ";
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
+        for (int i = 0; i < vertices; i++) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
         
-        for (int neighbor : adjList[vertex]) {
+        for (int neighbor : adjList[start]) {
             if (!visited[neighbor]) {
-                DFSUtil(neighbor, visited);
+                DFS(neighbor, visited);
             }
         }
     }
     
-    void DFS(int start) {
+    void DFSTraversal(int start) {
         vector<bool> visited(vertices, false);
         cout << "DFS from " << start << ": ";
-        DFSUtil(start, visited);
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
+        
+        visited[start] = true;
+        q.push(start);
+        
+        cout << "BFS from " << start << ": ";
+        
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
+            
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
+                }
+            }
+        }
         cout << endl;
     }
 };
 
 int main() {
-    cout << "=== Depth First Search ===" << endl;
-    Graph g(6);
+    cout << "=== DepthFirst Search Algorithm ===" << endl;
+    Graph g(5);
     
     g.addEdge(0, 1);
-    g.addEdge(0, 2);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
     g.addEdge(1, 3);
-    g.addEdge(1, 4);
-    g.addEdge(2, 5);
+    g.addEdge(2, 3);
     
-    g.DFS(0);
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Depth First Search (DFS) - C Implementation
- * Explore graph depth-wise using recursion
+ * DepthFirst Search Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
@@ -94,147 +144,293 @@ Graph* createGraph(int vertices) {
 void addEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 1;
     graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
 }
 
-void DFSUtil(Graph* graph, int vertex, bool visited[]) {
-    visited[vertex] = true;
-    printf("%d ", vertex);
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
+    }
+}
+
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
     
     for (int i = 0; i < graph->vertices; i++) {
-        if (graph->adjMatrix[vertex][i] == 1 && !visited[i]) {
-            DFSUtil(graph, i, visited);
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
         }
     }
 }
 
-void DFS(Graph* graph, int start) {
+void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
     printf("DFS from %d: ", start);
-    DFSUtil(graph, start, visited);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
+    
+    visited[start] = true;
+    queue[rear++] = start;
+    
+    printf("BFS from %d: ", start);
+    
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
+        
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
+            }
+        }
+    }
     printf("\n");
 }
 
 int main() {
-    printf("=== Depth First Search ===\n");
-    Graph* g = createGraph(6);
+    printf("=== DepthFirst Search Algorithm ===\n");
+    Graph* g = createGraph(5);
     
     addEdge(g, 0, 1);
-    addEdge(g, 0, 2);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
     addEdge(g, 1, 3);
-    addEdge(g, 1, 4);
-    addEdge(g, 2, 5);
+    addEdge(g, 2, 3);
     
-    DFS(g, 0);
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
     
     free(g);
     return 0;
 }`,
     python: `"""
-Depth First Search (DFS) - Python Implementation
-Explore graph depth-wise using recursion
+DepthFirst Search Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-from collections import defaultdict
-from typing import Set
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
-    def __init__(self):
-        self.graph = defaultdict(list)
+    def __init__(self, vertices: int):
+        self.vertices = vertices
+        self.adj_list = defaultdict(list)
     
     def add_edge(self, src: int, dest: int) -> None:
-        self.graph[src].append(dest)
-        self.graph[dest].append(src)  # Undirected graph
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def dfs_util(self, vertex: int, visited: Set[int]) -> None:
-        visited.add(vertex)
-        print(vertex, end=" ")
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
         
-        for neighbor in self.graph[vertex]:
+        for neighbor in self.adj_list[start]:
             if neighbor not in visited:
-                self.dfs_util(neighbor, visited)
+                self._dfs(neighbor, visited)
     
-    def dfs(self, start: int) -> None:
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
         visited = set()
         print(f"DFS from {start}: ", end="")
-        self.dfs_util(start, visited)
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
+        
+        print(f"BFS from {start}: ", end="")
+        
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
+            
+            for neighbor in self.adj_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
         print()
 
 def main() -> None:
-    print("=== Depth First Search ===")
-    g = Graph()
+    print("=== DepthFirst Search Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1)
-    g.add_edge(0, 2)
-    g.add_edge(1, 3)
-    g.add_edge(1, 4)
-    g.add_edge(2, 5)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    g.dfs(0)
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Depth First Search (DFS) - Java Implementation
- * Explore graph depth-wise using recursion
+ * DepthFirst Search Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-public class DepthFirstSearch {
-    private Map<Integer, List<Integer>> adjList;
+public class Graph {
+    private int vertices;
+    private List<List<Integer>> adjList;
     
-    public DepthFirstSearch() {
-        this.adjList = new HashMap<>();
+    public Graph(int vertices) {
+        this.vertices = vertices;
+        this.adjList = new ArrayList<>();
+        
+        for (int i = 0; i < vertices; i++) {
+            adjList.add(new ArrayList<>());
+        }
     }
     
     public void addEdge(int src, int dest) {
-        adjList.computeIfAbsent(src, k -> new ArrayList<>()).add(dest);
-        adjList.computeIfAbsent(dest, k -> new ArrayList<>()).add(src);
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    private void dfsUtil(int vertex, Set<Integer> visited) {
-        visited.add(vertex);
-        System.out.print(vertex + " ");
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
+    }
+    
+    public void display() {
+        System.out.println("Graph adjacency list:");
+        for (int i = 0; i < vertices; i++) {
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
+            }
+            System.out.println();
+        }
+    }
+    
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
         
-        List<Integer> neighbors = adjList.getOrDefault(vertex, new ArrayList<>());
-        for (int neighbor : neighbors) {
-            if (!visited.contains(neighbor)) {
-                dfsUtil(neighbor, visited);
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
             }
         }
     }
     
-    public void dfs(int start) {
-        Set<Integer> visited = new HashSet<>();
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
         System.out.print("DFS from " + start + ": ");
-        dfsUtil(start, visited);
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        visited[start] = true;
+        queue.offer(start);
+        
+        System.out.print("BFS from " + start + ": ");
+        
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
+            
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
+                }
+            }
+        }
         System.out.println();
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Depth First Search ===");
-        DepthFirstSearch g = new DepthFirstSearch();
+        System.out.println("=== DepthFirst Search Algorithm ===");
+        Graph g = new Graph(5);
         
         g.addEdge(0, 1);
-        g.addEdge(0, 2);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
         g.addEdge(1, 3);
-        g.addEdge(1, 4);
-        g.addEdge(2, 5);
+        g.addEdge(2, 3);
         
-        g.dfs(0);
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #7dd3fc)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -247,7 +443,7 @@ public class DepthFirstSearch {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -258,7 +454,7 @@ public class DepthFirstSearch {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Depth First Search Code
+        Graph Code
       </h1>
       
       <div style={{

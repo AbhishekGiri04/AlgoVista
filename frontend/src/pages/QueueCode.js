@@ -43,6 +43,30 @@ public:
         }
     }
     
+    int peek() {
+        if (!q.empty()) {
+            return q.front();
+        } else {
+            cout << "Queue is empty!" << endl;
+            return -1;
+        }
+    }
+    
+    void traverse() {
+        if (q.empty()) {
+            cout << "Queue is empty!" << endl;
+            return;
+        }
+        queue<int> temp = q;
+        cout << "Traversing queue (front to back): ";
+        while (!temp.empty()) {
+            cout << temp.front();
+            temp.pop();
+            if (!temp.empty()) cout << " -> ";
+        }
+        cout << endl;
+    }
+    
     int back() {
         if (!q.empty()) {
             return q.back();
@@ -85,9 +109,11 @@ int main() {
     q.enqueue(30);
     q.display();
     
-    cout << "Front element: " << q.front() << endl;
+    cout << "Front element (peek): " << q.peek() << endl;
     cout << "Back element: " << q.back() << endl;
     cout << "Queue size: " << q.size() << endl;
+    
+    q.traverse();
     
     q.dequeue();
     q.display();
@@ -122,36 +148,57 @@ Queue* createQueue() {
 
 void enqueue(Queue* queue, int element) {
     if (queue->size >= MAX_SIZE) {
-        printf("Queue overflow!\n");
+        printf("Queue overflow!");
         return;
     }
     queue->rear = (queue->rear + 1) % MAX_SIZE;
     queue->data[queue->rear] = element;
     queue->size++;
-    printf("Enqueued %d\n", element);
+    printf("Enqueued %d", element);
 }
 
 void dequeue(Queue* queue) {
     if (queue->size == 0) {
-        printf("Queue is empty!\n");
+        printf("Queue is empty!");
         return;
     }
-    printf("Dequeued %d\n", queue->data[queue->front]);
+    printf("Dequeued %d", queue->data[queue->front]);
     queue->front = (queue->front + 1) % MAX_SIZE;
     queue->size--;
 }
 
 int front(Queue* queue) {
     if (queue->size == 0) {
-        printf("Queue is empty!\n");
+        printf("Queue is empty!");
         return -1;
     }
     return queue->data[queue->front];
 }
 
+int peek(Queue* queue) {
+    if (queue->size == 0) {
+        printf("Queue is empty!");
+        return -1;
+    }
+    return queue->data[queue->front];
+}
+
+void traverse(Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty!");
+        return;
+    }
+    printf("Traversing queue (front to back): ");
+    for (int i = 0; i < queue->size; i++) {
+        int index = (queue->front + i) % MAX_SIZE;
+        printf("%d", queue->data[index]);
+        if (i < queue->size - 1) printf(" -> ");
+    }
+}
+
 int back(Queue* queue) {
     if (queue->size == 0) {
-        printf("Queue is empty!\n");
+        printf("Queue is empty!");
         return -1;
     }
     return queue->data[queue->rear];
@@ -167,7 +214,7 @@ int size(Queue* queue) {
 
 void display(Queue* queue) {
     if (isEmpty(queue)) {
-        printf("Queue is empty!\n");
+        printf("Queue is empty!");
         return;
     }
     
@@ -176,11 +223,10 @@ void display(Queue* queue) {
         int index = (queue->front + i) % MAX_SIZE;
         printf("%d ", queue->data[index]);
     }
-    printf("\n");
 }
 
 int main() {
-    printf("=== Queue Data Structure ===\n");
+    printf("=== Queue Data Structure ===");
     Queue* q = createQueue();
     
     enqueue(q, 10);
@@ -188,9 +234,11 @@ int main() {
     enqueue(q, 30);
     display(q);
     
-    printf("Front element: %d\n", front(q));
-    printf("Back element: %d\n", back(q));
-    printf("Queue size: %d\n", size(q));
+    printf("Front element (peek): %d", peek(q));
+    printf("Back element: %d", back(q));
+    printf("Queue size: %d", size(q));
+    
+    traverse(q);
     
     dequeue(q);
     display(q);
@@ -229,6 +277,19 @@ class Queue:
             return None
         return self.data[0]
     
+    def peek(self) -> Optional[int]:
+        if self.is_empty():
+            print("Queue is empty!")
+            return None
+        return self.data[0]
+    
+    def traverse(self) -> None:
+        if self.is_empty():
+            print("Queue is empty!")
+            return
+        elements = ' -> '.join(str(x) for x in self.data)
+        print(f"Traversing queue (front to back): {elements}")
+    
     def back(self) -> Optional[int]:
         if self.is_empty():
             print("Queue is empty!")
@@ -258,9 +319,11 @@ def main() -> None:
     queue.enqueue(30)
     queue.display()
     
-    print(f"Front element: {queue.front()}")
+    print(f"Front element (peek): {queue.peek()}")
     print(f"Back element: {queue.back()}")
     print(f"Queue size: {queue.size()}")
+    
+    queue.traverse()
     
     queue.dequeue()
     queue.display()
@@ -316,6 +379,28 @@ public class Queue {
         return data[front];
     }
     
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("Queue is empty!");
+            return -1;
+        }
+        return data[front];
+    }
+    
+    public void traverse() {
+        if (isEmpty()) {
+            System.out.println("Queue is empty!");
+            return;
+        }
+        System.out.print("Traversing queue (front to back): ");
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % capacity;
+            System.out.print(data[index]);
+            if (i < size - 1) System.out.print(" -> ");
+        }
+        System.out.println();
+    }
+    
     public int back() {
         if (isEmpty()) {
             System.out.println("Queue is empty!");
@@ -355,9 +440,11 @@ public class Queue {
         q.enqueue(30);
         q.display();
         
-        System.out.println("Front element: " + q.front());
+        System.out.println("Front element (peek): " + q.peek());
         System.out.println("Back element: " + q.back());
         System.out.println("Queue size: " + q.size());
+        
+        q.traverse();
         
         q.dequeue();
         q.display();

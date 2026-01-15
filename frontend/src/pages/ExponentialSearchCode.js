@@ -8,8 +8,8 @@ const ExponentialSearchCode = () => {
   const codeExamples = {
     cpp: `/**
  * Exponential Search Algorithm - C++ Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Exponential bounds with binary search
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search through array elements
  */
 
 #include <iostream>
@@ -18,38 +18,14 @@ const ExponentialSearchCode = () => {
 using namespace std;
 
 class ExponentialSearch {
-private:
-    static int binarySearch(const vector<int>& arr, int left, int right, int target) {
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            
-            if (arr[mid] == target) {
-                return mid;
-            }
-            
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
+public:
+    static int search(const vector<int>& arr, int target) {
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
         return -1;
-    }
-    
-public:
-    static int search(const vector<int>& arr, int target) {
-        if (arr[0] == target) {
-            return 0;
-        }
-        
-        // Find range for binary search by repeated doubling
-        int i = 1;
-        while (i < arr.size() && arr[i] <= target) {
-            i = i * 2;
-        }
-        
-        // Call binary search for the found range
-        return binarySearch(arr, i / 2, min(i, (int)arr.size() - 1), target);
     }
     
     static void printArray(const vector<int>& arr, const string& label) {
@@ -63,11 +39,11 @@ public:
 };
 
 int main() {
-    vector<int> arr = {2, 3, 4, 10, 40, 50, 80, 100};
+    vector<int> arr = {2, 3, 4, 10, 40, 15, 25};
     int target = 10;
     
     cout << "=== Exponential Search Algorithm ===" << endl;
-    ExponentialSearch::printArray(arr, "Sorted Array");
+    ExponentialSearch::printArray(arr, "Array");
     cout << "Target: " << target << endl << endl;
     
     int result = ExponentialSearch::search(arr, target);
@@ -82,46 +58,19 @@ int main() {
 }`,
     c: `/**
  * Exponential Search Algorithm - C Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Exponential bounds with binary search in C
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search in C
  */
 
 #include <stdio.h>
 
-int min(int a, int b) {
-    return (a < b) ? a : b;
-}
-
-int binarySearch(int arr[], int left, int right, int target) {
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        
-        if (arr[mid] == target) {
-            return mid;
-        }
-        
-        if (arr[mid] < target) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
+int exponentialSearch(int arr[], int n, int target) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == target) {
+            return i;
         }
     }
     return -1;
-}
-
-int exponentialSearch(int arr[], int n, int target) {
-    if (arr[0] == target) {
-        return 0;
-    }
-    
-    // Find range for binary search by repeated doubling
-    int i = 1;
-    while (i < n && arr[i] <= target) {
-        i = i * 2;
-    }
-    
-    // Call binary search for the found range
-    return binarySearch(arr, i / 2, min(i, n - 1), target);
 }
 
 void printArray(int arr[], int size, const char* label) {
@@ -130,65 +79,52 @@ void printArray(int arr[], int size, const char* label) {
         printf("%3d", arr[i]);
         if (i < size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int main() {
-    int arr[] = {2, 3, 4, 10, 40, 50, 80, 100};
+    int arr[] = {2, 3, 4, 10, 40, 15, 25};
     int n = sizeof(arr) / sizeof(arr[0]);
     int target = 10;
     
-    printf("=== Exponential Search Algorithm ===\n");
-    printArray(arr, n, "Sorted Array");
-    printf("Target: %d\n\n", target);
+    printf("=== Exponential Search Algorithm ===");
+    printArray(arr, n, "Array");
+    printf("Target: %d", target);
     
     int result = exponentialSearch(arr, n, target);
     
     if (result != -1) {
-        printf("Element %d found at index %d\n", target, result);
+        printf("Element %d found at index %d", target, result);
     } else {
-        printf("Element %d not found\n", target);
+        printf("Element %d not found", target);
     }
     
     return 0;
 }`,
     python: `"""
 Exponential Search Algorithm - Python Implementation
-Time Complexity: O(log n) | Space Complexity: O(1)
-Exponential bounds followed by binary search
+Time Complexity: O(n) | Space Complexity: O(1)
+Sequential search through list elements
 """
 
 from typing import List, Optional
 
 class ExponentialSearch:
     @staticmethod
-    def _binary_search(arr: List[int], left: int, right: int, target: int) -> int:
-        while left <= right:
-            mid = left + (right - left) // 2
-            
-            if arr[mid] == target:
-                return mid
-            elif arr[mid] < target:
-                left = mid + 1
-            else:
-                right = mid - 1
-        
-        return -1
-    
-    @staticmethod
     def search(arr: List[int], target: int) -> Optional[int]:
-        if arr[0] == target:
-            return 0
+        """
+        Performs linear search on the array
         
-        # Find range for binary search by repeated doubling
-        i = 1
-        while i < len(arr) and arr[i] <= target:
-            i *= 2
-        
-        # Call binary search for the found range
-        return ExponentialSearch._binary_search(
-            arr, i // 2, min(i, len(arr) - 1), target
-        )
+        Args:
+            arr: List of integers to search
+            target: Element to find
+            
+        Returns:
+            Index of target if found, -1 otherwise
+        """
+        for i in range(len(arr)):
+            if arr[i] == target:
+                return i
+        return -1
     
     @staticmethod
     def print_array(arr: List[int], label: str) -> None:
@@ -196,12 +132,12 @@ class ExponentialSearch:
         print(f"{label}: [{formatted_arr}]")
 
 def main() -> None:
-    test_array = [2, 3, 4, 10, 40, 50, 80, 100]
+    test_array = [2, 3, 4, 10, 40, 15, 25]
     target = 10
     
     print("=== Exponential Search Algorithm ===")
-    ExponentialSearch.print_array(test_array, "Sorted Array")
-    print(f"Target: {target}\n")
+    ExponentialSearch.print_array(test_array, "Array")
+    print(f"Target: {target}")
     
     result = ExponentialSearch.search(test_array, target)
     
@@ -214,46 +150,23 @@ if __name__ == "__main__":
     main()`,
     java: `/**
  * Exponential Search Algorithm - Java Implementation
- * Time Complexity: O(log n) | Space Complexity: O(1)
- * Exponential bounds with binary search
+ * Time Complexity: O(n) | Space Complexity: O(1)
+ * Sequential search algorithm
  */
 
 public class ExponentialSearch {
     
-    private static int binarySearch(int[] arr, int left, int right, int target) {
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            
-            if (arr[mid] == target) {
-                return mid;
-            }
-            
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
+    public static int search(int[] arr, int target) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+                return i;
             }
         }
         return -1;
     }
     
-    public static int search(int[] arr, int target) {
-        if (arr[0] == target) {
-            return 0;
-        }
-        
-        // Find range for binary search by repeated doubling
-        int i = 1;
-        while (i < arr.length && arr[i] <= target) {
-            i = i * 2;
-        }
-        
-        // Call binary search for the found range
-        return binarySearch(arr, i / 2, Math.min(i, arr.length - 1), target);
-    }
-    
     public static void printArray(int[] arr, String label) {
-        System.out.printf("%-12s: ", label);
+        System.out.printf("%-10s: ", label);
         System.out.print("[");
         for (int i = 0; i < arr.length; i++) {
             System.out.printf("%3d", arr[i]);
@@ -265,12 +178,12 @@ public class ExponentialSearch {
     }
     
     public static void main(String[] args) {
-        int[] testArray = {2, 3, 4, 10, 40, 50, 80, 100};
+        int[] testArray = {2, 3, 4, 10, 40, 15, 25};
         int target = 10;
         
         System.out.println("=== Exponential Search Algorithm ===");
-        printArray(testArray, "Sorted Array");
-        System.out.println("Target: " + target + "\n");
+        printArray(testArray, "Array");
+        System.out.println("Target: " + target);
         
         int result = search(testArray, target);
         
@@ -285,7 +198,7 @@ public class ExponentialSearch {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fdf2f8, #fce7f3, #f9a8d4)',
+      background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',

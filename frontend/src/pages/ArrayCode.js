@@ -26,22 +26,44 @@ public:
         arr.reserve(size);
     }
     
-    void insert(int element) {
+    void insert(int element, int index = -1) {
         if (arr.size() < capacity) {
-            arr.push_back(element);
+            if (index == -1 || index >= arr.size()) {
+                arr.push_back(element);
+            } else {
+                arr.insert(arr.begin() + index, element);
+            }
             cout << "Inserted " << element << endl;
         } else {
             cout << "Array is full!" << endl;
         }
     }
     
-    void remove(int index) {
+    void deleteElement(int index) {
         if (index >= 0 && index < arr.size()) {
-            cout << "Removed " << arr[index] << endl;
+            cout << "Deleted " << arr[index] << endl;
             arr.erase(arr.begin() + index);
         } else {
             cout << "Invalid index!" << endl;
         }
+    }
+    
+    void update(int index, int newValue) {
+        if (index >= 0 && index < arr.size()) {
+            cout << "Updated index " << index << ": " << arr[index] << " -> " << newValue << endl;
+            arr[index] = newValue;
+        } else {
+            cout << "Invalid index!" << endl;
+        }
+    }
+    
+    void traverse() {
+        cout << "Traversing array: ";
+        for (size_t i = 0; i < arr.size(); i++) {
+            cout << "arr[" << i << "] = " << arr[i];
+            if (i < arr.size() - 1) cout << ", ";
+        }
+        cout << endl;
     }
     
     void display() {
@@ -74,9 +96,14 @@ int main() {
     arr.insert(30);
     arr.display();
     
-    cout << "Element 20 found at index: " << arr.search(20) << endl;
+    arr.update(1, 25);
+    arr.display();
     
-    arr.remove(1);
+    cout << "Element 25 found at index: " << arr.search(25) << endl;
+    
+    arr.traverse();
+    
+    arr.deleteElement(1);
     arr.display();
     
     return 0;
@@ -107,21 +134,38 @@ void insert(Array* arr, int element) {
     if (arr->size < arr->capacity) {
         arr->data[arr->size] = element;
         arr->size++;
-        printf("Inserted %d\n", element);
+        printf("Inserted %d", element);
     } else {
-        printf("Array is full!\n");
+        printf("Array is full!");
     }
 }
 
-void removeAt(Array* arr, int index) {
+void deleteElement(Array* arr, int index) {
     if (index >= 0 && index < arr->size) {
-        printf("Removed %d\n", arr->data[index]);
+        printf("Deleted %d", arr->data[index]);
         for (int i = index; i < arr->size - 1; i++) {
             arr->data[i] = arr->data[i + 1];
         }
         arr->size--;
     } else {
-        printf("Invalid index!\n");
+        printf("Invalid index!");
+    }
+}
+
+void update(Array* arr, int index, int newValue) {
+    if (index >= 0 && index < arr->size) {
+        printf("Updated index %d: %d -> %d", index, arr->data[index], newValue);
+        arr->data[index] = newValue;
+    } else {
+        printf("Invalid index!");
+    }
+}
+
+void traverse(Array* arr) {
+    printf("Traversing array: ");
+    for (int i = 0; i < arr->size; i++) {
+        printf("arr[%d] = %d", i, arr->data[i]);
+        if (i < arr->size - 1) printf(", ");
     }
 }
 
@@ -131,7 +175,6 @@ void display(Array* arr) {
         printf("%3d", arr->data[i]);
         if (i < arr->size - 1) printf(", ");
     }
-    printf("\n");
 }
 
 int search(Array* arr, int element) {
@@ -149,7 +192,7 @@ void freeArray(Array* arr) {
 }
 
 int main() {
-    printf("=== Array Data Structure ===\n");
+    printf("=== Array Data Structure ===");
     Array* arr = createArray(5);
     
     insert(arr, 10);
@@ -157,9 +200,14 @@ int main() {
     insert(arr, 30);
     display(arr);
     
-    printf("Element 20 found at index: %d\n", search(arr, 20));
+    update(arr, 1, 25);
+    display(arr);
     
-    removeAt(arr, 1);
+    printf("Element 25 found at index: %d", search(arr, 25));
+    
+    traverse(arr);
+    
+    deleteElement(arr, 1);
     display(arr);
     
     freeArray(arr);
@@ -186,9 +234,9 @@ class Array:
         else:
             print("Array is full!")
     
-    def remove(self, index: int) -> None:
+    def delete(self, index: int) -> None:
         if 0 <= index < self.size:
-            print(f"Removed {self.data[index]}")
+            print(f"Deleted {self.data[index]}")
             # Shift elements left
             for i in range(index, self.size - 1):
                 self.data[i] = self.data[i + 1]
@@ -196,6 +244,20 @@ class Array:
             self.size -= 1
         else:
             print("Invalid index!")
+    
+    def update(self, index: int, newValue: int) -> None:
+        if 0 <= index < self.size:
+            print(f"Updated index {index}: {self.data[index]} -> {newValue}")
+            self.data[index] = newValue
+        else:
+            print("Invalid index!")
+    
+    def traverse(self) -> None:
+        print("Traversing array: ", end="")
+        for i in range(self.size):
+            print(f"arr[{i}] = {self.data[i]}", end="")
+            if i < self.size - 1:
+                print(", ", end="")
     
     def display(self) -> None:
         elements = [str(self.data[i]) for i in range(self.size)]
@@ -219,9 +281,14 @@ def main() -> None:
     arr.insert(30)
     arr.display()
     
-    print(f"Element 20 found at index: {arr.search(20)}")
+    arr.update(1, 25)
+    arr.display()
     
-    arr.remove(1)
+    print(f"Element 25 found at index: {arr.search(25)}")
+    
+    arr.traverse()
+    
+    arr.delete(1)
     arr.display()
 
 if __name__ == "__main__":
@@ -252,9 +319,9 @@ public class Array {
         }
     }
     
-    public void remove(int index) {
+    public void delete(int index) {
         if (index >= 0 && index < size) {
-            System.out.println("Removed " + data[index]);
+            System.out.println("Deleted " + data[index]);
             // Shift elements left
             for (int i = index; i < size - 1; i++) {
                 data[i] = data[i + 1];
@@ -263,6 +330,26 @@ public class Array {
         } else {
             System.out.println("Invalid index!");
         }
+    }
+    
+    public void update(int index, int newValue) {
+        if (index >= 0 && index < size) {
+            System.out.println("Updated index " + index + ": " + data[index] + " -> " + newValue);
+            data[index] = newValue;
+        } else {
+            System.out.println("Invalid index!");
+        }
+    }
+    
+    public void traverse() {
+        System.out.print("Traversing array: ");
+        for (int i = 0; i < size; i++) {
+            System.out.print("arr[" + i + "] = " + data[i]);
+            if (i < size - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println();
     }
     
     public void display() {
@@ -298,9 +385,14 @@ public class Array {
         arr.insert(30);
         arr.display();
         
-        System.out.println("Element 20 found at index: " + arr.search(20));
+        arr.update(1, 25);
+        arr.display();
         
-        arr.remove(1);
+        System.out.println("Element 25 found at index: " + arr.search(25));
+        
+        arr.traverse();
+        
+        arr.delete(1);
         arr.display();
     }
 }`

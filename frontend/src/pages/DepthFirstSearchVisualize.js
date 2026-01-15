@@ -812,37 +812,68 @@ const DepthFirstSearchVisualize = () => {
             <div style={{
               background: 'rgba(255, 255, 255, 0.95)',
               borderRadius: '16px',
-              padding: '25px',
+              padding: '20px',
               backdropFilter: 'blur(20px)',
               border: '1px solid rgba(148, 163, 184, 0.2)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-              flex: 1
+              height: '400px',
+              display: 'flex',
+              flexDirection: 'column'
             }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '15px', color: '#1f2937' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>
                 Operation Log
               </h3>
-              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <div style={{ 
+                flex: 1,
+                overflowY: 'auto',
+                paddingRight: '8px'
+              }}>
                 {operationLog.length > 0 ? operationLog.map((log) => (
                   <div key={log.id} style={{
-                    padding: '10px',
-                    marginBottom: '8px',
+                    padding: '8px 10px',
+                    marginBottom: '6px',
                     background: '#f9fafb',
-                    borderRadius: '8px',
-                    fontSize: '12px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
                     border: '1px solid #e5e7eb'
                   }}>
-                    <div style={{ fontWeight: '600', color: '#3b82f6' }}>
-                      {log.operation}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '3px'
+                    }}>
+                      <span style={{
+                        fontWeight: '700',
+                        fontSize: '10px',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        background: log.operation.includes('VERTEX') ? '#10b981' :
+                               log.operation.includes('EDGE') ? '#3b82f6' :
+                               log.operation.includes('PUSH') ? '#f59e0b' :
+                               log.operation.includes('POP') ? '#ef4444' :
+                               log.operation.includes('VISIT') ? '#06b6d4' :
+                               log.operation === 'COMPLETE' ? '#10b981' : '#64748b',
+                        color: 'white'
+                      }}>
+                        {log.operation}
+                      </span>
+                      <span style={{ color: '#94a3b8', fontSize: '9px' }}>
+                        {log.timestamp}
+                      </span>
                     </div>
-                    <div style={{ color: '#374151', marginTop: '4px' }}>
+                    <div style={{ color: '#475569', fontSize: '11px', lineHeight: '1.4' }}>
                       {log.details}
-                    </div>
-                    <div style={{ color: '#64748b', fontSize: '10px', marginTop: '4px' }}>
-                      {log.timestamp}
                     </div>
                   </div>
                 )) : (
-                  <div style={{ color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
+                  <div style={{ 
+                    color: '#94a3b8', 
+                    fontStyle: 'italic', 
+                    textAlign: 'center', 
+                    padding: '40px 20px',
+                    fontSize: '12px'
+                  }}>
                     No operations yet. Start DFS to see logs!
                   </div>
                 )}

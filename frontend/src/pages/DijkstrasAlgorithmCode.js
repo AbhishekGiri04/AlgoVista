@@ -7,309 +7,430 @@ const DijkstrasAlgorithmCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * Dijkstra's Algorithm - C++ Implementation
- * Find shortest paths from source vertex
+ * Dijkstra Algorithm - C++ Implementation
+ * Network of connected nodes using adjacency list
  */
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <queue>
-#include <climits>
 using namespace std;
 
 class Graph {
 private:
     int vertices;
-    vector<vector<pair<int, int>>> adjList;
+    vector<list<int>> adjList;
     
 public:
     Graph(int v) : vertices(v) {
         adjList.resize(v);
     }
     
-    void addEdge(int src, int dest, int weight) {
-        adjList[src].push_back({dest, weight});
-        adjList[dest].push_back({src, weight}); // Undirected graph
+    void addEdge(int src, int dest) {
+        adjList[src].push_back(dest);
+        adjList[dest].push_back(src); // Undirected graph
+        cout << "Added edge: " << src << " - " << dest << endl;
     }
     
-    void dijkstra(int src) {
-        vector<int> dist(vertices, INT_MAX);
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    void removeEdge(int src, int dest) {
+        adjList[src].remove(dest);
+        adjList[dest].remove(src);
+        cout << "Removed edge: " << src << " - " << dest << endl;
+    }
+    
+    void display() {
+        cout << "Graph adjacency list:" << endl;
+        for (int i = 0; i < vertices; i++) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void DFS(int start, vector<bool>& visited) {
+        visited[start] = true;
+        cout << start << " ";
         
-        dist[src] = 0;
-        pq.push({0, src});
+        for (int neighbor : adjList[start]) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    void DFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        cout << "DFS from " << start << ": ";
+        DFS(start, visited);
+        cout << endl;
+    }
+    
+    void BFSTraversal(int start) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
         
-        while (!pq.empty()) {
-            int u = pq.top().second;
-            pq.pop();
+        visited[start] = true;
+        q.push(start);
+        
+        cout << "BFS from " << start << ": ";
+        
+        while (!q.empty()) {
+            int current = q.front();
+            q.pop();
+            cout << current << " ";
             
-            for (auto& edge : adjList[u]) {
-                int v = edge.first;
-                int weight = edge.second;
-                
-                if (dist[u] + weight < dist[v]) {
-                    dist[v] = dist[u] + weight;
-                    pq.push({dist[v], v});
+            for (int neighbor : adjList[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
                 }
             }
         }
-        
-        cout << "Shortest distances from vertex " << src << ":" << endl;
-        for (int i = 0; i < vertices; i++) {
-            cout << "Vertex " << i << ": " << dist[i] << endl;
-        }
+        cout << endl;
     }
 };
 
 int main() {
-    cout << "=== Dijkstra's Algorithm ===" << endl;
-    Graph g(6);
+    cout << "=== Dijkstra Algorithm ===" << endl;
+    Graph g(5);
     
-    g.addEdge(0, 1, 4);
-    g.addEdge(0, 2, 2);
-    g.addEdge(1, 2, 1);
-    g.addEdge(1, 3, 5);
-    g.addEdge(2, 3, 8);
-    g.addEdge(2, 4, 10);
-    g.addEdge(3, 4, 2);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(2, 3);
     
-    g.dijkstra(0);
+    g.display();
+    
+    g.removeEdge(1, 3);
+    g.display();
+    
+    g.DFSTraversal(0);
+    g.BFSTraversal(0);
     
     return 0;
 }`,
     c: `/**
- * Dijkstra's Algorithm - C Implementation
- * Find shortest paths from source vertex
+ * Dijkstra Algorithm - C Implementation
+ * Network of connected nodes using adjacency list with arrays
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <stdbool.h>
 
 #define MAX_VERTICES 100
 
-int minDistance(int dist[], bool sptSet[], int V) {
-    int min = INT_MAX, min_index;
+typedef struct {
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int vertices;
+} Graph;
+
+Graph* createGraph(int vertices) {
+    Graph* graph = (Graph*)malloc(sizeof(Graph));
+    graph->vertices = vertices;
     
-    for (int v = 0; v < V; v++) {
-        if (sptSet[v] == false && dist[v] <= min) {
-            min = dist[v];
-            min_index = v;
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph->adjMatrix[i][j] = 0;
         }
     }
-    return min_index;
+    return graph;
 }
 
-void dijkstra(int graph[MAX_VERTICES][MAX_VERTICES], int src, int V) {
-    int dist[MAX_VERTICES];
-    bool sptSet[MAX_VERTICES];
-    
-    for (int i = 0; i < V; i++) {
-        dist[i] = INT_MAX;
-        sptSet[i] = false;
+void addEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1; // Undirected graph
+    printf("Added edge: %d - %d\n", src, dest);
+}
+
+void removeEdge(Graph* graph, int src, int dest) {
+    graph->adjMatrix[src][dest] = 0;
+    graph->adjMatrix[dest][src] = 0;
+    printf("Removed edge: %d - %d\n", src, dest);
+}
+
+void display(Graph* graph) {
+    printf("Graph adjacency list:\n");
+    for (int i = 0; i < graph->vertices; i++) {
+        printf("%d: ", i);
+        for (int j = 0; j < graph->vertices; j++) {
+            if (graph->adjMatrix[i][j] == 1) {
+                printf("%d ", j);
+            }
+        }
+        printf("\n");
     }
+}
+
+void DFS(Graph* graph, int start, bool visited[]) {
+    visited[start] = true;
+    printf("%d ", start);
     
-    dist[src] = 0;
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjMatrix[start][i] == 1 && !visited[i]) {
+            DFS(graph, i, visited);
+        }
+    }
+}
+
+void DFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    printf("DFS from %d: ", start);
+    DFS(graph, start, visited);
+    printf("\n");
+}
+
+void BFSTraversal(Graph* graph, int start) {
+    bool visited[MAX_VERTICES] = {false};
+    int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
     
-    for (int count = 0; count < V - 1; count++) {
-        int u = minDistance(dist, sptSet, V);
-        sptSet[u] = true;
+    visited[start] = true;
+    queue[rear++] = start;
+    
+    printf("BFS from %d: ", start);
+    
+    while (front < rear) {
+        int current = queue[front++];
+        printf("%d ", current);
         
-        for (int v = 0; v < V; v++) {
-            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && 
-                dist[u] + graph[u][v] < dist[v]) {
-                dist[v] = dist[u] + graph[u][v];
+        for (int i = 0; i < graph->vertices; i++) {
+            if (graph->adjMatrix[current][i] == 1 && !visited[i]) {
+                visited[i] = true;
+                queue[rear++] = i;
             }
         }
     }
-    
-    printf("Shortest distances from vertex %d:\n", src);
-    for (int i = 0; i < V; i++) {
-        printf("Vertex %d: %d\n", i, dist[i]);
-    }
+    printf("\n");
 }
 
 int main() {
-    printf("=== Dijkstra's Algorithm ===\n");
-    int graph[MAX_VERTICES][MAX_VERTICES] = {
-        {0, 4, 2, 0, 0, 0},
-        {4, 0, 1, 5, 0, 0},
-        {2, 1, 0, 8, 10, 0},
-        {0, 5, 8, 0, 2, 0},
-        {0, 0, 10, 2, 0, 0},
-        {0, 0, 0, 0, 0, 0}
-    };
+    printf("=== Dijkstra Algorithm ===\n");
+    Graph* g = createGraph(5);
     
-    dijkstra(graph, 0, 6);
+    addEdge(g, 0, 1);
+    addEdge(g, 0, 4);
+    addEdge(g, 1, 2);
+    addEdge(g, 1, 3);
+    addEdge(g, 2, 3);
     
+    display(g);
+    
+    removeEdge(g, 1, 3);
+    display(g);
+    
+    DFSTraversal(g, 0);
+    BFSTraversal(g, 0);
+    
+    free(g);
     return 0;
 }`,
     python: `"""
-Dijkstra's Algorithm - Python Implementation
-Find shortest paths from source vertex
+Dijkstra Algorithm - Python Implementation
+Network of connected nodes using adjacency list
 """
 
-import heapq
-from collections import defaultdict
-from typing import Dict, List, Tuple
+from collections import deque, defaultdict
+from typing import List, Set
 
 class Graph:
-    def __init__(self):
-        self.graph = defaultdict(list)
+    def __init__(self, vertices: int):
+        self.vertices = vertices
+        self.adj_list = defaultdict(list)
     
-    def add_edge(self, src: int, dest: int, weight: int) -> None:
-        self.graph[src].append((dest, weight))
-        self.graph[dest].append((src, weight))  # Undirected graph
+    def add_edge(self, src: int, dest: int) -> None:
+        """Add an undirected edge between src and dest"""
+        self.adj_list[src].append(dest)
+        self.adj_list[dest].append(src)
+        print(f"Added edge: {src} - {dest}")
     
-    def dijkstra(self, src: int) -> Dict[int, int]:
-        distances = defaultdict(lambda: float('inf'))
-        distances[src] = 0
-        pq = [(0, src)]
+    def remove_edge(self, src: int, dest: int) -> None:
+        """Remove an edge between src and dest"""
+        if dest in self.adj_list[src]:
+            self.adj_list[src].remove(dest)
+        if src in self.adj_list[dest]:
+            self.adj_list[dest].remove(src)
+        print(f"Removed edge: {src} - {dest}")
+    
+    def display(self) -> None:
+        """Display the adjacency list representation"""
+        print("Graph adjacency list:")
+        for vertex in range(self.vertices):
+            neighbors = ' '.join(map(str, self.adj_list[vertex]))
+            print(f"{vertex}: {neighbors}")
+    
+    def _dfs(self, start: int, visited: Set[int]) -> None:
+        """Helper method for DFS traversal"""
+        visited.add(start)
+        print(start, end=" ")
         
-        while pq:
-            current_dist, u = heapq.heappop(pq)
-            
-            if current_dist > distances[u]:
-                continue
-            
-            for neighbor, weight in self.graph[u]:
-                distance = current_dist + weight
-                
-                if distance < distances[neighbor]:
-                    distances[neighbor] = distance
-                    heapq.heappush(pq, (distance, neighbor))
-        
-        return distances
+        for neighbor in self.adj_list[start]:
+            if neighbor not in visited:
+                self._dfs(neighbor, visited)
     
-    def print_distances(self, distances: Dict[int, int], src: int) -> None:
-        print(f"Shortest distances from vertex {src}:")
-        for vertex in sorted(distances.keys()):
-            print(f"Vertex {vertex}: {distances[vertex]}")
+    def dfs_traversal(self, start: int) -> None:
+        """Depth-First Search traversal"""
+        visited = set()
+        print(f"DFS from {start}: ", end="")
+        self._dfs(start, visited)
+        print()
+    
+    def bfs_traversal(self, start: int) -> None:
+        """Breadth-First Search traversal"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
+        
+        print(f"BFS from {start}: ", end="")
+        
+        while queue:
+            current = queue.popleft()
+            print(current, end=" ")
+            
+            for neighbor in self.adj_list[current]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        print()
 
 def main() -> None:
-    print("=== Dijkstra's Algorithm ===")
-    g = Graph()
+    print("=== Dijkstra Algorithm ===")
+    graph = Graph(5)
     
-    g.add_edge(0, 1, 4)
-    g.add_edge(0, 2, 2)
-    g.add_edge(1, 2, 1)
-    g.add_edge(1, 3, 5)
-    g.add_edge(2, 3, 8)
-    g.add_edge(2, 4, 10)
-    g.add_edge(3, 4, 2)
+    graph.add_edge(0, 1)
+    graph.add_edge(0, 4)
+    graph.add_edge(1, 2)
+    graph.add_edge(1, 3)
+    graph.add_edge(2, 3)
     
-    distances = g.dijkstra(0)
-    g.print_distances(distances, 0)
+    graph.display()
+    
+    graph.remove_edge(1, 3)
+    graph.display()
+    
+    graph.dfs_traversal(0)
+    graph.bfs_traversal(0)
 
 if __name__ == "__main__":
     main()`,
     java: `/**
- * Dijkstra's Algorithm - Java Implementation
- * Find shortest paths from source vertex
+ * Dijkstra Algorithm - Java Implementation
+ * Network of connected nodes using adjacency list
  */
 
 import java.util.*;
 
-public class DijkstraAlgorithm {
-    private Map<Integer, List<Edge>> adjList;
+public class Graph {
+    private int vertices;
+    private List<List<Integer>> adjList;
     
-    static class Edge {
-        int dest, weight;
+    public Graph(int vertices) {
+        this.vertices = vertices;
+        this.adjList = new ArrayList<>();
         
-        Edge(int dest, int weight) {
-            this.dest = dest;
-            this.weight = weight;
+        for (int i = 0; i < vertices; i++) {
+            adjList.add(new ArrayList<>());
         }
     }
     
-    static class Node implements Comparable<Node> {
-        int vertex, distance;
-        
-        Node(int vertex, int distance) {
-            this.vertex = vertex;
-            this.distance = distance;
-        }
-        
-        public int compareTo(Node other) {
-            return Integer.compare(this.distance, other.distance);
-        }
+    public void addEdge(int src, int dest) {
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src); // Undirected graph
+        System.out.println("Added edge: " + src + " - " + dest);
     }
     
-    public DijkstraAlgorithm() {
-        this.adjList = new HashMap<>();
+    public void removeEdge(int src, int dest) {
+        adjList.get(src).remove(Integer.valueOf(dest));
+        adjList.get(dest).remove(Integer.valueOf(src));
+        System.out.println("Removed edge: " + src + " - " + dest);
     }
     
-    public void addEdge(int src, int dest, int weight) {
-        adjList.computeIfAbsent(src, k -> new ArrayList<>()).add(new Edge(dest, weight));
-        adjList.computeIfAbsent(dest, k -> new ArrayList<>()).add(new Edge(src, weight));
-    }
-    
-    public Map<Integer, Integer> dijkstra(int src) {
-        Map<Integer, Integer> distances = new HashMap<>();
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        
-        distances.put(src, 0);
-        pq.offer(new Node(src, 0));
-        
-        while (!pq.isEmpty()) {
-            Node current = pq.poll();
-            int u = current.vertex;
-            
-            if (current.distance > distances.getOrDefault(u, Integer.MAX_VALUE)) {
-                continue;
+    public void display() {
+        System.out.println("Graph adjacency list:");
+        for (int i = 0; i < vertices; i++) {
+            System.out.print(i + ": ");
+            for (int neighbor : adjList.get(i)) {
+                System.out.print(neighbor + " ");
             }
+            System.out.println();
+        }
+    }
+    
+    private void DFS(int start, boolean[] visited) {
+        visited[start] = true;
+        System.out.print(start + " ");
+        
+        for (int neighbor : adjList.get(start)) {
+            if (!visited[neighbor]) {
+                DFS(neighbor, visited);
+            }
+        }
+    }
+    
+    public void DFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS from " + start + ": ");
+        DFS(start, visited);
+        System.out.println();
+    }
+    
+    public void BFSTraversal(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        visited[start] = true;
+        queue.offer(start);
+        
+        System.out.print("BFS from " + start + ": ");
+        
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
             
-            List<Edge> neighbors = adjList.getOrDefault(u, new ArrayList<>());
-            for (Edge edge : neighbors) {
-                int v = edge.dest;
-                int weight = edge.weight;
-                int distance = distances.get(u) + weight;
-                
-                if (distance < distances.getOrDefault(v, Integer.MAX_VALUE)) {
-                    distances.put(v, distance);
-                    pq.offer(new Node(v, distance));
+            for (int neighbor : adjList.get(current)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(neighbor);
                 }
             }
         }
-        
-        return distances;
-    }
-    
-    public void printDistances(Map<Integer, Integer> distances, int src) {
-        System.out.println("Shortest distances from vertex " + src + ":");
-        distances.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .forEach(entry -> System.out.println("Vertex " + entry.getKey() + ": " + entry.getValue()));
+        System.out.println();
     }
     
     public static void main(String[] args) {
-        System.out.println("=== Dijkstra's Algorithm ===");
-        DijkstraAlgorithm g = new DijkstraAlgorithm();
+        System.out.println("=== Dijkstra Algorithm ===");
+        Graph g = new Graph(5);
         
-        g.addEdge(0, 1, 4);
-        g.addEdge(0, 2, 2);
-        g.addEdge(1, 2, 1);
-        g.addEdge(1, 3, 5);
-        g.addEdge(2, 3, 8);
-        g.addEdge(2, 4, 10);
-        g.addEdge(3, 4, 2);
+        g.addEdge(0, 1);
+        g.addEdge(0, 4);
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 3);
         
-        Map<Integer, Integer> distances = g.dijkstra(0);
-        g.printDistances(distances, 0);
+        g.display();
+        
+        g.removeEdge(1, 3);
+        g.display();
+        
+        g.DFSTraversal(0);
+        g.BFSTraversal(0);
     }
 }`
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fef7cd, #fde68a, #f59e0b)',
+      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7, #86efac)',
       color: 'white',
       minHeight: '100vh',
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/graphalgorithms" style={{
+      <a href="/datastructures" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -322,7 +443,7 @@ public class DijkstraAlgorithm {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Graph Algorithms
+        ← Back to Data Structures
       </a>
       
       <h1 style={{
@@ -333,7 +454,7 @@ public class DijkstraAlgorithm {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Dijkstra's Algorithm Code
+        Graph Code
       </h1>
       
       <div style={{
@@ -374,7 +495,16 @@ public class DijkstraAlgorithm {
                 fontSize: '14px',
                 cursor: 'pointer',
                 margin: '0 2px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textShadow: selectedLanguage === key 
+                  ? `0 0 20px ${color}, 0 0 40px ${color}80, 0 0 60px ${color}60` 
+                  : 'none',
+                boxShadow: selectedLanguage === key 
+                  ? `0 4px 20px ${color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
+                  : '0 2px 4px rgba(0, 0, 0, 0.1)',
+                transform: selectedLanguage === key 
+                  ? 'translateY(-1px)' 
+                  : 'translateY(0)'
               }}
             >
               {label}
@@ -423,7 +553,7 @@ public class DijkstraAlgorithm {
                 }}>
                   {selectedLanguage === 'cpp' ? 'dijkstra.cpp' : 
                    selectedLanguage === 'c' ? 'dijkstra.c' :
-                   selectedLanguage === 'python' ? 'dijkstra.py' : 'DijkstraAlgorithm.java'}
+                   selectedLanguage === 'python' ? 'dijkstra.py' : 'DijkstrasAlgorithm.java'}
                 </span>
               </div>
               <button
@@ -443,7 +573,10 @@ public class DijkstraAlgorithm {
                   fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: copied 
+                    ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+                    : '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
               >
                 {copied ? 'Copied' : 'Copy Code'}
