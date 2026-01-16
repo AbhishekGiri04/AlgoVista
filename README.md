@@ -140,12 +140,12 @@ AlgoVista/
 │   │   ├── 📂 TSP/                # 🚗 Travelling salesman problem
 │   │   └── 📂 JobScheduling/      # 📋 Job scheduling optimization
 │   └── 📂 DataStructures/
+│       ├── 📂 Array/              # 📊 Array operations
 │       ├── 📂 Stack/              # 📚 Stack operations
 │       ├── 📂 Queue/              # 🚶 Queue operations
 │       ├── 📂 LinkedList/         # 🔗 Linked list implementation
-│       ├── 📂 Tree/               # 🌳 Binary tree operations
-│       ├── 📂 Graph/              # 🌐 Graph data structure
-│       └── 📂 Array/              # 📊 Array operations
+│       ├── 📂 Tree/               # 🌳 Binary search tree (Tree.cpp, Tree)
+│       └── 📂 Graph/              # 🌐 Graph data structure (Graph.cpp, Graph)
 ├── 📂 backend/                     # 🚀 Express.js backend service
 │   ├── 📂 routes/
 │   │   └── 📄 algorithms.js       # 🔧 API route handlers
@@ -251,15 +251,18 @@ AlgoVista/
    cd ../frontend
    npm install
    
-   # Compile C++ algorithms
+   # Compile C++ algorithms (examples)
    cd ../algorithms/Sorting/BubbleSort
-   g++ -o bubble_sort_steps_exec bubble_sort_steps.cpp
+   g++ -o BubbleSort BubbleSort.cpp
    
    cd ../SelectionSort
-   g++ -o selection_sort_steps_exec selection_sort_steps.cpp
+   g++ -o SelectionSort SelectionSort.cpp
    
-   cd ../InsertionSort
-   g++ -o insertion_sort_steps_exec insertion_sort_steps.cpp
+   cd ../DataStructures/Tree
+   g++ -o Tree Tree.cpp
+   
+   cd ../Graph
+   g++ -o Graph Graph.cpp
    ```
 
 3. Start the services:
@@ -340,7 +343,7 @@ brew install gcc          # macOS
 
 # Compile algorithms
 cd algorithms/Sorting/BubbleSort
-g++ -o bubble_sort_steps_exec bubble_sort_steps.cpp
+g++ -o BubbleSort BubbleSort.cpp
 ```
 
 **Port already in use:**

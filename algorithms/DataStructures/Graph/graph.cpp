@@ -2,7 +2,7 @@
 #include <vector>
 #include <list>
 #include <queue>
-#include <fstream>
+#include <sstream>
 #include <string>
 using namespace std;
 
@@ -11,13 +11,13 @@ private:
     int vertices;
     vector<list<int>> adjList;
     
-    void DFS(int start, vector<bool>& visited, ofstream& output) {
+    void DFS(int start, vector<bool>& visited, vector<int>& result) {
         visited[start] = true;
-        output << start << " ";
+        result.push_back(start);
         
         for (int neighbor : adjList[start]) {
             if (!visited[neighbor]) {
-                DFS(neighbor, visited, output);
+                DFS(neighbor, visited, result);
             }
         }
     }
@@ -29,40 +29,54 @@ public:
     
     void addEdge(int src, int dest) {
         adjList[src].push_back(dest);
-        adjList[dest].push_back(src); // Undirected graph
+        adjList[dest].push_back(src);
     }
     
-    void display(ofstream& output) {
-        output << "Graph adjacency list:\n";
+    string display() {
+        stringstream ss;
+        ss << "{\"adjacencyList\":[";
         for (int i = 0; i < vertices; i++) {
-            output << i << ": ";
+            if (i > 0) ss << ",";
+            ss << "{\"vertex\":" << i << ",\"neighbors\":[";
+            bool first = true;
             for (int neighbor : adjList[i]) {
-                output << neighbor << " ";
+                if (!first) ss << ",";
+                ss << neighbor;
+                first = false;
             }
-            output << "\n";
+            ss << "]}";
         }
+        ss << "]}";
+        return ss.str();
     }
     
-    void DFSTraversal(int start, ofstream& output) {
+    string DFSTraversal(int start) {
         vector<bool> visited(vertices, false);
-        output << "DFS from " << start << ": ";
-        DFS(start, visited, output);
-        output << "\n";
+        vector<int> result;
+        DFS(start, visited, result);
+        
+        stringstream ss;
+        ss << "{\"traversal\":\"DFS\",\"start\":" << start << ",\"path\":[";
+        for (size_t i = 0; i < result.size(); i++) {
+            if (i > 0) ss << ",";
+            ss << result[i];
+        }
+        ss << "]}";
+        return ss.str();
     }
     
-    void BFSTraversal(int start, ofstream& output) {
+    string BFSTraversal(int start) {
         vector<bool> visited(vertices, false);
         queue<int> q;
+        vector<int> result;
         
         visited[start] = true;
         q.push(start);
         
-        output << "BFS from " << start << ": ";
-        
         while (!q.empty()) {
             int current = q.front();
             q.pop();
-            output << current << " ";
+            result.push_back(current);
             
             for (int neighbor : adjList[current]) {
                 if (!visited[neighbor]) {
@@ -71,39 +85,55 @@ public:
                 }
             }
         }
-        output << "\n";
+        
+        stringstream ss;
+        ss << "{\"traversal\":\"BFS\",\"start\":" << start << ",\"path\":[";
+        for (size_t i = 0; i < result.size(); i++) {
+            if (i > 0) ss << ",";
+            ss << result[i];
+        }
+        ss << "]}";
+        return ss.str();
     }
 };
 
-int main() {
-    ifstream input("input.txt");
-    ofstream output("output.txt");
+int main(int argc, char* argv[]) {
+    if (argc < 3) {
+        cout << "{\"error\":\"Usage: ./Graph <vertices> <operation> [args]\"}" << endl;
+        return 1;
+    }
     
-    int vertices;
-    input >> vertices;
+    int vertices = stoi(argv[1]);
+    string operation = argv[2];
     Graph graph(vertices);
     
-    string operation;
-    while (input >> operation) {
-        if (operation == "addEdge") {
-            int u, v;
-            input >> u >> v;
-            graph.addEdge(u, v);
-            output << "Added edge: " << u << " - " << v << "\n";
+    if (argc > 3) {
+        string edges = argv[3];
+        stringstream ss(edges);
+        string edge;
+        while (getline(ss, edge, ';')) {
+            size_t pos = edge.find(',');
+            if (pos != string::npos) {
+                int u = stoi(edge.substr(0, pos));
+                int v = stoi(edge.substr(pos + 1));
+                graph.addEdge(u, v);
+            }
         }
-        else if (operation == "display") {
-            graph.display(output);
-        }
-        else if (operation == "DFS") {
-            int start;
-            input >> start;
-            graph.DFSTraversal(start, output);
-        }
-        else if (operation == "BFS") {
-            int start;
-            input >> start;
-            graph.BFSTraversal(start, output);
-        }
+    }
+    
+    if (operation == "display") {
+        cout << graph.display() << endl;
+    }
+    else if (operation == "DFS" && argc > 4) {
+        int start = stoi(argv[4]);
+        cout << graph.DFSTraversal(start) << endl;
+    }
+    else if (operation == "BFS" && argc > 4) {
+        int start = stoi(argv[4]);
+        cout << graph.BFSTraversal(start) << endl;
+    }
+    else {
+        cout << "{\"error\":\"Invalid operation\"}" << endl;
     }
     
     return 0;

@@ -194,7 +194,7 @@ void BFSTraversal(Graph* graph, int start) {
     
     while (front < rear) {
         int current = queue[front++];
-        printf("%d ", current);
+        printf("%d", current);
         
         for (int i = 0; i < graph->vertices; i++) {
             if (graph->adjMatrix[current][i] == 1 && !visited[i]) {

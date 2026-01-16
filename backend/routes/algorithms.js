@@ -89,6 +89,111 @@ router.get('/tree/postorder', (req, res) => {
   });
 });
 
+// Graph Data Structure Operations
+router.post('/graph/display', (req, res) => {
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const child = spawn(execPath, [vertices.toString(), 'display', edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        operation: 'display',
+        vertices: vertices,
+        edges: edges,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+router.post('/graph/dfs', (req, res) => {
+  const { vertices, edges, start } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const child = spawn(execPath, [vertices.toString(), 'DFS', edgesStr, start.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        operation: 'DFS',
+        vertices: vertices,
+        edges: edges,
+        start: start,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
+router.post('/graph/bfs', (req, res) => {
+  const { vertices, edges, start } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const child = spawn(execPath, [vertices.toString(), 'BFS', edgesStr, start.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        operation: 'BFS',
+        vertices: vertices,
+        edges: edges,
+        start: start,
+        ...result,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
+  });
+});
+
 // Graph Algorithms
 router.post('/graph/prims', (req, res) => {
   const { graph } = req.body;
