@@ -1,12 +1,22 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <stack>
 #include <sstream>
 using namespace std;
 
+void dfs(int u, vector<vector<int>>& adj, vector<bool>& visited, stack<int>& st) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v, adj, visited, st);
+        }
+    }
+    st.push(u);
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        cout << "{\"error\":\"Usage: ./Kahns <vertices> <edges>\"}" << endl;
+        cout << "{\"error\":\"Usage: ./TopologicalSort <vertices> <edges>\"}" << endl;
         return 1;
     }
     
@@ -14,7 +24,6 @@ int main(int argc, char* argv[]) {
     string edgesStr = argv[2];
     
     vector<vector<int>> adj(vertices);
-    vector<int> indegree(vertices, 0);
     
     // Parse edges: "0,1;0,2;1,3;2,3"
     stringstream ss(edgesStr);
@@ -30,34 +39,24 @@ int main(int argc, char* argv[]) {
         int v = stoi(val);
         
         adj[u].push_back(v);
-        indegree[v]++;
     }
     
-    queue<int> q;
+    vector<bool> visited(vertices, false);
+    stack<int> st;
+    
     for (int i = 0; i < vertices; i++) {
-        if (indegree[i] == 0) {
-            q.push(i);
+        if (!visited[i]) {
+            dfs(i, adj, visited, st);
         }
     }
     
-    vector<int> order;
-    while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        order.push_back(u);
-        
-        for (int v : adj[u]) {
-            indegree[v]--;
-            if (indegree[v] == 0) {
-                q.push(v);
-            }
-        }
-    }
-    
-    cout << "{\"algorithm\":\"Kahns\",\"order\":[";
-    for (size_t i = 0; i < order.size(); i++) {
-        if (i > 0) cout << ",";
-        cout << order[i];
+    cout << "{\"algorithm\":\"Topological Sort\",\"order\":[";
+    bool first = true;
+    while (!st.empty()) {
+        if (!first) cout << ",";
+        cout << st.top();
+        st.pop();
+        first = false;
     }
     cout << "]}" << endl;
     

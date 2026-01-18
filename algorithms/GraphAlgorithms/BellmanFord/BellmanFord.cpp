@@ -1,15 +1,16 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 #include <sstream>
 #include <climits>
 using namespace std;
 
-typedef pair<int, int> pii;
+struct Edge {
+    int u, v, weight;
+};
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        cout << "{\"error\":\"Usage: ./Dijkstra <vertices> <edges> <source>\"}" << endl;
+        cout << "{\"error\":\"Usage: ./BellmanFord <vertices> <edges> <source>\"}" << endl;
         return 1;
     }
     
@@ -17,9 +18,9 @@ int main(int argc, char* argv[]) {
     string edgesStr = argv[2];
     int source = stoi(argv[3]);
     
-    vector<vector<pii>> adj(vertices);
+    vector<Edge> edges;
     
-    // Parse edges: "0,1,4;0,2,1;1,2,2;1,3,5;2,3,8"
+    // Parse edges: "0,1,4;0,2,1;1,2,2;1,3,5"
     stringstream ss(edgesStr);
     string edge;
     while (getline(ss, edge, ';')) {
@@ -35,33 +36,31 @@ int main(int argc, char* argv[]) {
         getline(edgeSS, val, ',');
         int w = stoi(val);
         
-        adj[u].push_back({v, w});
-        adj[v].push_back({u, w});
+        edges.push_back({u, v, w});
     }
     
     vector<int> dist(vertices, INT_MAX);
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    
     dist[source] = 0;
-    pq.push({0, source});
     
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
-        
-        for (auto& edge : adj[u]) {
-            int v = edge.first;
-            int weight = edge.second;
-            
-            if (dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
-                pq.push({dist[v], v});
+    for (int i = 0; i < vertices - 1; i++) {
+        for (auto& e : edges) {
+            if (dist[e.u] != INT_MAX && dist[e.u] + e.weight < dist[e.v]) {
+                dist[e.v] = dist[e.u] + e.weight;
             }
         }
     }
     
-    // Output JSON
-    cout << "{\"algorithm\":\"Dijkstra\",\"source\":" << source << ",\"distances\":[";
+    bool hasNegativeCycle = false;
+    for (auto& e : edges) {
+        if (dist[e.u] != INT_MAX && dist[e.u] + e.weight < dist[e.v]) {
+            hasNegativeCycle = true;
+            break;
+        }
+    }
+    
+    cout << "{\"algorithm\":\"Bellman-Ford\",\"source\":" << source 
+         << ",\"hasNegativeCycle\":" << (hasNegativeCycle ? "true" : "false")
+         << ",\"distances\":[";
     for (int i = 0; i < vertices; i++) {
         if (i > 0) cout << ",";
         if (dist[i] == INT_MAX) cout << "null";

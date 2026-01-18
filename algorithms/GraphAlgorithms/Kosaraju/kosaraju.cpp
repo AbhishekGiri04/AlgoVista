@@ -1,87 +1,80 @@
 #include <iostream>
 #include <vector>
 #include <stack>
-#include <fstream>
+#include <sstream>
 using namespace std;
 
-void fillOrder(int v, vector<vector<int>>& adj, vector<bool>& visited, stack<int>& Stack) {
-    visited[v] = true;
-    
-    for (int u : adj[v]) {
-        if (!visited[u]) {
-            fillOrder(u, adj, visited, Stack);
+void dfs1(int u, vector<vector<int>>& adj, vector<bool>& visited, stack<int>& st) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs1(v, adj, visited, st);
         }
     }
-    
-    Stack.push(v);
+    st.push(u);
 }
 
-void DFSUtil(int v, vector<vector<int>>& adj, vector<bool>& visited, ofstream& output) {
-    visited[v] = true;
-    output << v << " ";
-    
-    for (int u : adj[v]) {
-        if (!visited[u]) {
-            DFSUtil(u, adj, visited, output);
+void dfs2(int u, vector<vector<int>>& adj, vector<bool>& visited, vector<int>& component) {
+    visited[u] = true;
+    component.push_back(u);
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs2(v, adj, visited, component);
         }
     }
 }
 
-vector<vector<int>> getTranspose(vector<vector<int>>& adj, int V) {
-    vector<vector<int>> transpose(V);
-    for (int v = 0; v < V; v++) {
-        for (int u : adj[v]) {
-            transpose[u].push_back(v);
-        }
+int main(int argc, char* argv[]) {
+    if (argc < 3) {
+        cout << "{\"error\":\"Usage: ./Kosaraju <vertices> <edges>\"}" << endl;
+        return 1;
     }
-    return transpose;
-}
-
-void kosaraju(vector<vector<int>>& adj, int V, ofstream& output) {
-    stack<int> Stack;
-    vector<bool> visited(V, false);
     
-    for (int i = 0; i < V; i++) {
+    int vertices = stoi(argv[1]);
+    string edgesStr = argv[2];
+    
+    vector<vector<int>> adj(vertices), radj(vertices);
+    
+    // Parse edges: "0,1;1,2;2,0;1,3;3,4"
+    stringstream ss(edgesStr);
+    string edge;
+    while (getline(ss, edge, ';')) {
+        stringstream edgeSS(edge);
+        string val;
+        
+        getline(edgeSS, val, ',');
+        int u = stoi(val);
+        
+        getline(edgeSS, val, ',');
+        int v = stoi(val);
+        
+        adj[u].push_back(v);
+        radj[v].push_back(u);
+    }
+    
+    vector<bool> visited(vertices, false);
+    stack<int> st;
+    
+    for (int i = 0; i < vertices; i++) {
         if (!visited[i]) {
-            fillOrder(i, adj, visited, Stack);
+            dfs1(i, adj, visited, st);
         }
     }
-    
-    vector<vector<int>> transpose = getTranspose(adj, V);
     
     fill(visited.begin(), visited.end(), false);
+    int sccCount = 0;
     
-    output << "Strongly Connected Components:\n";
-    int componentCount = 0;
-    
-    while (!Stack.empty()) {
-        int v = Stack.top();
-        Stack.pop();
-        
-        if (!visited[v]) {
-            output << "Component " << ++componentCount << ": ";
-            DFSUtil(v, transpose, visited, output);
-            output << "\n";
+    while (!st.empty()) {
+        int u = st.top();
+        st.pop();
+        if (!visited[u]) {
+            vector<int> component;
+            dfs2(u, radj, visited, component);
+            sccCount++;
         }
     }
-}
-
-int main() {
-    ifstream input("input.txt");
-    ofstream output("output.txt");
     
-    int V, E;
-    input >> V >> E;
-    
-    vector<vector<int>> adj(V);
-    
-    for (int i = 0; i < E; i++) {
-        int u, v;
-        input >> u >> v;
-        adj[u].push_back(v);
-    }
-    
-    kosaraju(adj, V, output);
+    cout << "{\"algorithm\":\"Kosaraju\",\"sccCount\":" << sccCount << "}" << endl;
     
     return 0;
 }

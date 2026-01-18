@@ -7,109 +7,63 @@ const DepthFirstSearchCode = () => {
 
   const codeExamples = {
     cpp: `/**
- * DepthFirst Search Algorithm - C++ Implementation
- * Network of connected nodes using adjacency list
+ * Depth First Search (DFS) Algorithm - C++ Implementation
+ * Graph traversal algorithm that explores depth-wise
  */
 
 #include <iostream>
 #include <vector>
-#include <list>
-#include <queue>
+#include <sstream>
+#include <string>
 using namespace std;
 
-class Graph {
-private:
-    int vertices;
-    vector<list<int>> adjList;
+void dfsUtil(vector<vector<int>>& adj, int v, vector<bool>& visited, vector<int>& path) {
+    visited[v] = true;
+    path.push_back(v);
     
-public:
-    Graph(int v) : vertices(v) {
-        adjList.resize(v);
-    }
-    
-    void addEdge(int src, int dest) {
-        adjList[src].push_back(dest);
-        adjList[dest].push_back(src); // Undirected graph
-        cout << "Added edge: " << src << " - " << dest << endl;
-    }
-    
-    void removeEdge(int src, int dest) {
-        adjList[src].remove(dest);
-        adjList[dest].remove(src);
-        cout << "Removed edge: " << src << " - " << dest << endl;
-    }
-    
-    void display() {
-        cout << "Graph adjacency list:" << endl;
-        for (int i = 0; i < vertices; i++) {
-            cout << i << ": ";
-            for (int neighbor : adjList[i]) {
-                cout << neighbor << " ";
-            }
-            cout << endl;
+    for (int u : adj[v]) {
+        if (!visited[u]) {
+            dfsUtil(adj, u, visited, path);
         }
     }
-    
-    void DFS(int start, vector<bool>& visited) {
-        visited[start] = true;
-        cout << start << " ";
-        
-        for (int neighbor : adjList[start]) {
-            if (!visited[neighbor]) {
-                DFS(neighbor, visited);
-            }
-        }
-    }
-    
-    void DFSTraversal(int start) {
-        vector<bool> visited(vertices, false);
-        cout << "DFS from " << start << ": ";
-        DFS(start, visited);
-        cout << endl;
-    }
-    
-    void BFSTraversal(int start) {
-        vector<bool> visited(vertices, false);
-        queue<int> q;
-        
-        visited[start] = true;
-        q.push(start);
-        
-        cout << "BFS from " << start << ": ";
-        
-        while (!q.empty()) {
-            int current = q.front();
-            q.pop();
-            cout << current << " ";
-            
-            for (int neighbor : adjList[current]) {
-                if (!visited[neighbor]) {
-                    visited[neighbor] = true;
-                    q.push(neighbor);
-                }
-            }
-        }
-        cout << endl;
-    }
-};
+}
 
-int main() {
-    cout << "=== DepthFirst Search Algorithm ===" << endl;
-    Graph g(5);
+int main(int argc, char* argv[]) {
+    if (argc < 4) {
+        cout << "{\\"error\\":\\"Usage: ./DFS <vertices> <edges> <start>\\"}" << endl;
+        return 1;
+    }
     
-    g.addEdge(0, 1);
-    g.addEdge(0, 4);
-    g.addEdge(1, 2);
-    g.addEdge(1, 3);
-    g.addEdge(2, 3);
+    int vertices = stoi(argv[1]);
+    string edgesStr = argv[2];
+    int start = stoi(argv[3]);
     
-    g.display();
+    vector<vector<int>> adj(vertices);
     
-    g.removeEdge(1, 3);
-    g.display();
+    // Parse edges: "0,1;0,2;1,3"
+    stringstream ss(edgesStr);
+    string edge;
+    while (getline(ss, edge, ';')) {
+        size_t pos = edge.find(',');
+        if (pos != string::npos) {
+            int u = stoi(edge.substr(0, pos));
+            int v = stoi(edge.substr(pos + 1));
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+    }
     
-    g.DFSTraversal(0);
-    g.BFSTraversal(0);
+    vector<bool> visited(vertices, false);
+    vector<int> path;
+    dfsUtil(adj, start, visited, path);
+    
+    // Output JSON
+    cout << "{\\"algorithm\\":\\"DFS\\",\\"start\\":" << start << ",\\"path\\":[";
+    for (size_t i = 0; i < path.size(); i++) {
+        if (i > 0) cout << ",";
+        cout << path[i];
+    }
+    cout << "]}" << endl;
     
     return 0;
 }`,
@@ -144,17 +98,17 @@ Graph* createGraph(int vertices) {
 void addEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 1;
     graph->adjMatrix[dest][src] = 1; // Undirected graph
-    printf("Added edge: %d - %d\n", src, dest);
+    printf("Added edge: %d - %d", src, dest);
 }
 
 void removeEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 0;
     graph->adjMatrix[dest][src] = 0;
-    printf("Removed edge: %d - %d\n", src, dest);
+    printf("Removed edge: %d - %d", src, dest);
 }
 
 void display(Graph* graph) {
-    printf("Graph adjacency list:\n");
+    printf("Graph adjacency list:");
     for (int i = 0; i < graph->vertices; i++) {
         printf("%d: ", i);
         for (int j = 0; j < graph->vertices; j++) {
@@ -162,7 +116,6 @@ void display(Graph* graph) {
                 printf("%d ", j);
             }
         }
-        printf("\n");
     }
 }
 
@@ -181,7 +134,6 @@ void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
     printf("DFS from %d: ", start);
     DFS(graph, start, visited);
-    printf("\n");
 }
 
 void BFSTraversal(Graph* graph, int start) {
@@ -205,11 +157,10 @@ void BFSTraversal(Graph* graph, int start) {
             }
         }
     }
-    printf("\n");
 }
 
 int main() {
-    printf("=== DepthFirst Search Algorithm ===\n");
+    printf("=== DepthFirst Search Algorithm ===");
     Graph* g = createGraph(5);
     
     addEdge(g, 0, 1);

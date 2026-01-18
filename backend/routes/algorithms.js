@@ -196,66 +196,293 @@ router.post('/graph/bfs', (req, res) => {
 
 // Graph Algorithms
 router.post('/graph/prims', (req, res) => {
-  const { graph } = req.body;
-  runCpp('Graph/Prims/prims_exec', JSON.stringify(graph), (result) => {
-    res.json(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to},${e.weight}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Prims/Prims');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/graph/kruskal', (req, res) => {
-  const { graph } = req.body;
-  runCpp('Graph/Kruskal/kruskal_exec', JSON.stringify(graph), (result) => {
-    res.json(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to},${e.weight}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kruskal/Kruskal');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/graph/dijkstra', (req, res) => {
-  const { graph, source } = req.body;
-  runCpp('Graph/Dijkstra/dijkstra_exec', `${JSON.stringify(graph)} ${source}`, (result) => {
-    res.json(result);
+  const { vertices, edges, source } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to},${e.weight}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Dijkstra/Dijkstra');
+  const child = spawn(execPath, [vertices.toString(), edgesStr, source.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 // Additional Graph Algorithms
 router.post('/algorithms/dfs', (req, res) => {
-  runCpp('GraphAlgorithms/DFS/dfs_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges, start } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/DFS/DFS');
+  const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        ...result,
+        vertices: vertices,
+        edges: edges,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/bfs', (req, res) => {
-  runCpp('GraphAlgorithms/BFS/bfs_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges, start } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/BFS/BFS');
+  const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json({
+        ...result,
+        vertices: vertices,
+        edges: edges,
+        success: true
+      });
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/bellmanford', (req, res) => {
-  runCpp('GraphAlgorithms/BellmanFord/bellman_ford_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges, start } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to},${e.weight}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/BellmanFord/BellmanFord');
+  const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/floydwarshall', (req, res) => {
-  runCpp('GraphAlgorithms/FloydWarshall/floyd_warshall_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to},${e.weight}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/FloydWarshall/FloydWarshall');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/topologicalsort', (req, res) => {
-  runCpp('GraphAlgorithms/TopologicalSort/topological_sort_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/TopologicalSort/TopologicalSort');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/kahns', (req, res) => {
-  runCpp('GraphAlgorithms/Kahns/kahns_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kahns/Kahns');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
 router.post('/algorithms/kosaraju', (req, res) => {
-  runCpp('GraphAlgorithms/Kosaraju/kosaraju_exec', '', (result) => {
-    res.send(result);
+  const { vertices, edges } = req.body;
+  const edgesStr = edges.map(e => `${e.from},${e.to}`).join(';');
+  const { spawn } = require('child_process');
+  const path = require('path');
+  
+  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kosaraju/Kosaraju');
+  const child = spawn(execPath, [vertices.toString(), edgesStr]);
+  
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+  
+  child.on('close', (code) => {
+    try {
+      const result = JSON.parse(output.trim());
+      res.json(result);
+    } catch (e) {
+      res.json({ error: 'Failed to parse result', raw: output });
+    }
+  });
+  
+  child.on('error', (err) => {
+    res.json({ error: 'Execution failed', message: err.message });
   });
 });
 
@@ -1443,27 +1670,23 @@ router.post('/binarysearch', (req, res) => {
 // Naive String Matching
 router.post('/naivestring', (req, res) => {
   const { text, pattern } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/NaiveString/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/NaiveString/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/NaiveString/naive_string_exec');
+  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/NaiveString/NaiveString');
+  const child = spawn(execPath, [text, pattern]);
   
-  fs.writeFileSync(inputPath, `${text}\n${pattern}`);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1475,27 +1698,23 @@ router.post('/naivestring', (req, res) => {
 // KMP String Matching
 router.post('/kmp', (req, res) => {
   const { text, pattern } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/KMP/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/KMP/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/KMP/kmp_exec');
+  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/KMP/KMP');
+  const child = spawn(execPath, [text, pattern]);
   
-  fs.writeFileSync(inputPath, `${text}\n${pattern}`);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1507,27 +1726,23 @@ router.post('/kmp', (req, res) => {
 // Rabin-Karp String Matching
 router.post('/rabinkarp', (req, res) => {
   const { text, pattern } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/RabinKarp/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/StringAlgorithms/RabinKarp/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/RabinKarp/rabin_karp_exec');
+  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/RabinKarp/RabinKarp');
+  const child = spawn(execPath, [text, pattern]);
   
-  fs.writeFileSync(inputPath, `${text}\n${pattern}`);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1539,32 +1754,29 @@ router.post('/rabinkarp', (req, res) => {
 // TSP (Travelling Salesman Problem)
 router.post('/tsp', (req, res) => {
   const { distanceMatrix } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/BranchAndBound/TSP/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/BranchAndBound/TSP/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/TSP/tsp_exec');
-  
-  let inputData = `${distanceMatrix.length}\n`;
+  // Format: "4;0,10,15,20;10,0,35,25;15,35,0,30;20,25,30,0"
+  let matrixStr = `${distanceMatrix.length}`;
   for (let i = 0; i < distanceMatrix.length; i++) {
-    inputData += distanceMatrix[i].join(' ') + '\n';
+    matrixStr += `;${distanceMatrix[i].join(',')}`;
   }
   
-  fs.writeFileSync(inputPath, inputData);
+  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/TSP/TSP');
+  const child = spawn(execPath, [matrixStr]);
   
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1576,32 +1788,29 @@ router.post('/tsp', (req, res) => {
 // Job Scheduling
 router.post('/jobscheduling', (req, res) => {
   const { jobs } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/BranchAndBound/JobScheduling/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/BranchAndBound/JobScheduling/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/JobScheduling/job_scheduling_exec');
-  
-  let inputData = `${jobs.length}\n`;
+  // Format: "5;A,2,100;B,1,19;C,2,27;D,1,25;E,3,15"
+  let jobsStr = `${jobs.length}`;
   for (const job of jobs) {
-    inputData += `${job.id} ${job.deadline} ${job.profit}\n`;
+    jobsStr += `;${job.id},${job.deadline},${job.profit}`;
   }
   
-  fs.writeFileSync(inputPath, inputData);
+  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/JobScheduling/JobScheduling');
+  const child = spawn(execPath, [jobsStr]);
   
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1613,27 +1822,23 @@ router.post('/jobscheduling', (req, res) => {
 // LCS (Longest Common Subsequence)
 router.post('/lcs', (req, res) => {
   const { stringX, stringY } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/LCS/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/LCS/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/LCS/lcs_exec');
+  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/LCS/LCS');
+  const child = spawn(execPath, [stringX, stringY]);
   
-  fs.writeFileSync(inputPath, `${stringX}\n${stringY}`);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1645,30 +1850,25 @@ router.post('/lcs', (req, res) => {
 // Matrix Chain Multiplication
 router.post('/matrixchain', (req, res) => {
   const { dimensions } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/MatrixChainMultiplication/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/MatrixChainMultiplication/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/MatrixChainMultiplication/matrix_chain_exec');
+  const dimsStr = dimensions.join(',');
   
-  let inputData = `${dimensions.length - 1}\n`;
-  inputData += dimensions.join(' ');
+  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/MatrixChainMultiplication/MatrixChainMultiplication');
+  const child = spawn(execPath, [dimsStr]);
   
-  fs.writeFileSync(inputPath, inputData);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1680,32 +1880,29 @@ router.post('/matrixchain', (req, res) => {
 // 0/1 Knapsack
 router.post('/knapsack01', (req, res) => {
   const { items, capacity } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/Knapsack01/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/DynamicProgramming/Knapsack01/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/Knapsack01/knapsack_01_exec');
-  
-  let inputData = `${items.length} ${capacity}\n`;
+  // Format: "4;60,10;100,20;120,30;80,15"
+  let itemsStr = `${items.length}`;
   for (const item of items) {
-    inputData += `${item.value} ${item.weight}\n`;
+    itemsStr += `;${item.value},${item.weight}`;
   }
   
-  fs.writeFileSync(inputPath, inputData);
+  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/Knapsack01/Knapsack01');
+  const child = spawn(execPath, [capacity.toString(), itemsStr]);
   
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1717,27 +1914,23 @@ router.post('/knapsack01', (req, res) => {
 // Huffman Coding
 router.post('/huffman', (req, res) => {
   const { text } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/HuffmanCoding/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/HuffmanCoding/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/HuffmanCoding/huffman_coding_exec');
+  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/HuffmanCoding/HuffmanCoding');
+  const child = spawn(execPath, [text]);
   
-  fs.writeFileSync(inputPath, text);
-  
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      const result = JSON.parse(output);
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1749,41 +1942,29 @@ router.post('/huffman', (req, res) => {
 // Activity Selection
 router.post('/activityselection', (req, res) => {
   const { activities } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/ActivitySelection/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/ActivitySelection/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/ActivitySelection/activity_selection_exec');
-  
-  let inputData = `${activities.length}\n`;
+  // Format: "6;1,3;2,5;0,6;5,7;8,9;5,9"
+  let activitiesStr = `${activities.length}`;
   for (const activity of activities) {
-    inputData += `${activity.start} ${activity.finish}\n`;
+    activitiesStr += `;${activity.start},${activity.finish}`;
   }
   
-  fs.writeFileSync(inputPath, inputData);
+  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/ActivitySelection/ActivitySelection');
+  const child = spawn(execPath, [activitiesStr]);
   
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      
-      // Parse the output and create JSON response
-      const lines = output.trim().split('\n');
-      const result = {
-        algorithm: 'Activity Selection',
-        input: activities,
-        output: output,
-        success: true
-      };
-      
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
@@ -1795,40 +1976,29 @@ router.post('/activityselection', (req, res) => {
 // Fractional Knapsack
 router.post('/fractionalknapsack', (req, res) => {
   const { items, capacity } = req.body;
-  const fs = require('fs');
-  const path = require('path');
   const { spawn } = require('child_process');
+  const path = require('path');
   
-  // Write input to file
-  const inputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/FractionalKnapsack/input.txt');
-  const outputPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/FractionalKnapsack/output.txt');
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/FractionalKnapsack/fractional_knapsack_exec');
-  
-  let inputData = `${items.length} ${capacity}\n`;
+  // Format: "3;60,10;100,20;120,30"
+  let itemsStr = `${items.length}`;
   for (const item of items) {
-    inputData += `${item.value} ${item.weight}\n`;
+    itemsStr += `;${item.value},${item.weight}`;
   }
   
-  fs.writeFileSync(inputPath, inputData);
+  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/FractionalKnapsack/FractionalKnapsack');
+  const child = spawn(execPath, [capacity.toString(), itemsStr]);
   
-  // Execute C++ program
-  const child = spawn(execPath);
+  let output = '';
+  child.stdout.on('data', (data) => {
+    output += data.toString();
+  });
   
   child.on('close', (code) => {
     try {
-      const output = fs.readFileSync(outputPath, 'utf8');
-      
-      // Parse the output and create JSON response
-      const result = {
-        algorithm: 'Fractional Knapsack',
-        input: { items, capacity },
-        output: output,
-        success: true
-      };
-      
+      const result = JSON.parse(output.trim());
       res.json(result);
     } catch (e) {
-      res.json({ error: 'Failed to parse result', message: e.message });
+      res.json({ error: 'Failed to parse result', raw: output });
     }
   });
   
