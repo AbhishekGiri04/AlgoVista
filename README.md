@@ -197,22 +197,17 @@ AlgoVista/
 │   ├── 📂 public/
 │   │   └── 📄 index.html                      # HTML template
 │   ├── 📂 src/
-│   │   ├── 📂 components/                     # UI Components
-│   │   │   ├── 📄 AdvancedAnimations.js       # Animations
-│   │   │   ├── 📄 CodeBlock.js                # Code display
-│   │   │   ├── 📄 EnhancedAlgorithmVisualizer.js # Visualizer
-│   │   │   └── 📄 StackVisualizer.js          # Stack viz
-│   │   ├── 📂 data/
-│   │   │   └── 📄 algorithmInfo.js            # Metadata
-│   │   ├── 📂 pages/                          # 100+ Pages
+│   │   ├── 📂 components/                     # UI Components (3 files)
+│   │   │   ├── 📄 AdvancedAnimations.js       # Framer Motion animations
+│   │   │   ├── 📄 CodeBlock.js                # Syntax-highlighted code display
+│   │   │   └── 📄 syntax-highlighting.css     # Code styling
+│   │   ├── 📂 pages/                          # 104 Pages
 │   │   │   ├── 📄 Home.js                     # Landing page
 │   │   │   ├── 📄 About.js                    # About page
-│   │   │   ├── 📄 Visualizer.js               # Dashboard
+│   │   │   ├── 📄 Visualizer.js               # Main dashboard
 │   │   │   ├── 📄 SortingAlgorithms.js        # Category page
-│   │   │   ├── 📄 BubbleSortVisualize.js      # Visualization
-│   │   │   └── 📄 [90+ Algorithm Pages]       # Algorithm pages
-│   │   ├── 📂 utils/
-│   │   │   └── 📄 helpers.js                  # Utilities
+│   │   │   ├── 📄 BubbleSortVisualize.js      # Visualization page
+│   │   │   └── 📄 [98+ Algorithm Pages]       # Visualize & Code pages
 │   │   ├── 📄 App.js                          # Root component
 │   │   ├── 📄 index.js                        # Entry point
 │   │   └── 📄 LoadingPage.js                  # Loading screen
