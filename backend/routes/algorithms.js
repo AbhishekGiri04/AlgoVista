@@ -96,7 +96,7 @@ router.post('/graph/display', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Graph/Graph');
   const child = spawn(execPath, [vertices.toString(), 'display', edgesStr]);
   
   let output = '';
@@ -130,7 +130,7 @@ router.post('/graph/dfs', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Graph/Graph');
   const child = spawn(execPath, [vertices.toString(), 'DFS', edgesStr, start.toString()]);
   
   let output = '';
@@ -165,7 +165,7 @@ router.post('/graph/bfs', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Graph/Graph');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Graph/Graph');
   const child = spawn(execPath, [vertices.toString(), 'BFS', edgesStr, start.toString()]);
   
   let output = '';
@@ -201,7 +201,7 @@ router.post('/graph/prims', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Prims/Prims');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/Prims/Prims');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -229,7 +229,7 @@ router.post('/graph/kruskal', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kruskal/Kruskal');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/Kruskal/Kruskal');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -257,7 +257,7 @@ router.post('/graph/dijkstra', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Dijkstra/Dijkstra');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/Dijkstra/Dijkstra');
   const child = spawn(execPath, [vertices.toString(), edgesStr, source.toString()]);
   
   let output = '';
@@ -286,7 +286,7 @@ router.post('/algorithms/dfs', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/DFS/DFS');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/DFS/DFS');
   const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
   
   let output = '';
@@ -319,7 +319,7 @@ router.post('/algorithms/bfs', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/BFS/BFS');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/BFS/BFS');
   const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
   
   let output = '';
@@ -352,7 +352,7 @@ router.post('/algorithms/bellmanford', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/BellmanFord/BellmanFord');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/BellmanFord/BellmanFord');
   const child = spawn(execPath, [vertices.toString(), edgesStr, start.toString()]);
   
   let output = '';
@@ -380,7 +380,7 @@ router.post('/algorithms/floydwarshall', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/FloydWarshall/FloydWarshall');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/FloydWarshall/FloydWarshall');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -408,7 +408,7 @@ router.post('/algorithms/topologicalsort', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/TopologicalSort/TopologicalSort');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/TopologicalSort/TopologicalSort');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -436,7 +436,7 @@ router.post('/algorithms/kahns', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kahns/Kahns');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/Kahns/Kahns');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -464,7 +464,7 @@ router.post('/algorithms/kosaraju', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GraphAlgorithms/Kosaraju/Kosaraju');
+  const execPath = path.join(__dirname, '../algorithms/GraphAlgorithms/Kosaraju/Kosaraju');
   const child = spawn(execPath, [vertices.toString(), edgesStr]);
   
   let output = '';
@@ -507,7 +507,7 @@ router.post('/bubblesort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/BubbleSort/BubbleSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/BubbleSort/BubbleSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -541,7 +541,7 @@ router.post('/selectionsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/SelectionSort/SelectionSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/SelectionSort/SelectionSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -575,7 +575,7 @@ router.post('/radixsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/RadixSort/RadixSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/RadixSort/RadixSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -609,7 +609,7 @@ router.post('/countingsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/CountingSort/CountingSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/CountingSort/CountingSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -643,7 +643,7 @@ router.post('/heapsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/HeapSort/HeapSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/HeapSort/HeapSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -677,7 +677,7 @@ router.post('/quicksort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/QuickSort/QuickSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/QuickSort/QuickSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -711,7 +711,7 @@ router.post('/mergesort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/MergeSort/MergeSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/MergeSort/MergeSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -745,7 +745,7 @@ router.post('/insertionsort/visualize', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Sorting/InsertionSort/InsertionSort');
+  const execPath = path.join(__dirname, '../algorithms/Sorting/InsertionSort/InsertionSort');
   const child = spawn(execPath, [arrayStr]);
   
   let output = '';
@@ -779,7 +779,7 @@ router.post('/linearsearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/LinearSearch/LinearSearch');
+  const execPath = path.join(__dirname, '../algorithms/Searching/LinearSearch/LinearSearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1366,7 +1366,7 @@ router.post('/tree/insert', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['insert', value.toString()]);
   
   let output = '';
@@ -1399,7 +1399,7 @@ router.post('/tree/search', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['search', value.toString()]);
   
   let output = '';
@@ -1451,7 +1451,7 @@ router.post('/tree/inorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['inorder']);
   
   let output = '';
@@ -1482,7 +1482,7 @@ router.post('/tree/preorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['preorder']);
   
   let output = '';
@@ -1513,7 +1513,7 @@ router.post('/tree/postorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['postorder']);
   
   let output = '';
@@ -1544,7 +1544,7 @@ router.post('/tree/levelorder', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DataStructures/Tree/Tree');
+  const execPath = path.join(__dirname, '../algorithms/DataStructures/Tree/Tree');
   const child = spawn(execPath, ['levelorder']);
   
   let output = '';
@@ -1597,7 +1597,7 @@ router.post('/exponentialsearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/ExponentialSearch/ExponentialSearch');
+  const execPath = path.join(__dirname, '../algorithms/Searching/ExponentialSearch/ExponentialSearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1623,7 +1623,7 @@ router.post('/jumpsearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/JumpSearch/JumpSearch');
+  const execPath = path.join(__dirname, '../algorithms/Searching/JumpSearch/JumpSearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1649,7 +1649,7 @@ router.post('/binarysearch', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/Searching/BinarySearch/BinarySearch');
+  const execPath = path.join(__dirname, '../algorithms/Searching/BinarySearch/BinarySearch');
   const child = spawn(execPath, [arrayStr, target.toString()]);
   
   let output = '';
@@ -1673,7 +1673,7 @@ router.post('/naivestring', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/NaiveString/NaiveString');
+  const execPath = path.join(__dirname, '../algorithms/StringAlgorithms/NaiveString/NaiveString');
   const child = spawn(execPath, [text, pattern]);
   
   let output = '';
@@ -1701,7 +1701,7 @@ router.post('/kmp', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/KMP/KMP');
+  const execPath = path.join(__dirname, '../algorithms/StringAlgorithms/KMP/KMP');
   const child = spawn(execPath, [text, pattern]);
   
   let output = '';
@@ -1729,7 +1729,7 @@ router.post('/rabinkarp', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/StringAlgorithms/RabinKarp/RabinKarp');
+  const execPath = path.join(__dirname, '../algorithms/StringAlgorithms/RabinKarp/RabinKarp');
   const child = spawn(execPath, [text, pattern]);
   
   let output = '';
@@ -1763,7 +1763,7 @@ router.post('/tsp', (req, res) => {
     matrixStr += `;${distanceMatrix[i].join(',')}`;
   }
   
-  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/TSP/TSP');
+  const execPath = path.join(__dirname, '../algorithms/BranchAndBound/TSP/TSP');
   const child = spawn(execPath, [matrixStr]);
   
   let output = '';
@@ -1797,7 +1797,7 @@ router.post('/jobscheduling', (req, res) => {
     jobsStr += `;${job.id},${job.deadline},${job.profit}`;
   }
   
-  const execPath = path.join(__dirname, '../../algorithms/BranchAndBound/JobScheduling/JobScheduling');
+  const execPath = path.join(__dirname, '../algorithms/BranchAndBound/JobScheduling/JobScheduling');
   const child = spawn(execPath, [jobsStr]);
   
   let output = '';
@@ -1825,7 +1825,7 @@ router.post('/lcs', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/LCS/LCS');
+  const execPath = path.join(__dirname, '../algorithms/DynamicProgramming/LCS/LCS');
   const child = spawn(execPath, [stringX, stringY]);
   
   let output = '';
@@ -1855,7 +1855,7 @@ router.post('/matrixchain', (req, res) => {
   
   const dimsStr = dimensions.join(',');
   
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/MatrixChainMultiplication/MatrixChainMultiplication');
+  const execPath = path.join(__dirname, '../algorithms/DynamicProgramming/MatrixChainMultiplication/MatrixChainMultiplication');
   const child = spawn(execPath, [dimsStr]);
   
   let output = '';
@@ -1889,7 +1889,7 @@ router.post('/knapsack01', (req, res) => {
     itemsStr += `;${item.value},${item.weight}`;
   }
   
-  const execPath = path.join(__dirname, '../../algorithms/DynamicProgramming/Knapsack01/Knapsack01');
+  const execPath = path.join(__dirname, '../algorithms/DynamicProgramming/Knapsack01/Knapsack01');
   const child = spawn(execPath, [capacity.toString(), itemsStr]);
   
   let output = '';
@@ -1917,7 +1917,7 @@ router.post('/huffman', (req, res) => {
   const { spawn } = require('child_process');
   const path = require('path');
   
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/HuffmanCoding/HuffmanCoding');
+  const execPath = path.join(__dirname, '../algorithms/GreedyAlgorithms/HuffmanCoding/HuffmanCoding');
   const child = spawn(execPath, [text]);
   
   let output = '';
@@ -1951,7 +1951,7 @@ router.post('/activityselection', (req, res) => {
     activitiesStr += `;${activity.start},${activity.finish}`;
   }
   
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/ActivitySelection/ActivitySelection');
+  const execPath = path.join(__dirname, '../algorithms/GreedyAlgorithms/ActivitySelection/ActivitySelection');
   const child = spawn(execPath, [activitiesStr]);
   
   let output = '';
@@ -1985,7 +1985,7 @@ router.post('/fractionalknapsack', (req, res) => {
     itemsStr += `;${item.value},${item.weight}`;
   }
   
-  const execPath = path.join(__dirname, '../../algorithms/GreedyAlgorithms/FractionalKnapsack/FractionalKnapsack');
+  const execPath = path.join(__dirname, '../algorithms/GreedyAlgorithms/FractionalKnapsack/FractionalKnapsack');
   const child = spawn(execPath, [capacity.toString(), itemsStr]);
   
   let output = '';

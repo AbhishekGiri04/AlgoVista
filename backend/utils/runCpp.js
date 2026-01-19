@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const path = require('path');
 
 function runCpp(executable, input = '', callback) {
-  const execPath = path.join(__dirname, '../../algorithms', executable);
+  const execPath = path.join(__dirname, '../algorithms', executable);
   const command = input ? `${execPath} ${input}` : execPath;
   
   exec(command, (error, stdout, stderr) => {
