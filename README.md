@@ -285,7 +285,7 @@ AlgoVista/
 
 ---
 
-## 🏗️ System Architecture
+## 🧱 System Architecture
 
 <div align="center">
 
