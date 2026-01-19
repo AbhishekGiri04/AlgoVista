@@ -59,133 +59,57 @@ Traditional DSA learning is broken. Students struggle with abstract concepts thr
 
 ```
 AlgoVista/
-├── 📂 algorithms/                              # C++ Algorithm Implementations
-│   ├── 📂 Sorting/                            # 8 Sorting Algorithms
-│   │   ├── 📂 BubbleSort/
-│   │   │   ├── 📄 BubbleSort.cpp              # Implementation
-│   │   │   └── 📄 BubbleSort                  # Executable
-│   │   ├── 📂 SelectionSort/
-│   │   │   ├── 📄 SelectionSort.cpp           # Implementation
-│   │   │   └── 📄 SelectionSort               # Executable
-│   │   ├── 📂 InsertionSort/
-│   │   │   ├── 📄 InsertionSort.cpp           # Implementation
-│   │   │   └── 📄 InsertionSort               # Executable
-│   │   ├── 📂 QuickSort/
-│   │   │   ├── 📄 QuickSort.cpp               # Implementation
-│   │   │   └── 📄 QuickSort                   # Executable
-│   │   ├── 📂 MergeSort/
-│   │   │   ├── 📄 MergeSort.cpp               # Implementation
-│   │   │   └── 📄 MergeSort                   # Executable
-│   │   ├── 📂 HeapSort/
-│   │   │   ├── 📄 HeapSort.cpp                # Implementation
-│   │   │   └── 📄 HeapSort                    # Executable
-│   │   ├── 📂 CountingSort/
-│   │   │   ├── 📄 CountingSort.cpp            # Implementation
-│   │   │   └── 📄 CountingSort                # Executable
-│   │   └── 📂 RadixSort/
-│   │       ├── 📄 RadixSort.cpp               # Implementation
-│   │       └── 📄 RadixSort                   # Executable
-│   ├── 📂 Searching/                          # 4 Searching Algorithms
-│   │   ├── 📂 LinearSearch/
-│   │   │   ├── 📄 LinearSearch.cpp            # Implementation
-│   │   │   └── 📄 LinearSearch                # Executable
-│   │   ├── 📂 BinarySearch/
-│   │   │   ├── 📄 BinarySearch.cpp            # Implementation
-│   │   │   └── 📄 BinarySearch                # Executable
-│   │   ├── 📂 JumpSearch/
-│   │   │   ├── 📄 JumpSearch.cpp              # Implementation
-│   │   │   └── 📄 JumpSearch                  # Executable
-│   │   └── 📂 ExponentialSearch/
-│   │       ├── 📄 ExponentialSearch.cpp       # Implementation
-│   │       └── 📄 ExponentialSearch           # Executable
-│   ├── 📂 GraphAlgorithms/                    # 10 Graph Algorithms
-│   │   ├── 📂 BFS/
-│   │   │   ├── 📄 BFS.cpp                     # Implementation
-│   │   │   └── 📄 BFS                         # Executable
-│   │   ├── 📂 DFS/
-│   │   │   ├── 📄 DFS.cpp                     # Implementation
-│   │   │   └── 📄 DFS                         # Executable
-│   │   ├── 📂 Dijkstra/
-│   │   │   ├── 📄 Dijkstra.cpp                # Implementation
-│   │   │   └── 📄 Dijkstra                    # Executable
-│   │   ├── 📂 BellmanFord/
-│   │   │   ├── 📄 BellmanFord.cpp             # Implementation
-│   │   │   └── 📄 BellmanFord                 # Executable
-│   │   ├── 📂 FloydWarshall/
-│   │   │   ├── 📄 FloydWarshall.cpp           # Implementation
-│   │   │   └── 📄 FloydWarshall               # Executable
-│   │   ├── 📂 Kruskal/
-│   │   │   ├── 📄 Kruskal.cpp                 # Implementation
-│   │   │   └── 📄 Kruskal                     # Executable
-│   │   ├── 📂 Prims/
-│   │   │   ├── 📄 Prims.cpp                   # Implementation
-│   │   │   └── 📄 Prims                       # Executable
-│   │   ├── 📂 TopologicalSort/
-│   │   │   ├── 📄 TopologicalSort.cpp         # Implementation
-│   │   │   └── 📄 TopologicalSort             # Executable
-│   │   ├── 📂 Kahns/
-│   │   │   ├── 📄 Kahns.cpp                   # Implementation
-│   │   │   └── 📄 Kahns                       # Executable
-│   │   └── 📂 Kosaraju/
-│   │       ├── 📄 Kosaraju.cpp                # Implementation
-│   │       └── 📄 Kosaraju                    # Executable
-│   ├── 📂 DataStructures/                     # 6 Data Structures
-│   │   ├── 📂 Array/
-│   │   │   ├── 📄 Array.cpp                   # Implementation
-│   │   │   └── 📄 Array                       # Executable
-│   │   ├── 📂 Stack/
-│   │   │   ├── 📄 Stack.cpp                   # Implementation
-│   │   │   └── 📄 Stack                       # Executable
-│   │   ├── 📂 Queue/
-│   │   │   ├── 📄 Queue.cpp                   # Implementation
-│   │   │   └── 📄 Queue                       # Executable
-│   │   ├── 📂 LinkedList/
-│   │   │   ├── 📄 LinkedList.cpp              # Implementation
-│   │   │   └── 📄 LinkedList                  # Executable
-│   │   ├── 📂 Tree/
-│   │   │   ├── 📄 Tree.cpp                    # Implementation
-│   │   │   └── 📄 Tree                        # Executable
-│   │   └── 📂 Graph/
-│   │       ├── 📄 Graph.cpp                   # Implementation
-│   │       └── 📄 Graph                       # Executable
-│   ├── 📂 DynamicProgramming/                 # 3 DP Algorithms
-│   │   ├── 📂 Knapsack01/
-│   │   │   ├── 📄 Knapsack01.cpp              # Implementation
-│   │   │   └── 📄 Knapsack01                  # Executable
-│   │   ├── 📂 LCS/
-│   │   │   ├── 📄 LCS.cpp                     # Implementation
-│   │   │   └── 📄 LCS                         # Executable
-│   │   └── 📂 MatrixChainMultiplication/
-│   │       ├── 📄 MatrixChainMultiplication.cpp # Implementation
-│   │       └── 📄 MatrixChainMultiplication   # Executable
-│   ├── 📂 GreedyAlgorithms/                   # 3 Greedy Algorithms
-│   │   ├── 📂 ActivitySelection/
-│   │   │   ├── 📄 ActivitySelection.cpp       # Implementation
-│   │   │   └── 📄 ActivitySelection           # Executable
-│   │   ├── 📂 FractionalKnapsack/
-│   │   │   ├── 📄 FractionalKnapsack.cpp      # Implementation
-│   │   │   └── 📄 FractionalKnapsack          # Executable
-│   │   └── 📂 HuffmanCoding/
-│   │       ├── 📄 HuffmanCoding.cpp           # Implementation
-│   │       └── 📄 HuffmanCoding               # Executable
-│   ├── 📂 StringAlgorithms/                   # 3 String Algorithms
-│   │   ├── 📂 KMP/
-│   │   │   ├── 📄 KMP.cpp                     # Implementation
-│   │   │   └── 📄 KMP                         # Executable
-│   │   ├── 📂 NaiveString/
-│   │   │   ├── 📄 NaiveString.cpp             # Implementation
-│   │   │   └── 📄 NaiveString                 # Executable
-│   │   └── 📂 RabinKarp/
-│   │       ├── 📄 RabinKarp.cpp               # Implementation
-│   │       └── 📄 RabinKarp                   # Executable
-│   └── 📂 BranchAndBound/                     # 2 B&B Algorithms
-│       ├── 📂 TSP/
-│       │   ├── 📄 TSP.cpp                     # Implementation
-│       │   └── 📄 TSP                         # Executable
-│       └── 📂 JobScheduling/
-│           ├── 📄 JobScheduling.cpp           # Implementation
-│           └── 📄 JobScheduling               # Executable
 ├── 📂 backend/                                 # Express.js Backend (Port 8000)
+│   ├── 📂 algorithms/                         # C++ Algorithm Implementations
+│   │   ├── 📂 Sorting/                        # 8 Sorting Algorithms
+│   │   │   ├── 📂 BubbleSort/
+│   │   │   │   ├── 📄 BubbleSort.cpp          # Implementation
+│   │   │   │   └── 📄 BubbleSort              # Executable
+│   │   │   ├── 📂 SelectionSort/
+│   │   │   ├── 📂 InsertionSort/
+│   │   │   ├── 📂 QuickSort/
+│   │   │   ├── 📂 MergeSort/
+│   │   │   ├── 📂 HeapSort/
+│   │   │   ├── 📂 CountingSort/
+│   │   │   └── 📂 RadixSort/
+│   │   ├── 📂 Searching/                      # 4 Searching Algorithms
+│   │   │   ├── 📂 LinearSearch/
+│   │   │   ├── 📂 BinarySearch/
+│   │   │   ├── 📂 JumpSearch/
+│   │   │   └── 📂 ExponentialSearch/
+│   │   ├── 📂 GraphAlgorithms/                # 10 Graph Algorithms
+│   │   │   ├── 📂 BFS/
+│   │   │   ├── 📂 DFS/
+│   │   │   ├── 📂 Dijkstra/
+│   │   │   ├── 📂 BellmanFord/
+│   │   │   ├── 📂 FloydWarshall/
+│   │   │   ├── 📂 Kruskal/
+│   │   │   ├── 📂 Prims/
+│   │   │   ├── 📂 TopologicalSort/
+│   │   │   ├── 📂 Kahns/
+│   │   │   └── 📂 Kosaraju/
+│   │   ├── 📂 DataStructures/                 # 6 Data Structures
+│   │   │   ├── 📂 Array/
+│   │   │   ├── 📂 Stack/
+│   │   │   ├── 📂 Queue/
+│   │   │   ├── 📂 LinkedList/
+│   │   │   ├── 📂 Tree/
+│   │   │   └── 📂 Graph/
+│   │   ├── 📂 DynamicProgramming/             # 3 DP Algorithms
+│   │   │   ├── 📂 Knapsack01/
+│   │   │   ├── 📂 LCS/
+│   │   │   └── 📂 MatrixChainMultiplication/
+│   │   ├── 📂 GreedyAlgorithms/               # 3 Greedy Algorithms
+│   │   │   ├── 📂 ActivitySelection/
+│   │   │   ├── 📂 FractionalKnapsack/
+│   │   │   └── 📂 HuffmanCoding/
+│   │   ├── 📂 StringAlgorithms/               # 3 String Algorithms
+│   │   │   ├── 📂 KMP/
+│   │   │   ├── 📂 NaiveString/
+│   │   │   └── 📂 RabinKarp/
+│   │   └── 📂 BranchAndBound/                 # 2 B&B Algorithms
+│   │       ├── 📂 TSP/
+│   │       └── 📂 JobScheduling/
 │   ├── 📂 routes/
 │   │   └── 📄 algorithms.js                   # API endpoints
 │   ├── 📂 utils/
