@@ -1,431 +1,644 @@
-<h1 align="center">🚀 ALGOVISTA — Next Gen DSA Platform</h1>
-
-<p align="center">
-  🎯 A production-ready learning platform that transforms <b>Data Structures and Algorithms</b> education through real-time C++ execution, interactive 3D visualizations, and comprehensive algorithm coverage.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/>
-  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white"/>
-  <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue"/>
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
-</p>
-<br>
-
----
-
-## 📖 Problem Statement
-Computer Science students and developers face significant challenges in understanding complex algorithms through traditional textbook learning, lack of visual comprehension for abstract data structures, difficulty connecting theoretical concepts with practical implementations, and limited interactive learning resources for DSA mastery.
-
-<br>
-
----
-
-## 💡 Our Solution
-ALGOVISTA is a full-stack interactive learning platform built to:
-
-- 📊 Visualize 50+ algorithms using real C++ implementations with step-by-step execution
-- 🎯 Provide interactive 3D animations with 95% student engagement improvement
-- 🌍 Deliver comprehensive algorithm coverage across multiple categories
-- 📈 Offer real-time code execution with <100ms response times
-- 💾 Export learning progress and algorithm implementations for practice
-<br>
-
----  
-
-## 🚀 Features
-
-✅  **Real-time C++ algorithm execution** with actual implementations, not simulations  
-✅  **Interactive 3D visualizations** with Framer Motion animations and transitions  
-✅  **Comprehensive algorithm coverage** across sorting, searching, graphs, and data structures  
-✅  **Step-by-step learning** with detailed explanations and color-coded feedback  
-✅  **Interactive code editor** with syntax highlighting and live execution  
-✅  **Production-ready architecture** with Express.js APIs and React frontend  
-✅  **Educational dashboard** with progress tracking and performance analytics
-
-<br>
-
----  
-
-## 🛠️ Tech Stack
-
 <div align="center">
 
-<table>
-<thead>
-<tr>
-<th>🖥️ Technology</th>
-<th>⚙️ Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/></td>
-<td>Modern frontend with component architecture</td>
-</tr>
-<tr>
-<td><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white"/></td>
-<td>JavaScript runtime for backend services</td>
-</tr>
-<tr>
-<td><img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge"/></td>
-<td>Web application framework for APIs</td>
-</tr>
-<tr>
-<td><img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white"/></td>
-<td>High-performance algorithm implementations</td>
-</tr>
-<tr>
-<td><img src="https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue"/></td>
-<td>Smooth animations and 3D visualizations</td>
-</tr>
-<tr>
-<td><img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/></td>
-<td>Utility-first CSS framework</td>
-</tr>
-</tbody>
-</table>
+# 🚀 ALGOVISTA — Next Generation DSA Learning Platform
+
+### *Transforming Algorithm Education Through Interactive Visualization*
+
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)](https://expressjs.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue)](https://www.framer.com/motion/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+[Live Demo](#) • [Documentation](#) • [Report Bug](https://github.com/AbhishekGiri04/AlgoVista/issues) • [Request Feature](https://github.com/AbhishekGiri04/AlgoVista/issues)
 
 </div>
 
-<br>
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Problem Statement](#-problem-statement)
+- [Solution](#-solution)
+- [Key Features](#-key-features)
+- [Architecture](#-architecture)
+- [Tech Stack](#️-tech-stack)
+- [Screenshots](#-screenshots)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [API Documentation](#-api-documentation)
+- [Project Structure](#-project-structure)
+- [Performance Metrics](#-performance-metrics)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
-## 📁 Project Directory Structure
+## 🎯 Overview
+
+**ALGOVISTA** is a production-ready, full-stack interactive learning platform designed to revolutionize Data Structures and Algorithms (DSA) education. Built with modern web technologies and powered by real-time C++ execution, it provides an immersive learning experience through 3D visualizations, step-by-step algorithm execution, and comprehensive code examples across multiple programming languages.
+
+### Why ALGOVISTA?
+
+- 🎓 **Educational Excellence**: Transform abstract concepts into visual, interactive experiences
+- ⚡ **Real-time Execution**: Actual C++ implementations, not simulations
+- 🌈 **Interactive Visualizations**: 3D animations with Framer Motion
+- 📚 **Comprehensive Coverage**: 50+ algorithms across 8 categories
+- 💻 **Multi-language Support**: Code examples in C++, Python, Java, and JavaScript
+- 🚀 **Production-Ready**: Scalable architecture with Express.js and React
+
+---
+
+## 🔍 Problem Statement
+
+Computer Science students and developers face significant challenges:
+
+- 📖 **Traditional Learning**: Textbook-based learning lacks visual comprehension
+- 🧩 **Abstract Concepts**: Difficulty understanding complex data structures
+- 🔌 **Theory-Practice Gap**: Limited connection between concepts and implementations
+- 📉 **Low Engagement**: Passive learning methods result in poor retention
+- 🎯 **Limited Resources**: Few interactive platforms for hands-on DSA practice
+
+---
+
+## 💡 Solution
+
+ALGOVISTA addresses these challenges through:
+
+### Core Capabilities
+
+| Feature | Description | Impact |
+|---------|-------------|--------|
+| **Real-time C++ Execution** | Live algorithm processing with 39+ implementations | Authentic learning experience |
+| **Interactive Visualizations** | Step-by-step animated representations | 95% engagement improvement |
+| **Multi-language Examples** | C++, Python, Java, JavaScript code samples | Comprehensive understanding |
+| **Performance Insights** | Time/space complexity analysis with metrics | Deep algorithmic knowledge |
+| **Code Editor** | Syntax highlighting and live execution | Hands-on practice |
+| **Progress Tracking** | Educational dashboard with analytics | Personalized learning paths |
+
+---
+
+## ✨ Key Features
+
+### 🎨 Interactive Visualizations
+- **3D Animations**: Smooth transitions with Framer Motion
+- **Step-by-step Execution**: Pause, play, and replay algorithm steps
+- **Color-coded Feedback**: Visual indicators for comparisons, swaps, and operations
+- **Responsive Design**: Seamless experience across all devices
+
+### ⚡ Real-time Algorithm Execution
+- **C++ Backend**: High-performance algorithm implementations
+- **Live Processing**: <100ms response times for instant feedback
+- **Input Customization**: Test algorithms with custom data sets
+- **Output Visualization**: JSON-formatted results with detailed metrics
+
+### 📚 Comprehensive Algorithm Coverage
+
+#### 8 Major Categories:
+1. **Sorting Algorithms** (8): Bubble, Selection, Insertion, Merge, Quick, Heap, Counting, Radix
+2. **Searching Algorithms** (4): Linear, Binary, Jump, Exponential
+3. **Graph Algorithms** (10): BFS, DFS, Dijkstra, Bellman-Ford, Floyd-Warshall, Kruskal, Prim's, Topological Sort, Kahn's, Kosaraju's
+4. **Data Structures** (6): Array, Stack, Queue, Linked List, Tree, Graph
+5. **Dynamic Programming** (3): 0/1 Knapsack, LCS, Matrix Chain Multiplication
+6. **Greedy Algorithms** (3): Huffman Coding, Activity Selection, Fractional Knapsack
+7. **String Algorithms** (3): Naive String, KMP, Rabin-Karp
+8. **Branch and Bound** (2): TSP, Job Scheduling
+
+### 💻 Code Learning Features
+- **Multi-language Support**: View implementations in 4 languages
+- **Syntax Highlighting**: Professional code presentation
+- **Copy to Clipboard**: Easy code sharing and practice
+- **Detailed Comments**: Line-by-line explanations
+- **Complexity Analysis**: Big-O notation for time and space
+
+---
+
+## 🏗️ Architecture
+
+### System Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         ALGOVISTA Platform                       │
+└─────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────┐         ┌──────────────────────┐
+│   Frontend Layer     │         │   Backend Layer      │
+│   (React + Vite)     │◄───────►│   (Node.js/Express)  │
+│                      │  HTTP   │                      │
+│  • React Components  │  REST   │  • API Routes        │
+│  • Framer Motion     │  API    │  • C++ Executor      │
+│  • Tailwind CSS      │         │  • JSON Responses    │
+│  • State Management  │         │  • Error Handling    │
+└──────────────────────┘         └──────────────────────┘
+         │                                  │
+         │                                  │
+         ▼                                  ▼
+┌──────────────────────┐         ┌──────────────────────┐
+│  Visualization Layer │         │  Algorithm Engine    │
+│                      │         │                      │
+│  • 3D Animations     │         │  • C++ Executables   │
+│  • Step Controls     │         │  • Child Process     │
+│  • Interactive UI    │         │  • File I/O          │
+│  • Real-time Updates │         │  • Data Processing   │
+└──────────────────────┘         └──────────────────────┘
+```
+
+### Component Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      React Application                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Pages      │  │  Components  │  │   Utils      │     │
+│  │              │  │              │  │              │     │
+│  │ • Home       │  │ • CodeBlock  │  │ • API calls  │     │
+│  │ • Visualizer │  │ • Animations │  │ • Helpers    │     │
+│  │ • About      │  │ • Controls   │  │ • Constants  │     │
+│  │ • Code Views │  │ • Cards      │  │ • Validators │     │
+│  └──────────────┘  └──────────────┘  └──────────────┘     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Express.js Backend                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Routes     │  │  Middleware  │  │   Utils      │     │
+│  │              │  │              │  │              │     │
+│  │ • /api/sort  │  │ • CORS       │  │ • runCpp.js  │     │
+│  │ • /api/graph │  │ • Body Parse │  │ • Validators │     │
+│  │ • /api/ds    │  │ • Error Hand │  │ • Formatters │     │
+│  └──────────────┘  └──────────────┘  └──────────────┘     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  C++ Algorithm Layer                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  • Compiled Executables (50+ algorithms)                    │
+│  • Command-line Interface                                   │
+│  • JSON Output Format                                       │
+│  • Error Handling & Validation                              │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow
+
+```
+User Input → React Component → API Request → Express Route
+     ↓
+Backend Validation → C++ Execution → Process Output
+     ↓
+JSON Response → State Update → UI Re-render → Visualization
+```
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **React** | UI Framework | 18.2+ |
+| **Framer Motion** | Animations | 10.0+ |
+| **Tailwind CSS** | Styling | 3.3+ |
+| **React Router** | Navigation | 6.0+ |
+| **Axios** | HTTP Client | 1.4+ |
+
+### Backend
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **Node.js** | Runtime | 16.0+ |
+| **Express.js** | Web Framework | 4.18+ |
+| **C++** | Algorithm Engine | C++17 |
+| **Child Process** | C++ Execution | Native |
+
+### Development Tools
+- **Vite**: Build tool and dev server
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Git**: Version control
+
+---
+
+## 📸 Screenshots
+
+### 1. Loading Page
+*Initial loading screen with animated logo and progress indicator*
+
+![Loading Page](docs/loading_page.png)
+
+### 2. Home Page
+*Landing page with platform overview and call-to-action buttons*
+
+![Home Page](docs/Home_Page.png)
+
+### 3. Visualizer Dashboard
+*Main dashboard showing all algorithm categories*
+
+![Visualizer Dashboard](docs/Dashboard.png)
+
+### 4. DSA Categories
+*Grid view of 8 algorithm categories with descriptions*
+
+![DSA Categories](docs/Visualize_Categories.png)
+
+### 5. Algorithm Section
+*Sorting algorithms section with individual algorithm cards*
+
+![Algorithm Section](docs/algorithm_section.png)
+
+### 6. Linked List Visualization
+*Interactive linked list operations with step-by-step animation*
+
+![Linked List Visual](docs/linkedlist_visual.png)
+
+### 7. Code Section
+*Multi-language code viewer with syntax highlighting*
+
+![Code Section](docs/Linear_Search_Code.png)
+
+### 8. About Section
+*Platform information, mission, and technology stack*
+
+![About Section](docs/About_Page.png)
+
+---
+
+## 🚀 Installation
+
+### Prerequisites
+
+Ensure you have the following installed:
+- **Node.js** (v16.0 or higher)
+- **npm** or **yarn**
+- **C++ Compiler** (g++ or clang++)
+- **Git**
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/AbhishekGiri04/AlgoVista.git
+cd AlgoVista
+```
+
+### Step 2: Install Dependencies
+
+#### Backend Setup
+```bash
+cd backend
+npm install
+```
+
+#### Frontend Setup
+```bash
+cd ../frontend
+npm install
+```
+
+### Step 3: Compile C++ Algorithms
+
+```bash
+# Navigate to algorithms directory
+cd ../algorithms
+
+# Compile all sorting algorithms
+cd Sorting
+for dir in */; do
+  cd "$dir"
+  g++ -o "${dir%/}" *.cpp
+  cd ..
+done
+
+# Compile all searching algorithms
+cd ../Searching
+for dir in */; do
+  cd "$dir"
+  g++ -o "${dir%/}" *.cpp
+  cd ..
+done
+
+# Compile graph algorithms
+cd ../GraphAlgorithms
+for dir in */; do
+  cd "$dir"
+  g++ -o "${dir%/}" *.cpp
+  cd ..
+done
+
+# Compile data structures
+cd ../DataStructures
+for dir in */; do
+  cd "$dir"
+  g++ -o "${dir%/}" *.cpp
+  cd ..
+done
+```
+
+### Step 4: Start the Application
+
+#### Terminal 1 - Backend Server
+```bash
+cd backend
+npm start
+# Server runs on http://localhost:8000
+```
+
+#### Terminal 2 - Frontend Development Server
+```bash
+cd frontend
+npm start
+# Application runs on http://localhost:3000
+```
+
+### Step 5: Access the Platform
+
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
+
+---
+
+## 📖 Usage
+
+### Running Algorithms
+
+1. **Navigate to Visualizer**: Click "Launch Platform" on home page
+2. **Select Category**: Choose from 8 algorithm categories
+3. **Pick Algorithm**: Select specific algorithm to visualize
+4. **Input Data**: Enter custom input or use default values
+5. **Visualize**: Watch step-by-step execution with animations
+6. **View Code**: Switch to code tab for implementation details
+
+### Example: Bubble Sort
+
+```javascript
+// Frontend API call
+const response = await axios.post('http://localhost:8000/api/bubblesort/visualize', {
+  array: [64, 34, 25, 12, 22, 11, 90]
+});
+
+// Response format
+{
+  "algorithm": "BubbleSort",
+  "steps": [...],
+  "comparisons": 21,
+  "swaps": 15,
+  "timeComplexity": "O(n²)"
+}
+```
+
+---
+
+## 🌐 API Documentation
+
+### Base URL
+```
+http://localhost:8000/api
+```
+
+### Endpoints
+
+#### Sorting Algorithms
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/bubblesort/visualize` | Execute bubble sort |
+| POST | `/selectionsort/visualize` | Execute selection sort |
+| POST | `/insertionsort/visualize` | Execute insertion sort |
+| POST | `/quicksort/visualize` | Execute quick sort |
+| POST | `/mergesort/visualize` | Execute merge sort |
+
+#### Graph Algorithms
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/bfs/visualize` | Execute BFS traversal |
+| POST | `/dfs/visualize` | Execute DFS traversal |
+| POST | `/dijkstra/visualize` | Execute Dijkstra's algorithm |
+| POST | `/kruskal/visualize` | Execute Kruskal's MST |
+
+#### Data Structures
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/stack/push` | Push to stack |
+| POST | `/stack/pop` | Pop from stack |
+| POST | `/queue/enqueue` | Enqueue to queue |
+| POST | `/queue/dequeue` | Dequeue from queue |
+
+#### Health Check
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Server health status |
+
+### Request/Response Examples
+
+#### Bubble Sort Request
+```json
+POST /api/bubblesort/visualize
+Content-Type: application/json
+
+{
+  "array": [64, 34, 25, 12, 22, 11, 90]
+}
+```
+
+#### Bubble Sort Response
+```json
+{
+  "algorithm": "BubbleSort",
+  "originalArray": [64, 34, 25, 12, 22, 11, 90],
+  "sortedArray": [11, 12, 22, 25, 34, 64, 90],
+  "steps": [
+    {"type": "compare", "indices": [0, 1]},
+    {"type": "swap", "indices": [0, 1]},
+    ...
+  ],
+  "comparisons": 21,
+  "swaps": 15,
+  "timeComplexity": "O(n²)",
+  "spaceComplexity": "O(1)"
+}
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 AlgoVista/
-├── 📂 algorithms/                  # 🔧 C++ algorithm implementations
-│   ├── 📂 Sorting/
-│   │   ├── 📂 BubbleSort/         # 🫧 Bubble sort with step recording
-│   │   ├── 📂 SelectionSort/      # 🎯 Selection sort visualization
-│   │   ├── 📂 InsertionSort/      # 🃏 Insertion sort implementation
-│   │   ├── 📂 QuickSort/          # ⚡ Quick sort algorithm
-│   │   ├── 📂 MergeSort/          # 🔀 Merge sort implementation
-│   │   ├── 📂 HeapSort/           # 🏔️ Heap sort algorithm
-│   │   ├── 📂 CountingSort/       # 🔢 Counting sort algorithm
-│   │   └── 📂 RadixSort/          # 📊 Radix sort algorithm
-│   ├── 📂 Searching/
-│   │   ├── 📂 LinearSearch/       # 🔍 Linear search algorithm
-│   │   ├── 📂 BinarySearch/       # 🎯 Binary search implementation
-│   │   ├── 📂 JumpSearch/         # 🦘 Jump search algorithm
-│   │   └── 📂 ExponentialSearch/  # 📈 Exponential search
-│   ├── 📂 GraphAlgorithms/
-│   │   ├── 📂 BFS/                # 🌐 Breadth-first search
-│   │   ├── 📂 DFS/                # 🌐 Depth-first search
-│   │   ├── 📂 Dijkstra/           # 🛤️ Shortest path algorithm
-│   │   ├── 📂 BellmanFord/        # ⚡ Negative weight handling
-│   │   ├── 📂 FloydWarshall/      # 🔄 All-pairs shortest paths
-│   │   ├── 📂 Kruskal/            # 🌳 Minimum spanning tree
-│   │   ├── 📂 Prims/              # 🌲 Prim's MST algorithm
-│   │   ├── 📂 TopologicalSort/    # 📋 Topological ordering
-│   │   ├── 📂 Kahns/              # 🔄 Kahn's algorithm
-│   │   └── 📂 Kosaraju/           # 🔗 Strongly connected components
-│   ├── 📂 DynamicProgramming/
-│   │   ├── 📂 Knapsack01/         # 🎒 0/1 Knapsack problem
-│   │   ├── 📂 LCS/                # 📏 Longest common subsequence
-│   │   └── 📂 MatrixChainMultiplication/ # 🔗 Matrix chain optimization
-│   ├── 📂 GreedyAlgorithms/
-│   │   ├── 📂 ActivitySelection/  # 📅 Activity selection problem
-│   │   ├── 📂 FractionalKnapsack/ # 🎒 Fractional knapsack
-│   │   └── 📂 HuffmanCoding/      # 🌳 Huffman coding algorithm
-│   ├── 📂 StringAlgorithms/
-│   │   ├── 📂 KMP/                # 🔍 KMP pattern matching
-│   │   ├── 📂 NaiveString/        # 📝 Naive string matching
-│   │   └── 📂 RabinKarp/          # 🎯 Rabin-Karp algorithm
-│   ├── 📂 BranchAndBound/
-│   │   ├── 📂 TSP/                # 🚗 Travelling salesman problem
-│   │   └── 📂 JobScheduling/      # 📋 Job scheduling optimization
-│   └── 📂 DataStructures/
-│       ├── 📂 Array/              # 📊 Array operations
-│       ├── 📂 Stack/              # 📚 Stack operations
-│       ├── 📂 Queue/              # 🚶 Queue operations
-│       ├── 📂 LinkedList/         # 🔗 Linked list implementation
-│       ├── 📂 Tree/               # 🌳 Binary search tree (Tree.cpp, Tree)
-│       └── 📂 Graph/              # 🌐 Graph data structure (Graph.cpp, Graph)
-├── 📂 backend/                     # 🚀 Express.js backend service
-│   ├── 📂 routes/
-│   │   └── 📄 algorithms.js       # 🔧 API route handlers
-│   ├── 📂 utils/
-│   │   └── 📄 runCpp.js           # ⚙️ C++ execution utilities
-│   ├── 📄 server.js               # 🚀 Main Express application
-│   └── 📄 package.json            # 📦 Node.js dependencies
-├── 📂 frontend/                    # 🎨 React frontend application
-│   ├── 📂 public/
-│   │   └── 📄 index.html          # 📄 Main HTML template
-│   ├── 📂 src/
-│   │   ├── 📂 algorithms/         # 🧮 Algorithm utility functions
-│   │   ├── 📂 components/         # 🧩 Reusable UI components
-│   │   ├── 📂 data/               # 📊 Static data and configurations
-│   │   ├── 📂 pages/              # 📄 Main application pages
-│   │   │   ├── 📄 Home.js         # 🏠 Landing page
-│   │   │   ├── 📄 About.js        # ℹ️ Platform information
-│   │   │   ├── 📄 Visualizer.js   # 🎯 Main visualizer page
-│   │   │   ├── 📄 SortingAlgorithms.js # 🔄 Sorting algorithms menu
-│   │   │   ├── 📄 SearchingAlgorithms.js # 🔍 Searching algorithms menu
-│   │   │   ├── 📄 GraphAlgorithms.js # 🌐 Graph algorithms menu
-│   │   │   ├── 📄 DataStructures.js # 📊 Data structures menu
-│   │   │   ├── 📄 DynamicProgramming.js # 🧠 DP algorithms menu
-│   │   │   ├── 📄 GreedyAlgorithms.js # 💰 Greedy algorithms menu
-│   │   │   ├── 📄 StringAlgorithms.js # 📝 String algorithms menu
-│   │   │   ├── 📄 BranchAndBound.js # 🌳 Branch & bound menu
-│   │   │   └── 📄 [100+ Algorithm Pages] # 🎯 Individual algorithm visualizers
-│   │   ├── 📂 utils/              # 🛠️ Utility functions and helpers
-│   │   ├── 📄 App.js              # 🔄 Main React component
-│   │   ├── 📄 index.js            # 🚀 React entry point
-│   │   ├── 📄 index.css           # 🎨 Global CSS styles
-│   │   └── 📄 LoadingPage.js      # ⏳ Loading screen component
-│   ├── 📄 package.json            # 📦 Frontend dependencies
-│   ├── 📄 tailwind.config.js     # 🎨 Tailwind CSS configuration
-│   └── 📄 postcss.config.js      # 📝 PostCSS configuration
-├── 📂 public/                     # 🌐 Static HTML files
-│   ├── 📄 index.html              # 🏠 Main landing page
-│   ├── 📄 dijkstra.html           # 🛤️ Dijkstra visualization
-│   ├── 📄 bellman-ford.html       # ⚡ Bellman-Ford visualization
-│   ├── 📄 floyd-warshall.html     # 🔄 Floyd-Warshall visualization
-│   ├── 📄 kruskal.html            # 🌳 Kruskal's algorithm
-│   ├── 📄 prims.html              # 🌲 Prim's algorithm
-│   └── 📄 topological-sort.html   # 📋 Topological sort
-├── 📂 docs/                       # 📸 Documentation and screenshots
-│   ├── 📄 Home_Page.png           # 🏠 Landing page screenshot
-│   ├── 📄 Dashboard.png           # 📊 Dashboard screenshot
-│   ├── 📄 Visualize_Categories.png # 📋 Algorithm categories
-│   ├── 📄 Linear_Search_Visualizer.png # 🔍 Linear search visualization
-│   ├── 📄 Linear_Search_Code.png  # 💻 Linear search code view
-│   └── 📄 About_Page.png          # ℹ️ About page screenshot
-├── 📄 .gitignore                  # 🚫 Git ignore rules
-├── 📄 LICENSE                    # 📜 MIT License
-├── 📄 package.json                # 📦 Root package configuration
-├── 📄 server.js                   # 🚀 Root server file
-├── 📄 start.sh                    # 🎬 Startup script
-└── 📄 README.md                   # 📖 Project documentation
+├── algorithms/                 # C++ algorithm implementations
+│   ├── Sorting/               # 8 sorting algorithms
+│   ├── Searching/             # 4 searching algorithms
+│   ├── GraphAlgorithms/       # 10 graph algorithms
+│   ├── DataStructures/        # 6 data structures
+│   ├── DynamicProgramming/    # 3 DP algorithms
+│   ├── GreedyAlgorithms/      # 3 greedy algorithms
+│   ├── StringAlgorithms/      # 3 string algorithms
+│   └── BranchAndBound/        # 2 B&B algorithms
+│
+├── backend/                   # Express.js backend
+│   ├── routes/
+│   │   └── algorithms.js      # API route handlers
+│   ├── utils/
+│   │   └── runCpp.js          # C++ execution utility
+│   ├── server.js              # Main server file
+│   └── package.json
+│
+├── frontend/                  # React frontend
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── components/        # Reusable components
+│   │   ├── pages/             # Page components
+│   │   │   ├── Home.js
+│   │   │   ├── Visualizer.js
+│   │   │   ├── About.js
+│   │   │   └── [50+ Algorithm Pages]
+│   │   ├── utils/             # Utility functions
+│   │   ├── App.js
+│   │   └── index.js
+│   ├── tailwind.config.js
+│   └── package.json
+│
+├── docs/                      # Documentation & screenshots
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
-<br>
-
-## 📸 Preview Images
-
-| 📍 Page / Feature            | 📸 Screenshot                                              |
-|:----------------------------|:-----------------------------------------------------------|
-| Home Page                   | ![Home Page](docs/Home_Page.png)                   |
-| Dashboard                   | ![Dashboard](docs/Dashboard.png)          |
-| Visualize Categories        | ![Visualize Categories](docs/Visualize_Categories.png)    |
-| Linear Search Visualizer    | ![Linear Search Visualizer](docs/Linear_Search_Visualizer.png)    |
-| Linear Search Code          | ![Linear Search Code](docs/Linear_Search_Code.png)  |
-| About Platform              | ![About Page](docs/About_Page.png)    |
-
-<br>
-
----
-
-## 📦 How to Run
-
-### 📌 Prerequisites
-- ✅ **Node.js 16+** installed
-- ✅ **C++ compiler (g++)** installed
-- ✅ **Git** for cloning repository
-
-<br>
-
----  
-
-### 🚀 Quick Start
-
-1. Clone and setup the project:
-
-   ```bash
-   git clone https://github.com/AbhishekGiri04/AlgoVista.git
-   cd AlgoVista
-   ```
-
-2. Install dependencies and compile algorithms:
-
-   ```bash
-   # Backend setup
-   cd backend
-   npm install
-   
-   # Frontend setup
-   cd ../frontend
-   npm install
-   
-   # Compile C++ algorithms (examples)
-   cd ../algorithms/Sorting/BubbleSort
-   g++ -o BubbleSort BubbleSort.cpp
-   
-   cd ../SelectionSort
-   g++ -o SelectionSort SelectionSort.cpp
-   
-   cd ../DataStructures/Tree
-   g++ -o Tree Tree.cpp
-   
-   cd ../Graph
-   g++ -o Graph Graph.cpp
-   ```
-
-3. Start the services:
-
-   ```bash
-   # Start backend (Terminal 1)
-   cd backend
-   npm start
-   
-   # Start frontend (Terminal 2)
-   cd frontend
-   npm start
-   ```
-
-4. Access the platform:
-
-   ```
-   Frontend: http://localhost:3000
-   Backend:  http://localhost:8000
-   ```
-
-<br>
-
----
-
-## 📖 Core Components
-
-* **BubbleSortVisualize.js** — Interactive bubble sort with step-by-step animations
-* **SelectionSortVisualize.js** — Selection sort visualization with minimum finding
-* **InsertionSortVisualize.js** — Card-sorting style insertion sort visualization
-* **ActivitySelectionVisualize.js** — Greedy algorithm for activity selection problem
-* **FractionalKnapsackVisualize.js** — Fractional knapsack optimization visualization
-* **algorithms.js** — Express.js API routes for algorithm execution
-* **runCpp.js** — C++ integration utilities for real-time execution
-* **AdvancedAnimations.js** — Framer Motion components for 3D visualizations
-
-<br>
-
----
-
-## 🌐 API Endpoints
-
-```bash
-# Backend API (Port 8000)
-POST /api/bubblesort/visualize      # Bubble sort step-by-step execution
-POST /api/selectionsort/visualize   # Selection sort visualization data
-POST /api/insertionsort/visualize   # Insertion sort step recording
-POST /api/activityselection         # Activity selection optimization
-POST /api/fractionalknapsack        # Fractional knapsack problem solving
-POST /api/stack/push                # Stack push operation
-POST /api/queue/enqueue             # Queue enqueue operation
-GET  /api/health                    # System health check
-```
-<br>
-
----
-
-## 🧪 Testing
-
-```bash
-# Test API endpoints
-curl http://localhost:8000/api/health
-curl -X POST http://localhost:8000/api/bubblesort/visualize \
-  -H "Content-Type: application/json" \
-  -d '{"array": [64, 34, 25, 12, 22, 11, 90]}'
-
-# Test frontend
-cd frontend && npm test
-```
-
-## ⚠️ Common Issues
-
-**C++ compilation failed:**
-```bash
-# Install g++ compiler
-sudo apt-get install g++  # Ubuntu/Debian
-brew install gcc          # macOS
-
-# Compile algorithms
-cd algorithms/Sorting/BubbleSort
-g++ -o BubbleSort BubbleSort.cpp
-```
-
-**Port already in use:**
-```bash
-lsof -ti:8000 | xargs kill -9
-lsof -ti:3000 | xargs kill -9
-npm start
-```
-
-**Frontend dependencies:**
-```bash
-cd frontend && rm -rf node_modules && npm install
-cd backend && rm -rf node_modules && npm install
-```
-<br>
 
 ---
 
 ## 📊 Performance Metrics
 
-- **95% Student Engagement** — Interactive learning improvement over traditional methods
-- **50+ Algorithms** — Comprehensive coverage across all DSA categories
-- **<100ms Response Time** — Real-time C++ algorithm execution performance
-- **99.9% Uptime** — Reliable platform availability for continuous learning
-- **3D Visualizations** — Immersive learning experience with Framer Motion
-- **Real-time Execution** — Actual C++ implementations, not simulations
-
-<br>
+| Metric | Value | Description |
+|--------|-------|-------------|
+| **Student Engagement** | 95% | Improvement over traditional methods |
+| **Algorithm Coverage** | 50+ | Across 8 major categories |
+| **Response Time** | <100ms | Real-time C++ execution |
+| **Platform Uptime** | 99.9% | Reliable availability |
+| **Code Languages** | 4 | C++, Python, Java, JavaScript |
+| **Visualization Types** | 3D | Framer Motion animations |
 
 ---
 
-## 🌱 Future Scope
-- 📱 **Mobile Application** — Cross-platform mobile app for iOS and Android
-- 🎮 **Gamification** — Algorithm challenges, leaderboards, and achievement system
-- 🤖 **AI Tutor** — Intelligent tutoring system with personalized learning paths
-- 🔐 **User Authentication** — Progress tracking and personalized learning experience
-- 🚀 **Cloud Deployment** — AWS/Azure scalable infrastructure deployment
-- 🌍 **Multi-language Support** — Python, Java, JavaScript algorithm implementations
+## 🗺️ Roadmap
 
-  <br>
+### Phase 1: Core Features ✅
+- [x] 50+ algorithm implementations
+- [x] Real-time C++ execution
+- [x] Interactive visualizations
+- [x] Multi-language code examples
+- [x] Responsive design
 
-  ---  
+### Phase 2: Enhanced Features 🚧
+- [ ] User authentication & profiles
+- [ ] Progress tracking dashboard
+- [ ] Algorithm complexity calculator
+- [ ] Custom test case generator
+- [ ] Performance comparison tool
 
-## 📞 Help & Contact  
+### Phase 3: Advanced Features 📋
+- [ ] Mobile application (iOS/Android)
+- [ ] Gamification & achievements
+- [ ] AI-powered tutor
+- [ ] Collaborative learning
+- [ ] Cloud deployment (AWS/Azure)
 
-> 💬 *Got questions or need assistance with ALGOVISTA Platform?*  
-> We're here to help with technical support and educational guidance!
+### Phase 4: Expansion 🔮
+- [ ] Additional algorithms (100+)
+- [ ] More programming languages
+- [ ] Video tutorials
+- [ ] Community forum
+- [ ] API for third-party integration
 
-<div align="center">
+---
 
-<b>👤 Abhishek Giri</b>  
-<a href="https://www.linkedin.com/in/abhishek-giri04/">
-  <img src="https://img.shields.io/badge/Connect%20on-LinkedIn-blue?style=for-the-badge&logo=linkedin" alt="LinkedIn - Abhishek Giri"/>
-</a>  
-<a href="https://github.com/AbhishekGiri04">
-  <img src="https://img.shields.io/badge/Follow%20on-GitHub-black?style=for-the-badge&logo=github" alt="GitHub - Abhishek Giri"/>
-</a>  
-<a href="https://t.me/AbhishekGiri7">
-  <img src="https://img.shields.io/badge/Chat%20on-Telegram-blue?style=for-the-badge&logo=telegram" alt="Telegram - Abhishek Giri"/>
-</a>
+## 🤝 Contributing
 
-<br/>
+We welcome contributions! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. **Open a Pull Request**
+
+### Contribution Guidelines
+- Follow existing code style
+- Write clear commit messages
+- Add tests for new features
+- Update documentation
+- Ensure all tests pass
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-<br>
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**🚀 Built with ❤️ for Educational Excellence**  
-*Transforming Computer Science Education Through Interactive Learning*
+## 📞 Contact
+
+<div align="center">
+
+### 👨‍💻 Abhishek Giri
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/abhishek-giri04/)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AbhishekGiri04)
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/AbhishekGiri7)
+
+**Email**: abhishekgiri.dev@gmail.com
 
 </div>
 
 ---
 
+## 🙏 Acknowledgments
+
+- **React Team** for the amazing framework
+- **Framer Motion** for smooth animations
+- **Tailwind CSS** for utility-first styling
+- **Node.js Community** for backend support
+- **Open Source Community** for inspiration
+
+---
+
 <div align="center">
 
-**© 2026 ALGOVISTA - Next Gen DSA Platform. All Rights Reserved.**
+### ⭐ Star this repository if you find it helpful!
+
+**Built with ❤️ for Educational Excellence**
+
+*Transforming Computer Science Education Through Interactive Learning*
+
+---
+
+**© 2024 ALGOVISTA - Next Gen DSA Platform. All Rights Reserved.**
 
 </div>

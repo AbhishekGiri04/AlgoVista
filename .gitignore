@@ -1,126 +1,92 @@
 # Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+package-lock.json
 
-# Production builds
+# Build outputs
 build/
 dist/
 out/
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Compiled executables
+algorithms/**/BubbleSort
+algorithms/**/SelectionSort
+algorithms/**/InsertionSort
+algorithms/**/QuickSort
+algorithms/**/MergeSort
+algorithms/**/HeapSort
+algorithms/**/CountingSort
+algorithms/**/RadixSort
+algorithms/**/LinearSearch
+algorithms/**/BinarySearch
+algorithms/**/JumpSearch
+algorithms/**/ExponentialSearch
+algorithms/**/BFS
+algorithms/**/DFS
+algorithms/**/Dijkstra
+algorithms/**/BellmanFord
+algorithms/**/FloydWarshall
+algorithms/**/Kruskal
+algorithms/**/Prims
+algorithms/**/TopologicalSort
+algorithms/**/Kahns
+algorithms/**/Kosaraju
+algorithms/**/Knapsack01
+algorithms/**/LCS
+algorithms/**/MatrixChainMultiplication
+algorithms/**/ActivitySelection
+algorithms/**/FractionalKnapsack
+algorithms/**/HuffmanCoding
+algorithms/**/KMP
+algorithms/**/NaiveString
+algorithms/**/RabinKarp
+algorithms/**/TSP
+algorithms/**/JobScheduling
+algorithms/**/Array
+algorithms/**/Stack
+algorithms/**/Queue
+algorithms/**/LinkedList
+algorithms/**/Tree
+algorithms/**/Graph
 
-# IDE and editor files
+# C++ compiled files
+*.o
+*.out
+*.exe
+*.app
+*.dSYM/
+
+# Input/Output files
+input.txt
+output.txt
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
-logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Coverage directory used by tools like istanbul
+# Testing
 coverage/
-*.lcov
+.nyc_output/
 
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# C++ compiled files
-*.exe
-*.out
-*.o
-*.obj
-*.so
-*.dylib
-*.dll
-
-# Temporary files
-*.tmp
-*.temp
-
-# Package files
-*.tar.gz
-*.zip
-*.rar
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Backup files
+# Misc
 *.bak
-*.backup# Temporary algorithm I/O files
-algorithms/**/input.txt
-algorithms/**/output.txt
-backend/output.txt
-*.txt
-# Backup files
-*.backup
-*.bak
-*.old
 *.tmp
