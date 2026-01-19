@@ -390,7 +390,7 @@ const LinearSearchVisualize = () => {
                         Step {steps[currentStep].stepNumber}: Checking index {steps[currentStep].index}
                       </p>
                       <p style={{ fontSize: '16px', margin: '0 0 16px', fontFamily: 'ui-monospace, monospace', color: '#374151' }}>
-                        {steps[currentStep].comparison.replace('✓', '✅').replace('✗', '❌')}
+                        {steps[currentStep].comparison ? steps[currentStep].comparison.replace('✓', '✅').replace('✗', '❌') : ''}
                       </p>
                       {steps[currentStep].status === 'found' && (
                         <p style={{ fontSize: '16px', color: '#059669', margin: '0', fontWeight: '600' }}>

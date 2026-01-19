@@ -395,68 +395,150 @@ const DijkstrasAlgorithmVisualize = () => {
               position: 'relative',
               border: '2px solid #e5e7eb'
             }}>
-              <svg width="100%" height="500px" style={{ overflow: 'visible' }}>
-                {graph.edges.map((edge, idx) => {
-                  const fromIdx = graph.vertices.indexOf(edge.from);
-                  const toIdx = graph.vertices.indexOf(edge.to);
-                  const angle1 = (fromIdx * 2 * Math.PI) / graph.vertices.length - Math.PI / 2;
-                  const angle2 = (toIdx * 2 * Math.PI) / graph.vertices.length - Math.PI / 2;
-                  const radius = 35;
-                  const fromPos = { x: 50 + radius * Math.cos(angle1), y: 50 + radius * Math.sin(angle1) };
-                  const toPos = { x: 50 + radius * Math.cos(angle2), y: 50 + radius * Math.sin(angle2) };
-                  const midX = (fromPos.x + toPos.x) / 2;
-                  const midY = (fromPos.y + toPos.y) / 2;
-                  const isInPath = shortestPath.includes(edge.from) && shortestPath.includes(edge.to) && Math.abs(shortestPath.indexOf(edge.from) - shortestPath.indexOf(edge.to)) === 1;
-                  
-                  return (
-                    <g key={idx}>
-                      <line
-                        x1={`${fromPos.x}%`}
-                        y1={`${fromPos.y}%`}
-                        x2={`${toPos.x}%`}
-                        y2={`${toPos.y}%`}
-                        stroke={isInPath ? '#10b981' : '#cbd5e1'}
-                        strokeWidth={isInPath ? '3' : '2'}
-                      />
-                      <circle cx={`${midX}%`} cy={`${midY}%`} r="14" fill="white" stroke={isInPath ? '#10b981' : '#94a3b8'} strokeWidth="2" />
-                      <text x={`${midX}%`} y={`${midY}%`} textAnchor="middle" dy="4" style={{ fontSize: '12px', fontWeight: '700', fill: isInPath ? '#10b981' : '#64748b' }}>{edge.weight}</text>
-                    </g>
-                  );
-                })}
-
-                {graph.vertices.map((vertex, idx) => {
-                  const angle = (idx * 2 * Math.PI) / graph.vertices.length - Math.PI / 2;
-                  const radius = 35;
-                  const pos = { x: 50 + radius * Math.cos(angle), y: 50 + radius * Math.sin(angle) };
-                  let fillColor = '#64748b';
-                  if (vertex === currentVertex) fillColor = '#f59e0b';
-                  else if (shortestPath.includes(vertex)) fillColor = '#10b981';
-                  else if (visitedVertices.has(vertex)) fillColor = '#3b82f6';
-                  else if (vertex === startVertex) fillColor = '#8b5cf6';
-                  else if (vertex === endVertex) fillColor = '#ef4444';
-                  
-                  return (
-                    <g key={vertex}>
-                      <circle cx={`${pos.x}%`} cy={`${pos.y}%`} r="30" fill={fillColor} stroke="white" strokeWidth="3" />
-                      <text x={`${pos.x}%`} y={`${pos.y}%`} textAnchor="middle" dy="6" style={{ fontSize: '18px', fontWeight: '700', fill: 'white' }}>{vertex}</text>
-                      {distances[vertex] !== undefined && distances[vertex] !== Infinity && (
-                        <g>
-                          <circle cx={`${pos.x}%`} cy={`${pos.y - 8}%`} r="12" fill="#f59e0b" stroke="white" strokeWidth="2" />
-                          <text x={`${pos.x}%`} y={`${pos.y - 8}%`} textAnchor="middle" dy="4" style={{ fontSize: '11px', fontWeight: '700', fill: 'white' }}>{distances[vertex]}</text>
-                        </g>
-                      )}
-                    </g>
-                  );
-                })}
-              </svg>
+              <div style={{
+                position: 'relative',
+                width: '100%',
+                height: '350px'
+              }}>
+                {/* SVG for edges */}
+                <svg style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%'
+                }}>
+                  {graph.edges.map((edge, idx) => {
+                    const fromIdx = graph.vertices.indexOf(edge.from);
+                    const toIdx = graph.vertices.indexOf(edge.to);
+                    const totalVertices = graph.vertices.length;
+                    
+                    let x1, y1, x2, y2;
+                    
+                    if (totalVertices === 1) {
+                      x1 = y1 = x2 = y2 = 50;
+                    } else {
+                      const angle1 = (fromIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const angle2 = (toIdx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const radius = 35;
+                      x1 = 50 + radius * Math.cos(angle1);
+                      y1 = 50 + radius * Math.sin(angle1);
+                      x2 = 50 + radius * Math.cos(angle2);
+                      y2 = 50 + radius * Math.sin(angle2);
+                    }
+                    
+                    const isInPath = shortestPath.includes(edge.from) && shortestPath.includes(edge.to) && 
+                                     Math.abs(shortestPath.indexOf(edge.from) - shortestPath.indexOf(edge.to)) === 1;
+                    
+                    return (
+                      <g key={idx}>
+                        <line
+                          x1={`${x1}%`}
+                          y1={`${y1}%`}
+                          x2={`${x2}%`}
+                          y2={`${y2}%`}
+                          stroke={isInPath ? '#10b981' : '#cbd5e1'}
+                          strokeWidth="3"
+                        />
+                        <text
+                          x={`${(x1 + x2) / 2}%`}
+                          y={`${(y1 + y2) / 2}%`}
+                          fill="#f59e0b"
+                          fontSize="14"
+                          fontWeight="700"
+                          textAnchor="middle"
+                        >
+                          {edge.weight}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                
+                {/* Vertices */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%'
+                }}>
+                  {graph.vertices.map((vertex, idx) => {
+                    const totalVertices = graph.vertices.length;
+                    let x, y;
+                    
+                    if (totalVertices === 1) {
+                      x = 50;
+                      y = 50;
+                    } else {
+                      const angle = (idx * 2 * Math.PI) / totalVertices - Math.PI / 2;
+                      const radius = 35;
+                      x = 50 + radius * Math.cos(angle);
+                      y = 50 + radius * Math.sin(angle);
+                    }
+                    
+                    return (
+                      <div key={vertex} style={{ position: 'relative' }}>
+                        <div
+                          style={{
+                            ...getVertexStyle(vertex),
+                            position: 'absolute',
+                            left: `calc(${x}% - 30px)`,
+                            top: `calc(${y}% - 30px)`,
+                            margin: 0
+                          }}
+                        >
+                          {vertex}
+                        </div>
+                        {distances[vertex] !== undefined && distances[vertex] !== Infinity && (
+                          <div style={{
+                            position: 'absolute',
+                            left: `calc(${x}% - 10px)`,
+                            top: `calc(${y}% - 40px)`,
+                            background: '#f59e0b',
+                            color: 'white',
+                            borderRadius: '50%',
+                            width: '24px',
+                            height: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            zIndex: 20
+                          }}>
+                            {distances[vertex]}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
               
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', fontSize: '14px', color: '#374151', border: '1px solid #e5e7eb', marginTop: '20px' }}>
+              <div style={{
+                background: '#f9fafb',
+                padding: '15px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                color: '#374151',
+                border: '1px solid #e5e7eb',
+                marginTop: '20px'
+              }}>
                 <div style={{ fontWeight: '600', marginBottom: '8px' }}>Weighted Edges:</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {graph.edges.map((edge, idx) => {
-                    const isInPath = shortestPath.includes(edge.from) && shortestPath.includes(edge.to) && Math.abs(shortestPath.indexOf(edge.from) - shortestPath.indexOf(edge.to)) === 1;
+                    const isInPath = shortestPath.includes(edge.from) && shortestPath.includes(edge.to) && 
+                                     Math.abs(shortestPath.indexOf(edge.from) - shortestPath.indexOf(edge.to)) === 1;
                     return (
-                      <span key={idx} style={{ background: isInPath ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.2)', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600', color: isInPath ? '#10b981' : '#f59e0b' }}>
+                      <span key={idx} style={{
+                        background: isInPath ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.2)',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: isInPath ? '#10b981' : '#f59e0b'
+                      }}>
                         {edge.from} ↔ {edge.to} ({edge.weight})
                       </span>
                     );

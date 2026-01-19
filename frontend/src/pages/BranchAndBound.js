@@ -27,7 +27,7 @@ const BranchAndBound = () => {
   return (
     <div style={{
       backgroundColor: '#0a0e1a',
-      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://algocademy.com/blog/wp-content/uploads/2024/10/compressed_image-279-1024x585.jpg)',
+      backgroundImage: 'linear-gradient(rgba(10, 14, 26, 0.7), rgba(10, 14, 26, 0.7)), url(https://media.istockphoto.com/id/506066365/photo/stem-of-grand-oak-in-urvaste-estonia.jpg?s=612x612&w=0&k=20&c=XcLO9JWQxd54NkTkqrdv3KM--Qs9Mgw1uxMzndzUVMU=)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

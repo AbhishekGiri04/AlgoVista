@@ -20,7 +20,6 @@ import DynamicProgramming from './pages/DynamicProgramming';
 import BranchAndBound from './pages/BranchAndBound';
 import StringAlgorithms from './pages/StringAlgorithms';
 import SearchingAlgorithms from './pages/SearchingAlgorithms';
-import StackVisualizer from './components/StackVisualizer';
 import Stack from './pages/Stack';
 import Queue from './pages/Queue';
 import LinkedList from './pages/LinkedList';
