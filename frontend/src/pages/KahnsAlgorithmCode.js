@@ -144,17 +144,17 @@ Graph* createGraph(int vertices) {
 void addEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 1;
     graph->adjMatrix[dest][src] = 1; // Undirected graph
-    printf("Added edge: %d - %d\n", src, dest);
+    printf("Added edge: %d - %d", src, dest);
 }
 
 void removeEdge(Graph* graph, int src, int dest) {
     graph->adjMatrix[src][dest] = 0;
     graph->adjMatrix[dest][src] = 0;
-    printf("Removed edge: %d - %d\n", src, dest);
+    printf("Removed edge: %d - %d", src, dest);
 }
 
 void display(Graph* graph) {
-    printf("Graph adjacency list:\n");
+    printf("Graph adjacency list:");
     for (int i = 0; i < graph->vertices; i++) {
         printf("%d: ", i);
         for (int j = 0; j < graph->vertices; j++) {
@@ -162,7 +162,6 @@ void display(Graph* graph) {
                 printf("%d ", j);
             }
         }
-        printf("\n");
     }
 }
 
@@ -181,7 +180,6 @@ void DFSTraversal(Graph* graph, int start) {
     bool visited[MAX_VERTICES] = {false};
     printf("DFS from %d: ", start);
     DFS(graph, start, visited);
-    printf("\n");
 }
 
 void BFSTraversal(Graph* graph, int start) {
@@ -205,11 +203,10 @@ void BFSTraversal(Graph* graph, int start) {
             }
         }
     }
-    printf("\n");
 }
 
 int main() {
-    printf("=== Kahn Algorithm ===\n");
+    printf("=== Kahn Algorithm ===");
     Graph* g = createGraph(5);
     
     addEdge(g, 0, 1);
@@ -430,7 +427,7 @@ public class Graph {
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/datastructures" style={{
+      <a href="/graphalgorithms" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -443,7 +440,7 @@ public class Graph {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Data Structures
+        ← Back to Graph Algorithms
       </a>
       
       <h1 style={{
@@ -454,7 +451,7 @@ public class Graph {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Graph Code
+        Kahn's Algorithm Code
       </h1>
       
       <div style={{

@@ -131,7 +131,7 @@ int knapsack01(Item items[], int n, int capacity) {
 }
 
 int main() {
-    printf("=== 0/1 Knapsack Problem ===\n");
+    printf("=== 0/1 Knapsack Problem ===");
     
     Item items[] = {
         {60, 10},
@@ -143,7 +143,7 @@ int main() {
     int capacity = 50;
     
     int maxValue = knapsack01(items, n, capacity);
-    printf("Maximum value: %d\n", maxValue);
+    printf("Maximum value: %d", maxValue);
     
     return 0;
 }`,

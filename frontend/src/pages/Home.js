@@ -507,13 +507,13 @@ const Home = () => {
             WebkitTextFillColor: 'transparent',
             fontWeight: '600'
           }}>
-            Professional-grade learning platform
+            Production-ready learning platform
           </span>
           {' '}engineered for developers and students.
           <br />
-          Experience real-time algorithm execution, interactive visualizations,
+          Experience real-time C++ algorithm execution, interactive visualizations,
           <br />
-          comprehensive theory, and performance analytics in one unified ecosystem.
+          multi-language code examples, and performance insights in one unified platform.
           <br />
           <span style={{
             background: 'linear-gradient(45deg, #06b6d4, #10b981)',
@@ -522,7 +522,7 @@ const Home = () => {
             fontWeight: '700',
             fontSize: '1.1em'
           }}>
-            Transform your DSA mastery through immersive, hands-on learning.
+            Master 39 algorithms across 8 categories with hands-on learning.
           </span>
         </motion.p>
         
@@ -550,9 +550,9 @@ const Home = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 max-w-4xl"
         >
           {[
-            { icon: '⚡', title: 'Web Input & 3D Visualization', desc: 'Input data directly on web interface and watch algorithms execute with stunning 3D visualizations in real-time' },
-            { icon: '🖥️', title: 'Multi-Language Code Explorer', desc: 'View and study algorithm implementations in multiple programming languages with syntax highlighting' },
-            { icon: '🧠', title: 'Interactive Theory & Operations', desc: 'Perform operations step-by-step, explore comprehensive theory, and understand algorithmic concepts deeply' },
+            { icon: <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd"/></svg>, title: 'Real-Time C++ Execution', desc: 'Execute 39 algorithms with live C++ backend processing. Input data via web interface and watch step-by-step execution in real-time' },
+            { icon: <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"/></svg>, title: 'Multi-Language Code Examples', desc: 'Study algorithm implementations in C++, Python, Java, and JavaScript with professional syntax highlighting and detailed explanations' },
+            { icon: <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>, title: 'Interactive Learning Experience', desc: 'Explore 8 algorithm categories with visual step-by-step breakdowns, performance metrics, and comprehensive theory documentation' },
           ].map((feature, i) => (
             <motion.div
               key={i}
@@ -563,7 +563,7 @@ const Home = () => {
               transition={{ delay: 1.2 + i * 0.2 }}
             >
               <motion.div
-                className="text-4xl mb-4"
+                className="mb-4 flex justify-center text-purple-400"
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
               >
@@ -627,7 +627,7 @@ const Home = () => {
               </h3>
             </motion.div>
             <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed">
-              Enterprise-grade DSA learning ecosystem engineered for developers, students, and technical professionals worldwide.
+              Production-ready DSA learning platform with 39 algorithms across 8 categories. Real-time C++ execution, interactive visualizations, and comprehensive learning resources for developers worldwide.
             </p>
           </div>
           
@@ -636,7 +636,7 @@ const Home = () => {
             {/* Tech Stack */}
             <div className="text-center lg:text-left">
               <h4 className="text-xl font-bold text-white mb-6 flex items-center justify-center lg:justify-start gap-2">
-                <span className="text-2xl">⚙️</span> Built With
+                <svg className="w-6 h-6 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd"/></svg> Built With
               </h4>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
                 {[
@@ -714,14 +714,14 @@ const Home = () => {
             {/* Platform Capabilities */}
             <div className="text-center lg:text-right">
               <h4 className="text-xl font-bold text-white mb-6 flex items-center justify-center lg:justify-end gap-2">
-                <span className="text-2xl">💻</span> Platform Capabilities 
+                <svg className="w-6 h-6 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd"/></svg> Platform Capabilities 
               </h4>
               <div className="space-y-3">
                 {[
-                  { text: 'Live Algorithm Execution Engine', color: 'text-purple-400' },
-                  { text: 'Advanced Performance Analytics', color: 'text-cyan-400' },
-                  { text: 'Interactive Development Environment', color: 'text-emerald-400' },
-                  { text: 'Comprehensive Learning Modules', color: 'text-pink-400' }
+                  { text: 'Live C++ Algorithm Execution', color: 'text-purple-400' },
+                  { text: '39 Algorithms · 8 Categories', color: 'text-cyan-400' },
+                  { text: 'Interactive Code Visualizations', color: 'text-emerald-400' },
+                  { text: 'Multi-Language Code Examples', color: 'text-pink-400' }
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -757,7 +757,7 @@ const Home = () => {
               transition={{ delay: 3.4 }}
             >
               <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent font-bold text-lg">
-                Fueled by Next-Gen Visualization Engine
+                Powered by Real-Time Visualization Engine
               </span>
               <div className="flex gap-2">
                 {[...Array(5)].map((_, i) => (

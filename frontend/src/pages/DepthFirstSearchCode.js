@@ -381,7 +381,7 @@ public class Graph {
       padding: '40px',
       fontFamily: 'Inter, sans-serif'
     }}>
-      <a href="/datastructures" style={{
+      <a href="/graphalgorithms" style={{
         background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
         color: 'white',
         padding: '14px 24px',
@@ -394,7 +394,7 @@ public class Graph {
         display: 'inline-block',
         marginBottom: '40px'
       }}>
-        ← Back to Data Structures
+        ← Back to Graph Algorithms
       </a>
       
       <h1 style={{
@@ -405,7 +405,7 @@ public class Graph {
         color: '#1a202c',
         textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
       }}>
-        Graph Code
+        Depth First Search Code
       </h1>
       
       <div style={{

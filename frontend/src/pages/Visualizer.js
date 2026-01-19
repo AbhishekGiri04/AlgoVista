@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 const Visualizer = () => {
   const categories = [
     {
-      icon: '📊',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>,
       title: 'Sorting Algorithms',
       description: 'Bubble, Selection, Insertion, Merge, Quick, Heap, Counting, Radix',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -12,7 +12,7 @@ const Visualizer = () => {
       link: '/sortingalgorithms'
     },
     {
-      icon: '🔎',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/></svg>,
       title: 'Searching Algorithms',
       description: 'Linear, Binary, Jump, Exponential',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -20,7 +20,7 @@ const Visualizer = () => {
       link: '/searchingalgorithms'
     },
     {
-      icon: '🌐',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z" clipRule="evenodd"/></svg>,
       title: 'Data Structures',
       description: 'Array, Stack, Queue, Linked List, Tree, Graph',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
@@ -28,7 +28,7 @@ const Visualizer = () => {
       link: '/datastructures'
     },
     {
-      icon: '🔗',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>,
       title: 'Graph Algorithms',
       description: 'DFS, BFS, Dijkstra, Kruskal, Prim\'s, Bellman-Ford, Floyd-Warshall, Topological Sort, Kahn\'s, Kosaraju\'s',
       gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
@@ -36,7 +36,7 @@ const Visualizer = () => {
       link: '/graphalgorithms'
     },
     {
-      icon: '⌛️',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/></svg>,
       title: 'Greedy Algorithms',
       description: 'Huffman Coding, Activity Selection, Fractional Knapsack',
       gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
@@ -44,7 +44,7 @@ const Visualizer = () => {
       link: '/greedyalgorithms'
     },
     {
-      icon: '🧩',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>,
       title: 'Dynamic Programming',
       description: 'Longest Common Subsequence (LCS), Matrix Chain Multiplication, 0/1 Knapsack',
       gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
@@ -52,7 +52,7 @@ const Visualizer = () => {
       link: '/dynamicprogramming'
     },
     {
-      icon: '🌳',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>,
       title: 'Branch and Bound',
       description: 'Travelling Salesman Problem (TSP), Job Scheduling',
       gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
@@ -60,7 +60,7 @@ const Visualizer = () => {
       link: '/branchandbound'
     },
     {
-      icon: '📝',
+      icon: <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd"/></svg>,
       title: 'String Algorithms',
       description: 'Naive String, KMP, Rabin-Karp',
       gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
@@ -249,7 +249,7 @@ const Visualizer = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
               
               <motion.div 
-                className="text-6xl mb-6 relative z-10"
+                className="mb-6 relative z-10 flex justify-center"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
