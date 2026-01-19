@@ -22,7 +22,7 @@ const LinearSearchVisualize = () => {
     console.log('Sending request:', { array: arr, target: Number(target) });
     
     try {
-      const response = await fetch('http://localhost:8000/api/linearsearch', {
+      const response = await fetch('https://algovista-dev.onrender.com/api/linearsearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ array: arr, target: Number(target) })

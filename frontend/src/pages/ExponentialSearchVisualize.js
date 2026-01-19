@@ -27,7 +27,7 @@ const ExponentialSearchVisualize = () => {
     setIsSearching(true);
     
     try {
-      const response = await fetch('http://localhost:8000/api/exponentialsearch', {
+      const response = await fetch('https://algovista-dev.onrender.com/api/exponentialsearch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ array: arr, target: Number(target) })
