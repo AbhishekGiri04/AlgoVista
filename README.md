@@ -54,6 +54,190 @@ Traditional DSA learning is broken. Students struggle with abstract concepts thr
 • **Progress Tracking** - Monitor learning journey with analytics dashboard
 
 ---
+
+## 📁 Project Structure
+
+```
+AlgoVista/
+├── 📂 algorithms/                              # C++ Algorithm Implementations
+│   ├── 📂 Sorting/                            # 8 Sorting Algorithms
+│   │   ├── 📂 BubbleSort/
+│   │   │   ├── 📄 BubbleSort.cpp              # Implementation
+│   │   │   └── 📄 BubbleSort                  # Executable
+│   │   ├── 📂 SelectionSort/
+│   │   │   ├── 📄 SelectionSort.cpp           # Implementation
+│   │   │   └── 📄 SelectionSort               # Executable
+│   │   ├── 📂 InsertionSort/
+│   │   │   ├── 📄 InsertionSort.cpp           # Implementation
+│   │   │   └── 📄 InsertionSort               # Executable
+│   │   ├── 📂 QuickSort/
+│   │   │   ├── 📄 QuickSort.cpp               # Implementation
+│   │   │   └── 📄 QuickSort                   # Executable
+│   │   ├── 📂 MergeSort/
+│   │   │   ├── 📄 MergeSort.cpp               # Implementation
+│   │   │   └── 📄 MergeSort                   # Executable
+│   │   ├── 📂 HeapSort/
+│   │   │   ├── 📄 HeapSort.cpp                # Implementation
+│   │   │   └── 📄 HeapSort                    # Executable
+│   │   ├── 📂 CountingSort/
+│   │   │   ├── 📄 CountingSort.cpp            # Implementation
+│   │   │   └── 📄 CountingSort                # Executable
+│   │   └── 📂 RadixSort/
+│   │       ├── 📄 RadixSort.cpp               # Implementation
+│   │       └── 📄 RadixSort                   # Executable
+│   ├── 📂 Searching/                          # 4 Searching Algorithms
+│   │   ├── 📂 LinearSearch/
+│   │   │   ├── 📄 LinearSearch.cpp            # Implementation
+│   │   │   └── 📄 LinearSearch                # Executable
+│   │   ├── 📂 BinarySearch/
+│   │   │   ├── 📄 BinarySearch.cpp            # Implementation
+│   │   │   └── 📄 BinarySearch                # Executable
+│   │   ├── 📂 JumpSearch/
+│   │   │   ├── 📄 JumpSearch.cpp              # Implementation
+│   │   │   └── 📄 JumpSearch                  # Executable
+│   │   └── 📂 ExponentialSearch/
+│   │       ├── 📄 ExponentialSearch.cpp       # Implementation
+│   │       └── 📄 ExponentialSearch           # Executable
+│   ├── 📂 GraphAlgorithms/                    # 10 Graph Algorithms
+│   │   ├── 📂 BFS/
+│   │   │   ├── 📄 BFS.cpp                     # Implementation
+│   │   │   └── 📄 BFS                         # Executable
+│   │   ├── 📂 DFS/
+│   │   │   ├── 📄 DFS.cpp                     # Implementation
+│   │   │   └── 📄 DFS                         # Executable
+│   │   ├── 📂 Dijkstra/
+│   │   │   ├── 📄 Dijkstra.cpp                # Implementation
+│   │   │   └── 📄 Dijkstra                    # Executable
+│   │   ├── 📂 BellmanFord/
+│   │   │   ├── 📄 BellmanFord.cpp             # Implementation
+│   │   │   └── 📄 BellmanFord                 # Executable
+│   │   ├── 📂 FloydWarshall/
+│   │   │   ├── 📄 FloydWarshall.cpp           # Implementation
+│   │   │   └── 📄 FloydWarshall               # Executable
+│   │   ├── 📂 Kruskal/
+│   │   │   ├── 📄 Kruskal.cpp                 # Implementation
+│   │   │   └── 📄 Kruskal                     # Executable
+│   │   ├── 📂 Prims/
+│   │   │   ├── 📄 Prims.cpp                   # Implementation
+│   │   │   └── 📄 Prims                       # Executable
+│   │   ├── 📂 TopologicalSort/
+│   │   │   ├── 📄 TopologicalSort.cpp         # Implementation
+│   │   │   └── 📄 TopologicalSort             # Executable
+│   │   ├── 📂 Kahns/
+│   │   │   ├── 📄 Kahns.cpp                   # Implementation
+│   │   │   └── 📄 Kahns                       # Executable
+│   │   └── 📂 Kosaraju/
+│   │       ├── 📄 Kosaraju.cpp                # Implementation
+│   │       └── 📄 Kosaraju                    # Executable
+│   ├── 📂 DataStructures/                     # 6 Data Structures
+│   │   ├── 📂 Array/
+│   │   │   ├── 📄 Array.cpp                   # Implementation
+│   │   │   └── 📄 Array                       # Executable
+│   │   ├── 📂 Stack/
+│   │   │   ├── 📄 Stack.cpp                   # Implementation
+│   │   │   └── 📄 Stack                       # Executable
+│   │   ├── 📂 Queue/
+│   │   │   ├── 📄 Queue.cpp                   # Implementation
+│   │   │   └── 📄 Queue                       # Executable
+│   │   ├── 📂 LinkedList/
+│   │   │   ├── 📄 LinkedList.cpp              # Implementation
+│   │   │   └── 📄 LinkedList                  # Executable
+│   │   ├── 📂 Tree/
+│   │   │   ├── 📄 Tree.cpp                    # Implementation
+│   │   │   └── 📄 Tree                        # Executable
+│   │   └── 📂 Graph/
+│   │       ├── 📄 Graph.cpp                   # Implementation
+│   │       └── 📄 Graph                       # Executable
+│   ├── 📂 DynamicProgramming/                 # 3 DP Algorithms
+│   │   ├── 📂 Knapsack01/
+│   │   │   ├── 📄 Knapsack01.cpp              # Implementation
+│   │   │   └── 📄 Knapsack01                  # Executable
+│   │   ├── 📂 LCS/
+│   │   │   ├── 📄 LCS.cpp                     # Implementation
+│   │   │   └── 📄 LCS                         # Executable
+│   │   └── 📂 MatrixChainMultiplication/
+│   │       ├── 📄 MatrixChainMultiplication.cpp # Implementation
+│   │       └── 📄 MatrixChainMultiplication   # Executable
+│   ├── 📂 GreedyAlgorithms/                   # 3 Greedy Algorithms
+│   │   ├── 📂 ActivitySelection/
+│   │   │   ├── 📄 ActivitySelection.cpp       # Implementation
+│   │   │   └── 📄 ActivitySelection           # Executable
+│   │   ├── 📂 FractionalKnapsack/
+│   │   │   ├── 📄 FractionalKnapsack.cpp      # Implementation
+│   │   │   └── 📄 FractionalKnapsack          # Executable
+│   │   └── 📂 HuffmanCoding/
+│   │       ├── 📄 HuffmanCoding.cpp           # Implementation
+│   │       └── 📄 HuffmanCoding               # Executable
+│   ├── 📂 StringAlgorithms/                   # 3 String Algorithms
+│   │   ├── 📂 KMP/
+│   │   │   ├── 📄 KMP.cpp                     # Implementation
+│   │   │   └── 📄 KMP                         # Executable
+│   │   ├── 📂 NaiveString/
+│   │   │   ├── 📄 NaiveString.cpp             # Implementation
+│   │   │   └── 📄 NaiveString                 # Executable
+│   │   └── 📂 RabinKarp/
+│   │       ├── 📄 RabinKarp.cpp               # Implementation
+│   │       └── 📄 RabinKarp                   # Executable
+│   └── 📂 BranchAndBound/                     # 2 B&B Algorithms
+│       ├── 📂 TSP/
+│       │   ├── 📄 TSP.cpp                     # Implementation
+│       │   └── 📄 TSP                         # Executable
+│       └── 📂 JobScheduling/
+│           ├── 📄 JobScheduling.cpp           # Implementation
+│           └── 📄 JobScheduling               # Executable
+├── 📂 backend/                                 # Express.js Backend (Port 8000)
+│   ├── 📂 routes/
+│   │   └── 📄 algorithms.js                   # API endpoints
+│   ├── 📂 utils/
+│   │   └── 📄 runCpp.js                       # C++ executor
+│   ├── 📄 server.js                           # Server config
+│   ├── 📄 package.json                        # Dependencies
+│   └── 📄 package-lock.json                   # Lock file
+├── 📂 frontend/                                # React Frontend (Port 3000)
+│   ├── 📂 public/
+│   │   └── 📄 index.html                      # HTML template
+│   ├── 📂 src/
+│   │   ├── 📂 components/                     # UI Components
+│   │   │   ├── 📄 AdvancedAnimations.js       # Animations
+│   │   │   ├── 📄 CodeBlock.js                # Code display
+│   │   │   ├── 📄 EnhancedAlgorithmVisualizer.js # Visualizer
+│   │   │   └── 📄 StackVisualizer.js          # Stack viz
+│   │   ├── 📂 data/
+│   │   │   └── 📄 algorithmInfo.js            # Metadata
+│   │   ├── 📂 pages/                          # 100+ Pages
+│   │   │   ├── 📄 Home.js                     # Landing page
+│   │   │   ├── 📄 About.js                    # About page
+│   │   │   ├── 📄 Visualizer.js               # Dashboard
+│   │   │   ├── 📄 SortingAlgorithms.js        # Category page
+│   │   │   ├── 📄 BubbleSortVisualize.js      # Visualization
+│   │   │   └── 📄 [90+ Algorithm Pages]       # Algorithm pages
+│   │   ├── 📂 utils/
+│   │   │   └── 📄 helpers.js                  # Utilities
+│   │   ├── 📄 App.js                          # Root component
+│   │   ├── 📄 index.js                        # Entry point
+│   │   └── 📄 LoadingPage.js                  # Loading screen
+│   ├── 📄 package.json                        # Dependencies
+│   └── 📄 tailwind.config.js                  # Tailwind config
+├── 📂 docs/                                    # Documentation
+│   ├── 📄 AlgoVista.png                       # Logo
+│   ├── 📄 Architecture.png                    # Architecture
+│   ├── 📄 Data-Flow-Diagram.png               # Data flow
+│   ├── 📄 LoadingPage.png                     # Screenshot
+│   ├── 📄 HomePage.png                        # Screenshot
+│   ├── 📄 VisualizationPage.png               # Screenshot
+│   ├── 📄 DSA-Categories.png                  # Screenshot
+│   ├── 📄 DataStructureSection.png            # Screenshot
+│   ├── 📄 LinkedListVisualization.png         # Screenshot
+│   ├── 📄 CodeSection.png                     # Screenshot
+│   └── 📄 AboutPage.png                       # Screenshot
+├── 📄 .gitignore                              # Git ignore
+├── 📄 LICENSE                                 # MIT License
+├── 📄 README.md                               # Documentation
+└── 📄 start.sh                                # Startup script
+```
+
+---
+
 ## 📸 Screenshots
 
 <table>
@@ -165,33 +349,12 @@ Traditional DSA learning is broken. Students struggle with abstract concepts thr
 
 <div align="center">
 
-<table>
-<tr>
-<th><b>Software</b></th>
-<th><b>Version</b></th>
-<th><b>Purpose</b></th>
-</tr>
-<tr>
-<td>Node.js</td>
-<td>16+</td>
-<td>Frontend and backend runtime</td>
-</tr>
-<tr>
-<td>C++ Compiler</td>
-<td>g++ / clang++</td>
-<td>Algorithm compilation</td>
-</tr>
-<tr>
-<td>npm / yarn</td>
-<td>Latest</td>
-<td>Package management</td>
-</tr>
-<tr>
-<td>Git</td>
-<td>Latest</td>
-<td>Version control</td>
-</tr>
-</table>
+| **Software** | **Version** | **Purpose** |
+|:-------------|:------------|:------------|
+| Node.js | v16+ | Runtime environment |
+| C++ Compiler | g++ / clang++ | Algorithm compilation |
+| npm / yarn | Latest | Package management |
+| Git | Latest | Version control |
 
 </div>
 
@@ -199,303 +362,119 @@ Traditional DSA learning is broken. Students struggle with abstract concepts thr
 
 ### ⚡ Quick Start
 
-#### Step 1: Clone Repository
+**1. Clone the Repository**
 ```bash
 git clone https://github.com/AbhishekGiri04/AlgoVista.git
 cd AlgoVista
 ```
 
-#### Step 2: Backend Setup
+**2. Install Dependencies**
 ```bash
-cd backend
-npm install
+# Backend
+cd backend && npm install
+
+# Frontend
+cd ../frontend && npm install
 ```
 
-#### Step 3: Frontend Setup
-```bash
-cd ../frontend
-npm install
-```
-
-#### Step 4: Compile C++ Algorithms
+**3. Compile C++ Algorithms**
 ```bash
 cd ../algorithms
 
-# Compile Sorting Algorithms
-cd Sorting
-for dir in */; do
-  cd "$dir"
-  g++ -o "${dir%/}" *.cpp
-  cd ..
-done
-
-# Compile Searching Algorithms
-cd ../Searching
-for dir in */; do
-  cd "$dir"
-  g++ -o "${dir%/}" *.cpp
-  cd ..
-done
-
-# Compile Graph Algorithms
-cd ../GraphAlgorithms
-for dir in */; do
-  cd "$dir"
-  g++ -o "${dir%/}" *.cpp
-  cd ..
-done
-
-# Compile Data Structures
-cd ../DataStructures
-for dir in */; do
-  cd "$dir"
-  g++ -o "${dir%/}" *.cpp
+# Compile all algorithms
+for category in Sorting Searching GraphAlgorithms DataStructures DynamicProgramming GreedyAlgorithms StringAlgorithms BranchAndBound; do
+  cd $category
+  for dir in */; do
+    cd "$dir" && g++ -o "${dir%/}" *.cpp && cd ..
+  done
   cd ..
 done
 ```
 
-#### Step 5: Run Application
+**4. Start the Application**
 
-**Terminal 1 - Backend Server:**
+Open two terminals:
+
+**Terminal 1 - Backend:**
 ```bash
 cd backend
 npm start
-# Server runs on http://localhost:8000
 ```
 
-**Terminal 2 - Frontend Server:**
+**Terminal 2 - Frontend:**
 ```bash
 cd frontend
 npm start
-# Application runs on http://localhost:3000
 ```
 
-#### Step 6: Access Platform
+**5. Access the Platform**
 
-- **Frontend UI**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: [http://localhost:8000](http://localhost:8000)
-
----
-## 📁 Project Structure
-
-```
-AlgoVista/
-├── 📂 algorithms/                              # C++ Algorithm Implementations
-│   ├── 📂 Sorting/                            # 8 Sorting Algorithms
-│   │   ├── 📂 BubbleSort/
-│   │   │   ├── 📄 BubbleSort.cpp              # Bubble sort implementation with step tracking
-│   │   │   └── 📄 BubbleSort                  # Compiled executable binary
-│   │   ├── 📂 SelectionSort/
-│   │   │   ├── 📄 SelectionSort.cpp           # Selection sort with minimum element selection
-│   │   │   └── 📄 SelectionSort               # Compiled executable binary
-│   │   ├── 📂 InsertionSort/
-│   │   │   ├── 📄 InsertionSort.cpp           # Insertion sort with element positioning
-│   │   │   └── 📄 InsertionSort               # Compiled executable binary
-│   │   ├── 📂 QuickSort/
-│   │   │   ├── 📄 QuickSort.cpp               # Quick sort with pivot partitioning
-│   │   │   └── 📄 QuickSort                   # Compiled executable binary
-│   │   ├── 📂 MergeSort/
-│   │   │   ├── 📄 MergeSort.cpp               # Merge sort with divide-conquer approach
-│   │   │   └── 📄 MergeSort                   # Compiled executable binary
-│   │   ├── 📂 HeapSort/
-│   │   │   ├── 📄 HeapSort.cpp                # Heap sort with max-heap construction
-│   │   │   └── 📄 HeapSort                    # Compiled executable binary
-│   │   ├── 📂 CountingSort/
-│   │   │   ├── 📄 CountingSort.cpp            # Counting sort for integer arrays
-│   │   │   └── 📄 CountingSort                # Compiled executable binary
-│   │   └── 📂 RadixSort/
-│   │       ├── 📄 RadixSort.cpp               # Radix sort with digit-by-digit sorting
-│   │       └── 📄 RadixSort                   # Compiled executable binary
-│   ├── 📂 Searching/                          # 4 Searching Algorithms
-│   │   ├── 📂 LinearSearch/
-│   │   │   ├── 📄 LinearSearch.cpp            # Sequential search implementation
-│   │   │   └── 📄 LinearSearch                # Compiled executable binary
-│   │   ├── 📂 BinarySearch/
-│   │   │   ├── 📄 BinarySearch.cpp            # Binary search on sorted arrays
-│   │   │   └── 📄 BinarySearch                # Compiled executable binary
-│   │   ├── 📂 JumpSearch/
-│   │   │   ├── 📄 JumpSearch.cpp              # Jump search with block jumping
-│   │   │   └── 📄 JumpSearch                  # Compiled executable binary
-│   │   └── 📂 ExponentialSearch/
-│   │       ├── 📄 ExponentialSearch.cpp       # Exponential search with range doubling
-│   │       └── 📄 ExponentialSearch           # Compiled executable binary
-│   ├── 📂 GraphAlgorithms/                    # 10 Graph Algorithms
-│   │   ├── 📂 BFS/
-│   │   │   ├── 📄 BFS.cpp                     # Breadth-first search traversal
-│   │   │   └── 📄 BFS                         # Compiled executable binary
-│   │   ├── 📂 DFS/
-│   │   │   ├── 📄 DFS.cpp                     # Depth-first search traversal
-│   │   │   └── 📄 DFS                         # Compiled executable binary
-│   │   ├── 📂 Dijkstra/
-│   │   │   ├── 📄 Dijkstra.cpp                # Shortest path with priority queue
-│   │   │   └── 📄 Dijkstra                    # Compiled executable binary
-│   │   ├── 📂 BellmanFord/
-│   │   │   ├── 📄 BellmanFord.cpp             # Shortest path with negative edges
-│   │   │   └── 📄 BellmanFord                 # Compiled executable binary
-│   │   ├── 📂 FloydWarshall/
-│   │   │   ├── 📄 FloydWarshall.cpp           # All-pairs shortest path algorithm
-│   │   │   └── 📄 FloydWarshall               # Compiled executable binary
-│   │   ├── 📂 Kruskal/
-│   │   │   ├── 📄 Kruskal.cpp                 # Minimum spanning tree with union-find
-│   │   │   └── 📄 Kruskal                     # Compiled executable binary
-│   │   ├── 📂 Prims/
-│   │   │   ├── 📄 Prims.cpp                   # Minimum spanning tree with greedy approach
-│   │   │   └── 📄 Prims                       # Compiled executable binary
-│   │   ├── 📂 TopologicalSort/
-│   │   │   ├── 📄 TopologicalSort.cpp         # DFS-based topological ordering
-│   │   │   └── 📄 TopologicalSort             # Compiled executable binary
-│   │   ├── 📂 Kahns/
-│   │   │   ├── 📄 Kahns.cpp                   # Kahn's algorithm for topological sort
-│   │   │   └── 📄 Kahns                       # Compiled executable binary
-│   │   └── 📂 Kosaraju/
-│   │       ├── 📄 Kosaraju.cpp                # Strongly connected components detection
-│   │       └── 📄 Kosaraju                    # Compiled executable binary
-│   ├── 📂 DataStructures/                     # 6 Data Structures
-│   │   ├── 📂 Array/
-│   │   │   ├── 📄 Array.cpp                   # Array operations and manipulations
-│   │   │   └── 📄 Array                       # Compiled executable binary
-│   │   ├── 📂 Stack/
-│   │   │   ├── 📄 Stack.cpp                   # LIFO stack implementation
-│   │   │   └── 📄 Stack                       # Compiled executable binary
-│   │   ├── 📂 Queue/
-│   │   │   ├── 📄 Queue.cpp                   # FIFO queue implementation
-│   │   │   └── 📄 Queue                       # Compiled executable binary
-│   │   ├── 📂 LinkedList/
-│   │   │   ├── 📄 LinkedList.cpp              # Singly linked list operations
-│   │   │   └── 📄 LinkedList                  # Compiled executable binary
-│   │   ├── 📂 Tree/
-│   │   │   ├── 📄 Tree.cpp                    # Binary tree traversals and operations
-│   │   │   └── 📄 Tree                        # Compiled executable binary
-│   │   └── 📂 Graph/
-│   │       ├── 📄 Graph.cpp                   # Graph representation and operations
-│   │       └── 📄 Graph                       # Compiled executable binary
-│   ├── 📂 DynamicProgramming/                 # 3 DP Algorithms
-│   │   ├── 📂 Knapsack01/
-│   │   │   ├── 📄 Knapsack01.cpp              # 0/1 knapsack with memoization
-│   │   │   └── 📄 Knapsack01                  # Compiled executable binary
-│   │   ├── 📂 LCS/
-│   │   │   ├── 📄 LCS.cpp                     # Longest common subsequence
-│   │   │   └── 📄 LCS                         # Compiled executable binary
-│   │   └── 📂 MatrixChainMultiplication/
-│   │       ├── 📄 MatrixChainMultiplication.cpp # Optimal matrix multiplication order
-│   │       └── 📄 MatrixChainMultiplication   # Compiled executable binary
-│   ├── 📂 GreedyAlgorithms/                   # 3 Greedy Algorithms
-│   │   ├── 📂 ActivitySelection/
-│   │   │   ├── 📄 ActivitySelection.cpp       # Maximum non-overlapping activities
-│   │   │   └── 📄 ActivitySelection           # Compiled executable binary
-│   │   ├── 📂 FractionalKnapsack/
-│   │   │   ├── 📄 FractionalKnapsack.cpp      # Fractional knapsack with value/weight ratio
-│   │   │   └── 📄 FractionalKnapsack          # Compiled executable binary
-│   │   └── 📂 HuffmanCoding/
-│   │       ├── 📄 HuffmanCoding.cpp           # Optimal prefix-free encoding
-│   │       └── 📄 HuffmanCoding               # Compiled executable binary
-│   ├── 📂 StringAlgorithms/                   # 3 String Algorithms
-│   │   ├── 📂 KMP/
-│   │   │   ├── 📄 KMP.cpp                     # Knuth-Morris-Pratt pattern matching
-│   │   │   └── 📄 KMP                         # Compiled executable binary
-│   │   ├── 📂 NaiveString/
-│   │   │   ├── 📄 NaiveString.cpp             # Brute-force string matching
-│   │   │   └── 📄 NaiveString                 # Compiled executable binary
-│   │   └── 📂 RabinKarp/
-│   │       ├── 📄 RabinKarp.cpp               # Hash-based pattern matching
-│   │       └── 📄 RabinKarp                   # Compiled executable binary
-│   └── 📂 BranchAndBound/                     # 2 B&B Algorithms
-│       ├── 📂 TSP/
-│       │   ├── 📄 TSP.cpp                     # Traveling salesman problem solver
-│       │   └── 📄 TSP                         # Compiled executable binary
-│       └── 📂 JobScheduling/
-│           ├── 📄 JobScheduling.cpp           # Job scheduling with deadlines
-│           └── 📄 JobScheduling               # Compiled executable binary
-├── 📂 backend/                                 # Express.js Backend (Port 8000)
-│   ├── 📂 routes/
-│   │   └── 📄 algorithms.js                   # RESTful API endpoints for algorithm execution
-│   ├── 📂 utils/
-│   │   └── 📄 runCpp.js                       # C++ process spawner and output parser
-│   ├── 📄 server.js                           # Express server configuration and middleware
-│   ├── 📄 package.json                        # Backend dependencies and scripts
-│   └── 📄 package-lock.json                   # Locked dependency versions
-├── 📂 frontend/                                # React Frontend (Port 3000)
-│   ├── 📂 public/
-│   │   └── 📄 index.html                      # Root HTML template with React mount point
-│   ├── 📂 src/
-│   │   ├── 📂 components/                     # Reusable UI Components
-│   │   │   ├── 📄 AdvancedAnimations.js       # Framer Motion animation configurations
-│   │   │   ├── 📄 CodeBlock.js                # Syntax-highlighted code display component
-│   │   │   ├── 📄 EnhancedAlgorithmVisualizer.js # Main visualization engine with controls
-│   │   │   └── 📄 StackVisualizer.js          # Stack data structure visualization
-│   │   ├── 📂 data/
-│   │   │   └── 📄 algorithmInfo.js            # Algorithm metadata, complexity, and descriptions
-│   │   ├── 📂 pages/                          # 100+ Page Components
-│   │   │   ├── 📄 Home.js                     # Landing page with platform overview
-│   │   │   ├── 📄 About.js                    # About page with project details
-│   │   │   ├── 📄 Visualizer.js               # Main visualizer dashboard
-│   │   │   ├── 📄 SortingAlgorithms.js        # Sorting algorithms category page
-│   │   │   ├── 📄 BubbleSortVisualize.js      # Bubble sort visualization page
-│   │   │   └── 📄 [90+ Algorithm Pages]       # Individual algorithm visualization pages
-│   │   ├── 📂 utils/
-│   │   │   └── 📄 helpers.js                  # Utility functions and helpers
-│   │   ├── 📄 App.js                          # Root component with routing configuration
-│   │   ├── 📄 index.js                        # React DOM render entry point
-│   │   └── 📄 LoadingPage.js                  # Animated loading screen component
-│   ├── 📄 package.json                        # Frontend dependencies and scripts
-│   └── 📄 tailwind.config.js                  # Tailwind CSS configuration
-├── 📂 docs/                                    # Documentation & Screenshots
-│   ├── 📄 AlgoVista.png                       # Platform logo and branding
-│   ├── 📄 Architecture.png                    # System architecture diagram
-│   ├── 📄 Data-Flow-Diagram.png               # Data flow visualization
-│   ├── 📄 LoadingPage.png                     # Loading screen screenshot
-│   ├── 📄 HomePage.png                        # Home page screenshot
-│   ├── 📄 VisualizationPage.png               # Visualizer dashboard screenshot
-│   ├── 📄 DSA-Categories.png                  # Categories overview screenshot
-│   ├── 📄 DataStructureSection.png            # Algorithm section screenshot
-│   ├── 📄 LinkedListVisualization.png         # Linked list visualization screenshot
-│   ├── 📄 CodeSection.png                     # Code section screenshot
-│   └── 📄 AboutPage.png                       # About page screenshot
-├── 📄 .gitignore                              # Git ignore patterns for node_modules and builds
-├── 📄 LICENSE                                 # MIT License file
-├── 📄 README.md                               # Project documentation and setup guide
-└── 📄 start.sh                                # Shell script for automated project startup
-```
+🌐 **Frontend**: [http://localhost:3000](http://localhost:3000)  
+🔧 **Backend API**: [http://localhost:8000](http://localhost:8000)
 
 ---
 
 ## 📊 Performance Metrics
 
-**50+ Algorithms** — Comprehensive coverage across 8 major DSA categories  
-**<100ms Response** — Real-time C++ execution with instant feedback  
-**95% Engagement** — Enhanced student learning vs traditional methods  
-**4 Languages** — Multi-language code examples (C++, Python, Java, JavaScript)  
-**99.9% Uptime** — Production-ready platform with reliable availability  
-**39+ Implementations** — Live C++ algorithm processing, not simulations  
-**3D Visualizations** — Interactive step-by-step animated representations  
-**8 Categories** — Sorting, Searching, Graphs, DP, Greedy, Strings, B&B, Data Structures
+<div align="center">
+
+| 🎯 **Metric** | 📊 **Value** | 📝 **Description** |
+|:----------------|:-------------|:-------------------|
+| **Algorithms** | **50+** | Comprehensive coverage across 8 major DSA categories |
+| **Response Time** | **<100ms** | Real-time C++ execution with instant feedback |
+| **Engagement** | **95%** | Enhanced student learning vs traditional methods |
+| **Languages** | **4** | Multi-language code examples (C++, Python, Java, JavaScript) |
+| **Uptime** | **99.9%** | Production-ready platform with reliable availability |
+| **Implementations** | **39+** | Live C++ algorithm processing, not simulations |
+| **Visualizations** | **3D** | Interactive step-by-step animated representations |
+| **Categories** | **8** | Sorting, Searching, Graphs, DP, Greedy, Strings, B&B, Data Structures |
+
+</div>
+
+<br>
 
 ---
 
-## 🌱 Future Scope
+## 🌱 Future Roadmap
 
-**📱 Mobile Application** — Cross-platform mobile app for on-the-go learning  
-**🤖 AI-Powered Hints** — Intelligent suggestions and personalized learning paths  
-**🎮 Gamification** — Badges, leaderboards, and achievement systems  
-**👥 Collaborative Learning** — Real-time code sharing and peer learning features  
-**📊 Advanced Analytics** — Detailed performance tracking and progress insights  
-**🌐 Multi-Language Support** — Platform localization for global accessibility  
-**🔐 User Authentication** — Personalized accounts with saved progress  
-**📚 Extended Coverage** — Additional algorithms and advanced data structures
+<div align="center">
+
+| 🕰️ **Phase** | 🎯 **Feature** | 📝 **Description** | 📅 **Status** |
+|:------------|:--------------|:-------------------|:--------------|
+| **Phase 1** | Mobile Application | Cross-platform mobile app for on-the-go learning | 📅 Planned |
+| **Phase 2** | AI-Powered Hints | Intelligent suggestions and personalized learning paths | 📅 Planned |
+| **Phase 3** | Gamification | Badges, leaderboards, and achievement systems | 🔄 In Progress |
+| **Phase 4** | Collaborative Learning | Real-time code sharing and peer learning features | 📅 Planned |
+| **Phase 5** | Advanced Analytics | Detailed performance tracking and progress insights | 📅 Planned |
+| **Phase 6** | Multi-Language Support | Platform localization for global accessibility | 🔍 Research |
+| **Phase 7** | User Authentication | Personalized accounts with saved progress | 📅 Planned |
+| **Phase 8** | Extended Coverage | Additional algorithms and advanced data structures | 🔍 Research |
+
+</div>
+
+<br>
 
 ---
 
 ## 📞 Help & Contact
 
-💬 **Got questions or need assistance with AlgoVista?**  
-We're here to help with setup, customization, and learning support!
+> 💬 *Got questions or need assistance with AlgoVista?*  
+> We're here to help with setup, customization, and learning support!
 
-**👤 Abhishek Giri**
+<div align="center">
 
-🔗 **LinkedIn** — [Abhishek Giri](https://linkedin.com/in/abhishek-giri04)  
-💻 **GitHub** — [Abhishek Giri](https://github.com/abhishekgiri04)  
-💬 **Telegram** — [Abhishek Giri](https://t.me/AbhishekGiri7)  
-📧 **Email** — abhishekgiri.dev@gmail.com
+<b>👤 Abhishek Giri</b>  
+<a href="https://www.linkedin.com/in/abhishek-giri04/">
+  <img src="https://img.shields.io/badge/Connect%20on-LinkedIn-blue?style=for-the-badge&logo=linkedin" alt="LinkedIn - Abhishek Giri"/>
+</a>  
+<a href="https://github.com/abhishekgiri04">
+  <img src="https://img.shields.io/badge/Follow%20on-GitHub-black?style=for-the-badge&logo=github" alt="GitHub - Abhishek Giri"/>
+</a>  
+<a href="https://t.me/AbhishekGiri7">
+  <img src="https://img.shields.io/badge/Chat%20on-Telegram-blue?style=for-the-badge&logo=telegram" alt="Telegram - Abhishek Giri"/>
+</a>
+
+<br/>
 
 ---
 
@@ -505,9 +484,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**🚀 Built with ❤️ for Educational Excellence**  
-*Transforming Computer Science Education Through Interactive Learning*
+**🚀 Built with ❤️ for Educational Excellence | Transforming Computer Science Education Through Interactive Learning**
+
+</div>
 
 ---
 
+<div align="center">
+
 **© 2026 ALGOVISTA - Next Gen DSA Platform. All Rights Reserved.**
+
+</div>
